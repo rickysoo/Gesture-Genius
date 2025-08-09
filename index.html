@@ -1,0 +1,1077 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Gesture Genius - Master Public Speaking Body Language | Interactive Quiz</title>
+<meta name="description" content="Learn to read body language like a pro with our AI-powered interactive quiz. Master public speaking gestures, postures, and expressions through fun cartoon scenarios.">
+<meta name="keywords" content="body language, public speaking, gestures, communication skills, presentation skills, quiz">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="shortcut icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/favicon.svg">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0a0714">
+<style>
+  :root{
+    --bg: #1e40af;
+    --card: rgba(255,255,255,0.95);
+    --accent: #3b82f6;
+    --accent2: #8b5cf6;
+    --accent3: #f59e0b;
+    --accent4: #ec4899;
+    --good: #10b981;
+    --warn: #f59e0b;
+    --bad: #ef4444;
+    --muted: rgba(255,255,255,0.7);
+    --text: #ffffff;
+    --text-soft: rgba(255,255,255,0.9);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{font-family:'Inter',-apple-system,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:
+    linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #3730a3 100%);
+    color:white;min-height:100vh;
+    background-attachment:fixed;font-size:16px;line-height:1.5;}
+  .wrap{width:100%;margin:0;padding:0;position:relative;min-height:100vh;display:flex;flex-direction:column;}
+  header{display:flex;gap:6px;align-items:center;justify-content:center;padding:4px 0;margin-bottom:4px;}
+  .brand{display:flex;gap:8px;align-items:center}
+  .logo{
+    width:32px;height:32px;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:18px;
+    background:linear-gradient(135deg, rgba(0,229,255,.1), rgba(255,110,199,.1));
+    border:1px solid rgba(255,255,255,.2);
+    box-shadow:0 0 15px rgba(0,229,255,.2);
+  }
+  @keyframes pulse { from{box-shadow:0 0 30px rgba(0,229,255,.5)} to{box-shadow:0 0 50px rgba(255,110,199,.6)} }
+  @keyframes spin { from{transform:rotate(0)} to{transform:rotate(360deg)} }
+  h1{font-size:1.8rem;margin:0;font-weight:700;color:white;text-shadow:0 2px 4px rgba(0,0,0,.3);}
+  .card{
+    background:rgba(255,255,255,0.95);
+    border:1px solid rgba(255,255,255,.3);
+    border-radius:24px;padding:32px;
+    box-shadow:0 20px 40px rgba(0,0,0,.3);
+    backdrop-filter: blur(20px);
+    color: #1f2937;
+    transition:all 0.3s ease;
+    position:relative;
+    overflow:hidden;
+  }
+  .card::before{
+    content:'';
+    position:absolute;
+    top:0;left:0;right:0;bottom:0;
+    background:linear-gradient(135deg, rgba(59,130,246,.05), rgba(139,92,246,.05));
+    border-radius:24px;
+    pointer-events:none;
+  }
+  .card:hover{
+    transform:translateY(-2px);
+    box-shadow:0 30px 60px rgba(0,0,0,.5), 0 20px 40px rgba(0,229,255,.15);
+  }
+  .controls{display:flex;gap:10px;flex-wrap:wrap}
+  .btn{
+    background:linear-gradient(135deg, #3b82f6, #8b5cf6);
+    border:none;
+    color:#fff;padding:18px 32px;border-radius:16px;cursor:pointer;
+    transition:all .2s ease;
+    box-shadow:0 8px 25px rgba(59,130,246,.4);
+    font-weight:600;
+    font-size:1.1rem;
+    position:relative;
+    overflow:hidden;
+    text-decoration:none;
+    display:inline-block;
+  }
+  .btn::before{
+    content:'';
+    position:absolute;
+    top:0;left:-100%;width:100%;height:100%;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,.2), transparent);
+    transition:left 0.5s ease;
+  }
+  .btn:hover::before{
+    left:100%;
+  }
+  .btn:hover{
+    transform:translateY(-3px) scale(1.02);
+    box-shadow:0 18px 32px rgba(108,92,231,.35), 0 8px 16px rgba(255,110,199,.25);
+  }
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .btn-secondary{background:linear-gradient(180deg, #2b244d, #201c3d)}
+  .settings{margin-top:10px}
+  .settings select{background:#0c0a2a;color:#fff;border-radius:10px;border:1px solid rgba(255,255,255,.15);padding:6px}
+  .hint{color:var(--muted);font-size:.9rem}
+  .stage{margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+  @media (max-width: 768px) { .stage{grid-template-columns:1fr} }
+  .imgBox{
+    min-height:400px;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:20px;
+    background:rgba(255,255,255,0.95);
+    border:2px solid rgba(255,255,255,.4);
+    position:relative;
+    backdrop-filter:blur(20px);
+    box-shadow:0 10px 40px rgba(0,0,0,.2);
+  }
+  .imgBox::before{
+    content:'';
+    position:absolute;
+    top:0;left:0;right:0;bottom:0;
+    background:linear-gradient(45deg, rgba(0,229,255,.03), rgba(255,110,199,.03));
+    border-radius:18px;
+  }
+  .imgBox img{max-width:100%;display:block;animation:flipIn .8s ease}
+  @keyframes pop { from{transform:scale(.95);opacity:.5} to{transform:scale(1);opacity:1} }
+  @keyframes flipIn {
+    0% { transform:perspective(600px) rotateY(-90deg); opacity:0; }
+    40% { transform:perspective(600px) rotateY(-15deg); opacity:1; }
+    70% { transform:perspective(600px) rotateY(15deg); }
+    100% { transform:perspective(600px) rotateY(0deg); }
+  }
+  .qmeta{display:flex;justify-content:space-between;align-items:center;color:white;font-size:1.1rem;font-weight:600;}
+  .options{display:grid;grid-template-columns:1fr;gap:12px}
+  .option{
+    background:rgba(255,255,255,0.95);
+    border:1px solid rgba(255,255,255,.4);
+    padding:20px 24px;border-radius:16px;cursor:pointer;
+    transition:all .2s ease;
+    color:#1f2937;font-weight:500;
+    backdrop-filter:blur(20px);
+    position:relative;
+    overflow:hidden;
+    box-shadow:0 6px 20px rgba(0,0,0,.15);
+    font-size:1.05rem;
+    line-height:1.4;
+  }
+  .option::before{
+    content:'';
+    position:absolute;
+    top:0;left:0;right:0;bottom:0;
+    background:linear-gradient(135deg, rgba(0,229,255,.05), rgba(255,110,199,.05));
+    opacity:0;
+    transition:opacity 0.3s ease;
+    border-radius:16px;
+  }
+  .option:hover::before{
+    opacity:1;
+  }
+  .option:hover{
+    transform:translateY(-2px) scale(1.02);
+    box-shadow:0 12px 28px rgba(0,0,0,.4), 0 6px 16px rgba(0,229,255,.15);
+    border-color:rgba(0,229,255,.4);
+  }
+  .option.correct{
+    background:linear-gradient(135deg, rgba(0,208,132,.25), rgba(0,208,132,.15));
+    border-color:var(--good);
+    box-shadow:0 0 20px rgba(0,208,132,.3), 0 8px 16px rgba(0,0,0,.3);
+  }
+  .option.close{
+    background:linear-gradient(135deg, rgba(253,203,110,.2), rgba(253,203,110,.1));
+    border-color:var(--warn);
+    border-style:dashed;
+    box-shadow:0 0 16px rgba(253,203,110,.25), 0 6px 12px rgba(0,0,0,.3);
+  }
+  .option.wrong{
+    background:linear-gradient(135deg, rgba(255,71,87,.2), rgba(255,71,87,.1));
+    border-color:var(--bad);
+    box-shadow:0 0 16px rgba(255,71,87,.25), 0 6px 12px rgba(0,0,0,.3);
+  }
+  @keyframes correctPulse {
+    0%{transform:scale(1);} 
+    50%{transform:scale(1.05);} 
+    100%{transform:scale(1);}
+  }
+  @keyframes incorrectShake {
+    0%, 100%{transform:translateX(0);} 
+    25%{transform:translateX(-5px);} 
+    75%{transform:translateX(5px);}
+  }
+  .option.correct{animation:correctPulse 0.6s ease-out;}
+  .option.incorrect{animation:incorrectShake 0.5s ease-out;}
+  .explain{background:#13112c;border:1px solid rgba(255,255,255,.12);padding:16px 20px;border-radius:12px;font-size:1rem;line-height:1.5;}
+  .footer{display:flex;justify-content:space-between;align-items:center}
+  .progress{height:12px;background:linear-gradient(90deg, #1a1640, #0f0b1f);border-radius:12px;overflow:hidden;
+    border:1px solid rgba(255,255,255,.15);box-shadow:inset 0 2px 4px rgba(0,0,0,.3);}
+  .bar{height:100%;width:0;background:linear-gradient(90deg, var(--accent4), var(--accent2));border-radius:12px;position:relative;
+    box-shadow:0 2px 8px rgba(0,229,255,.3);transition:width .8s ease;}
+  .bar::after{
+    content:'';position:absolute;top:0;left:0;right:0;bottom:0;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,.2), transparent);
+    animation:progressGlow 2s ease-in-out infinite;
+  }
+  @keyframes progressGlow {
+    0%, 100%{transform:translateX(-100%);}
+    50%{transform:translateX(100%);}
+  }
+    background:linear-gradient(90deg, var(--accent), var(--accent3), var(--accent2), var(--accent4));
+    transition:width .5s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow:0 0 12px rgba(0,229,255,.4);
+  }
+  .confetti{position:fixed;inset:0;pointer-events:none}
+  .loading-spinner{
+    width:40px;height:40px;border:3px solid rgba(255,255,255,.2);
+    border-top:3px solid var(--accent);border-radius:50%;
+    animation:spin 1s linear infinite;margin:20px auto;
+  }
+  .loading-text{
+    text-align:center;color:var(--muted);font-size:1rem;margin-top:8px;
+    animation:pulse-text 1.5s ease-in-out infinite;font-weight:500;
+  }
+  @keyframes pulse-text{0%,100%{opacity:.7} 50%{opacity:1}}
+  .shimmer{
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,.1), transparent);
+    animation:shimmer 1.5s infinite;
+  }
+  @keyframes shimmer{0%{transform:translateX(-100%)} 100%{transform:translateX(100%)}}
+  /* Optimize animations for performance */
+  *{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
+  .option,.btn,.card{will-change:transform;}
+  img{image-rendering:optimizeSpeed;}
+  .intro-screen{padding:0;width:100%;margin:0;min-height:100vh;display:flex;flex-direction:column;}
+  .hero{flex:1;display:flex;align-items:center;justify-content:center;padding:0 20px;text-align:center;}
+  .hero-content{max-width:1000px;width:100%;}
+  .hero-icon{font-size:5rem;margin-bottom:20px;}
+  .hero-title{font-size:4rem;margin:0 0 16px 0;font-weight:800;color:white;text-shadow:0 4px 8px rgba(0,0,0,.3);}
+  .hero-subtitle{font-size:1.5rem;margin:0 0 60px 0;color:rgba(255,255,255,0.9);font-weight:400;}
+  .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:30px;margin:0 0 60px 0;}
+  .feature-card{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:40px 24px;backdrop-filter:blur(20px);transition:all .3s ease;}
+  .feature-card:hover{transform:translateY(-8px);background:rgba(255,255,255,0.15);box-shadow:0 15px 40px rgba(0,0,0,0.3);}
+  .feature-icon{font-size:3rem;margin-bottom:20px;}
+  .feature-card h3{color:white;font-size:1.4rem;margin:0 0 12px 0;font-weight:700;}
+  .feature-card p{color:rgba(255,255,255,0.8);font-size:1rem;margin:0;line-height:1.6;}
+  .hero-btn{background:linear-gradient(135deg,#3b82f6,#8b5cf6);border:none;color:white;padding:24px 48px;border-radius:60px;cursor:pointer;transition:all .3s ease;box-shadow:0 10px 30px rgba(59,130,246,.4);font-weight:700;font-size:1.3rem;text-decoration:none;display:inline-block;}
+  .hero-btn:hover{transform:translateY(-3px) scale(1.05);box-shadow:0 20px 50px rgba(99,102,241,.6);}
+  .prefetch-status{margin-top:30px;color:rgba(255,255,255,0.7);font-size:1rem;}
+  @media (max-width: 768px) {
+    .hero{padding:0 20px;}
+    .hero-title{font-size:2.5rem;}
+    .hero-subtitle{font-size:1.2rem;margin-bottom:40px;}
+    .hero-icon{font-size:3.5rem;}
+    .features-grid{grid-template-columns:1fr;gap:20px;margin-bottom:40px;}
+    .feature-card{padding:30px 20px;}
+    .hero-btn{padding:20px 40px;font-size:1.1rem;}
+    main.stage{grid-template-columns:1fr !important;gap:20px !important;}
+    .quiz-screen{padding:16px;}
+  }
+  
+  .quiz-screen{min-height:100vh;width:100%;padding:20px;box-sizing:border-box;}
+  main.stage{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;margin-top:20px;max-width:1200px;margin-left:auto;margin-right:auto;}
+  .card.imgBox{
+    width:240px;height:240px;margin:0;position:relative;
+    border-radius:16px;overflow:hidden;
+    background:linear-gradient(135deg, rgba(0,229,255,.06), rgba(255,110,199,.06));
+    border:2px solid rgba(255,255,255,.1);
+    box-shadow:0 8px 24px rgba(0,0,0,.15);
+    backdrop-filter:blur(8px);
+  }
+  .card.imgBox img{
+    width:100%;height:100%;object-fit:cover;
+    border-radius:22px;
+  }
+  .image-skeleton{
+    width:100%;height:100%;
+    background:linear-gradient(90deg, rgba(255,255,255,.05) 25%, rgba(255,255,255,.1) 50%, rgba(255,255,255,.05) 75%);
+    background-size:200% 100%;
+    animation:shimmer 2s infinite;
+    border-radius:22px;
+    display:flex;align-items:center;justify-content:center;
+    flex-direction:column;gap:16px;
+  }
+  .gesture-silhouette{
+    width:80px;height:80px;
+    background:rgba(255,255,255,.1);
+    border-radius:50%;
+    position:relative;
+  }
+  .gesture-silhouette::before{
+    content:'🧍';
+    position:absolute;
+    top:50%;left:50%;
+    transform:translate(-50%,-50%);
+    font-size:2rem;
+    opacity:0.3;
+  }
+  .quiz-screen header{padding:6px 0;margin-bottom:8px;}
+  .quiz-screen header h1{font-size:1.1rem;margin:0;}
+  .sound-toggle{position:fixed;top:24px;right:24px;z-index:1000;width:56px;height:56px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-size:1.4rem;
+    background:linear-gradient(135deg, rgba(0,229,255,.15), rgba(255,110,199,.15));
+    backdrop-filter:blur(12px);border:2px solid rgba(255,255,255,.2);
+    box-shadow:0 8px 20px rgba(0,0,0,.3);}
+</style>
+</head>
+<body>
+  <canvas class="confetti"></canvas>
+  <button class="btn sound-toggle" id="soundToggle" title="Toggle sound effects">🔊</button>
+  <div class="wrap">
+    <!-- Intro Screen -->
+    <div class="intro-screen" id="introScreen">
+      <div class="hero">
+        <div class="hero-content">
+          <div class="hero-icon">🎭</div>
+          <h1 class="hero-title">Gesture Genius</h1>
+          <h2 class="hero-subtitle">Master the art of reading body language</h2>
+          
+          <div class="features-grid">
+            <div class="feature-card">
+              <div class="feature-icon">👋</div>
+              <h3>Hand Gestures</h3>
+              <p>Learn to read open vs closed hand positions</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon">🧍</div>
+              <h3>Body Posture</h3>
+              <p>Understand confidence through stance</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon">😊</div>
+              <h3>Facial Expressions</h3>
+              <p>Decode emotions from facial cues</p>
+            </div>
+          </div>
+          
+          <button class="hero-btn" id="startQuizBtn">
+            🚀 Start Learning Journey
+          </button>
+          
+          <div id="prefetchStatus" class="prefetch-status">
+            <div class="loading-spinner"></div>
+            Getting ready...
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quiz Screen -->
+    <div class="quiz-screen" id="quizScreen" style="display: none;">
+      <header>
+        <div class="brand">
+          <div class="logo" aria-hidden="true">🎭</div>
+          <h1>Gesture Genius</h1>
+        </div>
+        <div class="controls">
+          <button class="btn" id="restartBtn" style="display:none">Restart Quiz</button>
+        </div>
+      </header>
+
+
+    <!-- Main Challenge Text -->
+    <div class="main-challenge" style="text-align:center;margin-bottom:30px;">
+      <div id="engagementText" style="font-size:2rem;font-weight:700;color:var(--accent3);margin-bottom:10px;">Decode their gesture!</div>
+    </div>
+
+    <main class="stage" style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;justify-items:center;">
+      <div class="card imgBox" id="imgBox" style="margin:0;justify-self:end;">
+        <div id="imgPlaceholder">
+          <div style="padding:40px;text-align:center;">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Generating your first scenario...</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;">
+        <div class="question-info" style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
+          <div id="qTitle" style="font-size:1rem;font-weight:600;color:var(--text-main);">Loading your first question...</div>
+          <div style="font-size:0.85rem;color:var(--text-soft);"><span id="counter">0</span> of 5</div>
+        </div>
+        <div class="card" style="padding:16px;">
+          <div class="options" id="options"></div>
+          <div class="explain" id="explain" style="display:none;margin-top:12px;"></div>
+          <div class="footer" style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1);">
+            <div class="progress" style="flex:1;margin-right:12px"><div class="bar" id="bar"></div></div>
+            <button class="btn" id="nextBtn" disabled>Next</button>
+          </div>
+        </div>
+        <div class="card" id="summary" style="display:none"></div>
+      </div>
+    </main>
+    </div>
+  </div>
+
+<script>
+const qs = (s) => document.querySelector(s);
+const imgBox = qs('#imgBox');
+const optionsEl = qs('#options');
+const explainEl = qs('#explain');
+const qTitle = qs('#qTitle');
+const counterEl = qs('#counter');
+const bar = qs('#bar');
+const summaryEl = qs('#summary');
+const restartBtn = qs('#restartBtn');
+const nextBtn = qs('#nextBtn');
+
+let state = {
+  total: 5,
+  index: 0,
+  score: 0,
+  history: [],
+  busy: false,
+  chatModel: 'gpt-4o-mini',
+  imgSize: '512x512',
+  soundEnabled: true,
+  prefetchQueue: [],
+  loadingInterval: null,
+  usedGestures: [],
+};
+
+// Sound system using Web Audio API
+const sounds = {
+  click: () => playTone(800, 0.1, 'sine'),
+  correct: () => playTone(523, 0.3, 'sine'),
+  wrong: () => playTone(200, 0.4, 'sawtooth'),
+  close: () => playTone(400, 0.2, 'triangle'),
+  next: () => playTone(600, 0.15, 'sine')
+};
+
+function playTone(freq, duration, type = 'sine') {
+  if (!state.soundEnabled) return;
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.frequency.value = freq;
+    osc.type = type;
+    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + duration);
+  } catch(e) {}
+}
+
+const soundToggle = qs('#soundToggle');
+soundToggle.addEventListener('click', () => {
+  state.soundEnabled = !state.soundEnabled;
+  soundToggle.textContent = state.soundEnabled ? '🔊' : '🔇';
+  sounds.click();
+});
+
+
+const introScreen = qs('#introScreen');
+const quizScreen = qs('#quizScreen');
+const startQuizBtn = qs('#startQuizBtn');
+const prefetchStatus = qs('#prefetchStatus');
+
+// Start prefetching when page loads
+window.addEventListener('load', async () => {
+  await prefetchFirstQuestion();
+  prefetchStatus.innerHTML = '✅ Ready to start!';
+});
+
+// Ensure DOM is loaded before attaching events
+document.addEventListener('DOMContentLoaded', () => {
+  const startBtn = document.getElementById('startQuizBtn');
+  if (startBtn) {
+    startBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      console.log('Start button clicked'); // Debug log
+      sounds.click();
+      introScreen.style.display = 'none';
+      quizScreen.style.display = 'block';
+      await startQuiz();
+    });
+  }
+});
+
+// Keep the original for fallback
+if (startQuizBtn) {
+  startQuizBtn.addEventListener('click', async () => {
+    sounds.click();
+    introScreen.style.display = 'none';
+    quizScreen.style.display = 'block';
+    await startQuiz();
+  });
+}
+
+
+restartBtn.addEventListener('click', async () => {
+  sounds.click();
+  quizScreen.style.display = 'none';
+  introScreen.style.display = 'block';
+  prefetchStatus.innerHTML = '<div class="loading-spinner" style="display: inline-block; width: 16px; height: 16px; margin-right: 8px;"></div>Preparing your first question...';
+  await prefetchFirstQuestion();
+  prefetchStatus.innerHTML = '✅ Ready to start!';
+});
+
+async function startQuiz() {
+  state.chatModel = 'gpt-4o-mini';
+  state.imgSize = '256x256';
+  state.index = 0; state.score = 0; state.history = []; state.usedGestures = [];
+  // Don't clear prefetch queue - use what we already have
+  summaryEl.style.display = 'none';
+  nextBtn.disabled = true;
+  optionsEl.innerHTML = '';
+  explainEl.style.display = 'none';
+  qTitle.textContent = 'Question 1 of 5';
+  counterEl.textContent = '1';
+  bar.style.width = '0%';
+  restartBtn.style.display = 'none';
+  
+  
+  await newQuestion();
+}
+
+nextBtn.addEventListener('click', async () => {
+  sounds.next();
+  if (state.index >= state.total) return;
+  optionsEl.innerHTML = '';
+  explainEl.style.display = 'none';
+  nextBtn.disabled = true;
+  await newQuestion();
+});
+
+async function newQuestion(){
+  if (state.busy) return;
+  state.busy = true;
+  const n = state.index + 1;
+  qTitle.textContent = `Question ${n} of 5`;
+  counterEl.textContent = String(n);
+  bar.style.width = ((state.index) / state.total * 100) + '%';
+
+  // Show loading state
+  showLoadingState();
+
+  try {
+    // Check if we have a prefetched question
+    let idea, imageUrl;
+    if (state.prefetchQueue.length > 0) {
+      const prefetched = state.prefetchQueue.shift();
+      idea = prefetched.idea;
+      imageUrl = prefetched.imageUrl;
+    } else {
+      // Generate with timeout
+      idea = await Promise.race([
+        getGestureAndOptions(),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 15000))
+      ]);
+      
+      if (!idea) throw new Error('No idea generated');
+      
+      try {
+        imageUrl = await Promise.race([
+          getDalle2Image(idea.imagePrompt),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Image timeout')), 25000))
+        ]);
+      } catch (imageError) {
+        console.warn('Image generation failed, continuing without image:', imageError.message);
+        imageUrl = null; // Continue with text-only question
+      }
+    }
+    
+    hideLoadingState();
+    renderQuestion(idea, imageUrl);
+    
+    
+  } catch (error) {
+    console.error('Question generation failed:', error);
+    hideLoadingState();
+    
+    // Show error state with fallback
+    imgBox.innerHTML = `
+      <div style="padding:40px;text-align:center;color:var(--warn);">
+        <div style="font-size:3rem;margin-bottom:16px;">⚡</div>
+        <div style="font-size:1.1rem;font-weight:600;margin-bottom:8px;">Having trouble generating content</div>
+        <div style="color:var(--muted);font-size:0.9rem;">Let's try the next question...</div>
+      </div>
+    `;
+    
+    // Auto-skip to next after a short delay
+    setTimeout(() => {
+      if (state.index + 1 < state.total) {
+        state.index++;
+        newQuestion();
+      } else {
+        showSummary();
+      }
+    }, 3000);
+  }
+  
+  state.busy = false;
+}
+
+function showLoadingState() {
+  qTitle.innerHTML = `Question ${state.index + 1}`;
+  
+  // Update engagement message
+  const engagementMessages = [
+    'What do you think this person is saying?',
+    'Can you read their body language?',
+    'What message are they conveying?',
+    'What\'s their likely response?',
+    'Decode their gesture!'
+  ];
+  const randomMessage = engagementMessages[Math.floor(Math.random() * engagementMessages.length)];
+  const engagementTextEl = qs('#engagementText');
+  if (engagementTextEl) {
+    engagementTextEl.textContent = randomMessage;
+  }
+  
+  // Show optimistic loading with shorter intervals
+  const loadingMessages = [
+    'Creating scenario...',
+    'Drawing character...',
+    'Adding gestures...',
+    'Finalizing question...',
+    'Almost ready...'
+  ];
+  let msgIndex = 0;
+  
+  function updateMessage() {
+    const loadingTextEl = document.querySelector('.loading-text');
+    if (loadingTextEl && msgIndex < loadingMessages.length) {
+      loadingTextEl.textContent = loadingMessages[msgIndex];
+      msgIndex++;
+    }
+  }
+  
+  imgBox.innerHTML = `
+    <div class="image-skeleton">
+      <div class="gesture-silhouette"></div>
+      <div style="text-align:center;">
+        <div class="loading-text" style="font-weight:600;color:var(--accent3);margin-bottom:8px;">${loadingMessages[0]}</div>
+        <div style="font-size:0.8rem;color:var(--text-soft);opacity:0.8;">Creating your scenario...</div>
+      </div>
+    </div>
+  `;
+  
+  // Update message every 5 seconds for realistic timing
+  state.loadingInterval = setInterval(updateMessage, 5000);
+  
+  // Show skeleton with faster animation
+  optionsEl.innerHTML = `
+    <div style="height:75px;border-radius:18px;background:rgba(255,255,255,.06);position:relative;overflow:hidden;margin:12px 0;border:2px solid rgba(255,255,255,.08);">
+      <div class="shimmer" style="position:absolute;inset:0;animation-duration:1.5s;"></div>
+    </div>
+    <div style="height:75px;border-radius:18px;background:rgba(255,255,255,.06);position:relative;overflow:hidden;margin:12px 0;border:2px solid rgba(255,255,255,.08);">
+      <div class="shimmer" style="position:absolute;inset:0;animation-duration:1.5s;animation-delay:0.2s;"></div>
+    </div>
+    <div style="height:75px;border-radius:18px;background:rgba(255,255,255,.06);position:relative;overflow:hidden;margin:12px 0;border:2px solid rgba(255,255,255,.08);">
+      <div class="shimmer" style="position:absolute;inset:0;animation-duration:1.5s;animation-delay:0.4s;"></div>
+    </div>
+    <div style="height:75px;border-radius:18px;background:rgba(255,255,255,.06);position:relative;overflow:hidden;margin:12px 0;border:2px solid rgba(255,255,255,.08);">
+      <div class="shimmer" style="position:absolute;inset:0;animation-duration:1.5s;animation-delay:0.6s;"></div>
+    </div>
+  `;
+}
+
+function hideLoadingState() {
+  // Clear loading message interval
+  if (state.loadingInterval) {
+    clearInterval(state.loadingInterval);
+    state.loadingInterval = null;
+  }
+}
+
+async function prefetchFirstQuestion() {
+  return prefetchNextQuestion();
+}
+
+async function prefetchNextQuestion() {
+  // Don't prefetch if already have enough or if API seems slow
+  if (state.prefetchQueue.length >= 2 || state.busy) return;
+  
+  try {
+    console.log('Prefetching next question...');
+    
+    // Add timeout to prefetch to avoid hanging
+    const idea = await Promise.race([
+      getGestureAndOptions(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Prefetch timeout')), 20000))
+    ]);
+    
+    if (idea) {
+      const imageUrl = await Promise.race([
+        getDalle2Image(idea.imagePrompt),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Image prefetch timeout')), 25000))
+      ]);
+      
+      state.prefetchQueue.push({ idea, imageUrl });
+      console.log('Prefetch successful, queue length:', state.prefetchQueue.length);
+      
+      // Preload the image for faster display
+      const img = new Image();
+      img.loading = 'eager';
+      img.decoding = 'async';
+      img.src = imageUrl;
+    }
+  } catch(e) {
+    console.warn('Prefetch failed (this is normal):', e.message);
+    // Prefetch failures are acceptable - we'll generate on demand
+  }
+}
+
+function renderQuestion(idea, imageUrl){
+  imgBox.innerHTML = '';
+  
+  if (!imageUrl) {
+    // No image URL provided - show fallback immediately
+    showImageFallback(idea);
+    return;
+  }
+  
+  const img = new Image();
+  img.alt = 'Cartoon speaker with body gestures';
+  img.loading = 'lazy';
+  
+  let retryCount = 0;
+  const maxRetries = 2;
+  
+  const tryLoadImage = (url) => {
+    img.onerror = () => {
+      console.warn('Image load failed:', url, 'Retry:', retryCount);
+      if (retryCount < maxRetries) {
+        retryCount++;
+        // Try again after a short delay
+        setTimeout(() => {
+          img.src = url + '&retry=' + retryCount; // Add retry parameter to bypass cache
+        }, 1000);
+      } else {
+        // All retries failed, show fallback
+        showImageFallback(idea);
+      }
+    };
+    
+    img.onload = () => {
+      imgBox.appendChild(img);
+    };
+    
+    img.src = url;
+  };
+  
+  tryLoadImage(imageUrl);
+}
+
+function showImageFallback(idea) {
+  imgBox.innerHTML = `
+    <div style="padding:30px;text-align:center;color:var(--text-soft);background:rgba(0,229,255,.05);border:2px dashed rgba(255,255,255,.2);border-radius:12px;">
+      <div style="font-size:2.5rem;margin-bottom:12px;">🎭</div>
+      <div style="font-size:1rem;margin-bottom:8px;font-weight:600;color:var(--text-main);">Scenario: ${idea.title}</div>
+      <div style="font-size:0.85rem;line-height:1.4;color:var(--text-soft);max-width:200px;margin:0 auto;">
+        Use the scenario description to answer the question!
+      </div>
+    </div>
+  `;
+
+  qTitle.innerHTML = `Question ${state.index+1}`;
+  
+  // Update engagement message with variety
+  const engagementMessages = [
+    'What do you think this person is saying?',
+    'Can you read their body language?',
+    'What message are they conveying?',
+    'What\'s their likely response?',
+    'Decode their gesture!',
+    'What are they probably thinking?',
+    'Interpret their body language!',
+    'What would they say next?'
+  ];
+  const randomMessage = engagementMessages[Math.floor(Math.random() * engagementMessages.length)];
+  const engagementTextEl = qs('#engagementText');
+  if (engagementTextEl) {
+    engagementTextEl.textContent = randomMessage;
+  }
+
+  const opts = [
+    { text: idea.options.correct, tag: 'correct' },
+    { text: idea.options.close, tag: 'close' },
+    { text: idea.options.obviouslyWrong, tag: 'wrong' },
+    { text: idea.options.funnyWrong, tag: 'wrong' },
+  ].sort(() => Math.random() - 0.5);
+
+  optionsEl.innerHTML = '';
+  opts.forEach((o, idx) => {
+    const div = document.createElement('button');
+    div.className = 'option';
+    div.innerText = o.text;
+    div.onclick = () => choose(o, div, opts, idea);
+    optionsEl.appendChild(div);
+  });
+
+  explainEl.style.display = 'none';
+  
+  // Start prefetching the next question immediately when options are shown
+  if (state.index + 1 < state.total) {
+    console.log(`Starting prefetch for question ${state.index + 2}`);
+    setTimeout(() => prefetchNextQuestion(), 500); // Reduced delay for faster prefetching
+  }
+}
+
+function choose(chosen, btnEl, all, idea){
+  Array.from(optionsEl.children).forEach(c => c.disabled = true);
+  
+  // Add visual feedback immediately
+  if (chosen.tag === 'correct') {
+    btnEl.classList.add('correct');
+    sounds.correct();
+  } else {
+    btnEl.classList.add('incorrect');
+    sounds.wrong();
+    // Highlight the correct answer
+    Array.from(optionsEl.children).forEach((el, idx) => {
+      if (all[idx].tag === 'correct') {
+        el.classList.add('correct');
+      }
+    });
+  }
+
+  all.forEach((o, i) => {
+    const el = optionsEl.children[i];
+    if (o.tag === 'correct') el.classList.add('correct');
+    if (o.tag === 'close' && !el.classList.contains('correct')) el.classList.add('close');
+    if (o.tag === 'wrong' && !el.classList.contains('correct')) el.classList.add('wrong');
+  });
+
+  const correct = chosen.tag === 'correct';
+  if (correct) { 
+    state.score++; 
+    confettiBurst(); 
+    sounds.correct();
+  }
+  else if (chosen.tag === 'close') { 
+    sounds.close();
+  }
+  else { 
+    sounds.wrong();
+  }
+
+  explainEl.style.display = 'block';
+  explainEl.innerHTML = `
+    <div><strong>Answer:</strong> ${idea.options.correct}</div>
+    <div style="margin-top:6px">${idea.explanation}</div>
+    ${idea.coachingTips ? `<ul style="margin:8px 0 0 18px">${idea.coachingTips.map(t=>`<li>${t}</li>`).join('')}</ul>`:''}
+  `;
+
+  state.history.push({
+    title: idea.title,
+    chosen: chosen.text,
+    correctness: chosen.tag,
+    correct: idea.options.correct,
+    tips: idea.coachingTips || []
+  });
+
+  state.index++;
+  bar.style.width = (state.index / state.total * 100) + '%';
+  nextBtn.disabled = false;
+  if (state.index === state.total) {
+    nextBtn.textContent = 'See Summary';
+    nextBtn.onclick = showSummary;
+  } else {
+    nextBtn.textContent = 'Next';
+    nextBtn.onclick = async () => {
+      optionsEl.innerHTML = '';
+      explainEl.style.display = 'none';
+      nextBtn.disabled = true;
+      await newQuestion();
+    };
+  }
+}
+
+function showSummary(){
+  optionsEl.innerHTML = '';
+  explainEl.style.display = 'none';
+  nextBtn.style.display = 'none';
+  
+  // Show restart button
+  restartBtn.style.display = 'inline-flex';
+
+  const percent = Math.round((state.score / state.total) * 100);
+  const verdict = percent >= 80 ? 'Outstanding! You\'re a body language expert! 🏆'
+                : percent >= 60 ? 'Well done! Keep practicing to perfect your skills 💪'
+                : 'Great start! Focus on hands, posture, and facial expressions 🌱';
+
+  const bullets = aggregateTips(state.history);
+  
+  // Add celebration for high scores
+  if (percent >= 80) {
+    confettiBurst();
+    sounds.correct();
+  }
+
+  summaryEl.style.display = 'block';
+  summaryEl.innerHTML = `
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="font-size:4rem;margin-bottom:12px">${percent >= 80 ? '🏆' : percent >= 60 ? '🎯' : '📚'}</div>
+      <h2 style="margin:0 0 8px 0;font-size:2rem;background:linear-gradient(135deg, var(--accent), var(--accent2));
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">
+        ${state.score}/${state.total} Correct
+      </h2>
+      <div style="font-size:1.2rem;color:var(--muted);margin-bottom:16px">${percent}% Accuracy</div>
+      <div style="padding:16px 20px;background:linear-gradient(135deg, rgba(0,229,255,.1), rgba(255,110,199,.1));
+        border-radius:16px;border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(8px);">
+        <strong style="font-size:1.1rem;color:var(--text);">${verdict}</strong>
+      </div>
+    </div>
+    
+    ${bullets.length > 0 ? `
+      <h3 style="margin:24px 0 12px 0;color:var(--accent);">🎯 Key Learning Points</h3>
+      <ul style="list-style:none;padding:0;">
+        ${bullets.map(b=>`<li style="margin:8px 0;padding:12px 16px;background:rgba(255,255,255,.05);
+          border-radius:12px;border-left:4px solid var(--accent2);">• ${b}</li>`).join('')}
+      </ul>
+    ` : ''}
+    
+    <details style="margin-top:24px;">
+      <summary style="cursor:pointer;padding:12px 0;font-weight:600;color:var(--accent3);
+        border-bottom:1px solid rgba(255,255,255,.1);">📋 Review Your Answers</summary>
+      <div style="margin-top:16px;">
+        ${state.history.map((h,i)=>`
+          <div style="margin:12px 0;padding:16px;background:rgba(255,255,255,.03);
+            border:1px solid rgba(255,255,255,.1);border-radius:12px;">
+            <strong style="color:var(--accent);">Q${i+1}.</strong> 
+            <span style="color:var(--text-soft);">${h.title}</span><br/>
+            <div style="margin-top:8px;font-size:0.9rem;">
+              <span style="color:${h.correctness === 'correct' ? 'var(--good)' : h.correctness === 'close' ? 'var(--warn)' : 'var(--bad)'};">
+                ● Your answer: "${h.chosen}"
+              </span><br/>
+              <span style="color:var(--good);">✓ Correct: "${h.correct}"</span>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </details>
+  `;
+}
+
+function aggregateTips(history){
+  const map = new Map();
+  history.forEach(h => (h.tips||[]).forEach(t=>{ map.set(t, (map.get(t)||0)+1); }));
+  return Array.from(map.entries()).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([t])=>t);
+}
+
+async function openaiChat(body){
+  const res = await fetch('/api/openai/chat', {
+    method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)
+  });
+  if (!res.ok) { throw new Error('Proxy error'); }
+  return res.json();
+}
+
+async function openaiImages(body){
+  const res = await fetch('/api/openai/images', {
+    method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)
+  });
+  if (!res.ok) { throw new Error('Proxy error'); }
+  return res.json();
+}
+
+async function getGestureAndOptions(){
+  const sys = `You are a public speaking coach. Create a single multiple-choice item based on reading body language.
+Return strict JSON with keys: title, imagePrompt, options{correct,close,obviouslyWrong,funnyWrong}, explanation, coachingTips(array).
+Constraints:
+- The speaker is a very handsome/beautiful, model-quality attractive professional person drawn in premium cartoon style with face and full upper body clearly visible (never crop the face), on a bright professional stage or modern background.
+- Body cues must be clear (hands, stance, facial expression, eye contact).
+- The "correct" option should be a short sentence of what the speaker might be saying that matches the body cues.
+- The "close" option should be plausible but slightly off.
+- The "obviouslyWrong" should ignore the cues.
+- The "funnyWrong" should be silly (family-friendly).
+- Keep each option under 100 characters for faster processing.
+- The imagePrompt must be concise but vivid - under 150 characters.
+- Keep explanations <= 80 words; coachingTips = 3 to 4 short items.`;
+  const gestureTypes = [
+    'open palms showing honesty and transparency',
+    'confident power pose with chest out and hands on hips',
+    'defensive folded arms across chest',
+    'enthusiastic pointing to invisible slides or visual aids',
+    'uncertain shoulder shrug with questioning expression',
+    'sincere hand-on-heart gesture',
+    'thoughtful chin scratch while pondering',
+    'welcoming outstretched arms gesture',
+    'nervous fidgeting with hands or clothing',
+    'authoritative index finger raised making a point',
+    'calming downward hand gesture',
+    'excited clapping or animated hand movements',
+    'protective crossed hands in front of body',
+    'confident handshake position reaching forward',
+    'storytelling gesture with expressive hand movements',
+    'presenting gesture with one arm extended',
+    'victory or celebration pose with arms raised',
+    'listening pose with hand cupped to ear',
+    'counting on fingers while explaining points',
+    'dramatic sweeping arm gesture'
+  ];
+  
+  // Get unused gestures or reset if all used
+  let availableGestures = gestureTypes.filter(g => !state.usedGestures.includes(g));
+  if (availableGestures.length === 0) {
+    state.usedGestures = [];
+    availableGestures = gestureTypes;
+  }
+  
+  const randomGesture = availableGestures[Math.floor(Math.random() * availableGestures.length)];
+  state.usedGestures.push(randomGesture);
+  const user = `Create one item focusing EXACTLY on: ${randomGesture}. 
+CRITICAL: The imagePrompt must describe the exact gesture "${randomGesture}" clearly. The correct answer must match what someone with this exact gesture would be saying.
+Make the body language very clear and distinct. The gesture should be the primary focus that determines what the speaker is likely saying.
+Ensure the image description and correct answer are perfectly aligned with "${randomGesture}".`;
+
+  const data = await openaiChat({
+    model: state.chatModel,
+    temperature: 0.8,
+    max_tokens: 800,
+    messages: [
+      { role:'system', content: sys },
+      { role:'user', content: user }
+    ],
+    response_format: { type: "json_object" }
+  });
+
+  try {
+    const obj = JSON.parse(data.choices[0].message.content);
+    if (!obj?.imagePrompt || !obj?.options?.correct) throw new Error('Bad JSON');
+    return obj;
+  } catch(e){
+    console.error('Parsing error:', e);
+    return null;
+  }
+}
+
+async function getDalle2Image(prompt){
+  const styled = `${prompt}. Clean cartoon style, attractive professional person with face and full upper body clearly visible, never crop the face, colorful background, clear gestures, good-looking character.`;
+
+  try {
+    const data = await openaiImages({
+      model: 'dall-e-2',
+      prompt: styled,
+      size: state.imgSize,
+      n: 1
+    });
+    return data.data?.[0]?.url || '';
+  } catch(e){
+    return '';
+  }
+}
+
+
+const confettiCanvas = document.querySelector('.confetti');
+const ctx = confettiCanvas.getContext('2d');
+let confetti = [];
+function confettiBurst(){
+  const w = confettiCanvas.width = innerWidth;
+  const h = confettiCanvas.height = innerHeight;
+  const colors = ['#7cf5ff','#ffd166','#ff8bd1','#b5ff7a','#c1a8ff'];
+  for(let i=0;i<120;i++){
+    confetti.push({
+      x: Math.random()*w, y: -10, vy: 2+Math.random()*4, vx: -1+Math.random()*2,
+      size: 3+Math.random()*5, rot: Math.random()*360, vr: -5+Math.random()*10,
+      color: colors[Math.floor(Math.random()*colors.length)]
+    });
+  }
+}
+function tick(){
+  ctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+  confetti.forEach(p=>{
+    p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr;
+    ctx.save();
+    ctx.translate(p.x,p.y);
+    ctx.rotate(p.rot*Math.PI/180);
+    ctx.fillStyle = p.color;
+    ctx.fillRect(-p.size/2,-p.size/2,p.size,p.size);
+    ctx.restore();
+  });
+  confetti = confetti.filter(p=>p.y < innerHeight+20);
+  requestAnimationFrame(tick);
+}
+tick();
+</script>
+</body>
+</html>

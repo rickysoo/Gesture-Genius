@@ -1,0 +1,12 @@
+{
+  "name": "gesture-genius",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "start": "serve .",
+    "build": "mkdir -p public && cp index.html public/index.html && cp favicon.svg public/favicon.svg && cp manifest.json public/manifest.json && cp -r api public/"
+  },
+  "devDependencies": {
+    "serve": "^14.2.1"
+  }
+}

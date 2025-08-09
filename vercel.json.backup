@@ -1,0 +1,12 @@
+{
+  "builds": [
+    { "src": "index.html", "use": "@vercel/static" },
+    { "src": "api/openai/chat.js", "use": "@vercel/node" },
+    { "src": "api/images.js", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/api/openai/chat", "dest": "/api/openai/chat.js" },
+    { "src": "/api/openai/images", "dest": "/api/images.js" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+}
