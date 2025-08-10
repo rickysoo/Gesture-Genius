@@ -1,18 +1,13 @@
 {
-  "builds": [
-    { "src": "index.html", "use": "@vercel/static" },
-    { "src": "api/openai/chat.js", "use": "@vercel/node" },
-    { "src": "api/openai/images.js", "use": "@vercel/node" },
-    { "src": "api/storage/upload.js", "use": "@vercel/node" },
-    { "src": "api/database/setup.js", "use": "@vercel/node" },
-    { "src": "api/database/save-quiz.js", "use": "@vercel/node" }
-  ],
-  "routes": [
-    { "src": "/api/openai/chat", "dest": "/api/openai/chat.js" },
-    { "src": "/api/openai/images", "dest": "/api/openai/images.js" },
-    { "src": "/api/storage/upload", "dest": "/api/storage/upload.js" },
-    { "src": "/api/database/setup", "dest": "/api/database/setup.js" },
-    { "src": "/api/database/save-quiz", "dest": "/api/database/save-quiz.js" },
-    { "src": "/(.*)", "dest": "/index.html" }
+  "functions": {
+    "api/**/*.js": {
+      "runtime": "@vercel/node"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
   ]
 }
