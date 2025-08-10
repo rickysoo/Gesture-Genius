@@ -596,6 +596,22 @@ async function newQuestion(){
       idea = prefetched.idea;
       imageUrl = prefetched.imageUrl;
       console.log('Using prefetched question+image pair');
+      
+      // Show the prefetched question immediately
+      hideLoadingState();
+      if (imageUrl) {
+        renderQuestion(idea, imageUrl);
+      } else {
+        // Question was prefetched but image failed, show fallback
+        renderQuestionWithProgressiveLoading(idea);
+        showImageFallback(idea);
+      }
+      
+      state.busy = false;
+      
+      // Start prefetching the next question while user reads this one
+      setTimeout(() => prefetchNextQuestion(), 1000);
+      return;
     } else {
       // Generate question first, then appropriate image
       console.log('Generating question first, then matching image...');
@@ -727,33 +743,20 @@ async function prefetchFirstQuestion() {
 }
 
 async function prefetchNextQuestion() {
-  // Only prefetch images to save API costs - generate text on demand
+  // Generate full question+image pairs to ensure perfect matching
   if (state.prefetchQueue.length >= 1 || state.busy) return;
   
   try {
-    console.log('Prefetching next question...');
+    console.log('Prefetching next complete question...');
     
-    // Get a random gesture type for image prefetching
-    const gestureTypes = [
-      'confident handshake position reaching forward',
-      'storytelling gesture with expressive hand movements', 
-      'presenting gesture with one arm extended',
-      'victory or celebration pose with arms raised',
-      'listening pose with hand cupped to ear',
-      'counting on fingers while explaining points',
-      'dramatic sweeping arm gesture',
-      'open palms welcoming gesture',
-      'pointing gesture to emphasize a point',
-      'crossed arms confident stance'
-    ];
+    // Generate the full question first to ensure image matches
+    const idea = await getGestureAndOptions();
+    if (!idea) throw new Error('No idea generated in prefetch');
     
-    const randomGesture = gestureTypes[Math.floor(Math.random() * gestureTypes.length)];
-    const imagePrompt = `A professional speaker ${randomGesture}, in business attire on stage`;
-    
-    console.log('Prefetch: Generating image for:', imagePrompt);
+    console.log('Prefetch: Generating matching image for gesture:', idea.gesture);
     
     const imagePromise = Promise.race([
-      getDalle2Image(imagePrompt),
+      getDalle2Image(idea.imagePrompt),
       new Promise((_, reject) => setTimeout(() => reject(new Error('Image prefetch timeout')), 25000))
     ]);
     
@@ -761,9 +764,9 @@ async function prefetchNextQuestion() {
     const imageUrl = imageResult.url || null;
     
     if (imageUrl) {
-      // Store just the preloaded image - text will be generated on demand
-      state.prefetchQueue.push({ imageUrl, preloaded: true });
-      console.log('Image prefetch successful, queue length:', state.prefetchQueue.length);
+      // Store the complete question with matching image
+      state.prefetchQueue.push({ idea, imageUrl });
+      console.log('Full question+image prefetch successful, queue length:', state.prefetchQueue.length);
       
       // Preload the image for faster display
       const img = new Image();
@@ -771,7 +774,8 @@ async function prefetchNextQuestion() {
       img.decoding = 'async';
       img.src = imageUrl;
     } else {
-      console.log('Prefetch image failed, will generate everything on-demand');
+      console.log('Prefetch image failed, storing question without image');
+      state.prefetchQueue.push({ idea, imageUrl: null });
     }
     
   } catch(e) {
