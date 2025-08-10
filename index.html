@@ -754,10 +754,9 @@ async function prefetchFirstQuestion() {
 }
 
 async function prefetchNextQuestion() {
-  // TEMPORARILY DISABLED: Generate full question+image pairs to ensure perfect matching
-  console.log('Prefetch temporarily disabled to ensure content consistency');
-  return;
-  // if (state.prefetchQueue.length >= 1 || state.busy) return;
+  // Re-enabled with improved consistency: Generate full question+image pairs
+  console.log('Prefetch with improved content consistency');
+  if (state.prefetchQueue.length >= 1 || state.busy) return;
   
   try {
     console.log('Prefetching next complete question...');
