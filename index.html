@@ -276,8 +276,8 @@
     .quiz-screen{padding:16px;}
   }
   
-  .quiz-screen{min-height:100vh;width:100%;padding:20px;box-sizing:border-box;position:relative;}
-  main.stage{display:grid;grid-template-columns:400px 1fr;gap:30px;align-items:start;margin-top:20px;max-width:1200px;margin-left:auto;margin-right:auto;}
+  .quiz-screen{min-height:100vh;width:100%;padding:8px 20px;box-sizing:border-box;position:relative;}
+  main.stage{display:grid;grid-template-columns:400px 1fr;gap:30px;align-items:start;margin-top:8px;max-width:1200px;margin-left:auto;margin-right:auto;}
   .card.imgBox{
     width:100%;height:300px;margin:0;position:relative;
     border-radius:16px;overflow:hidden;
@@ -312,7 +312,7 @@
     font-size:2rem;
     opacity:0.3;
   }
-  .quiz-screen header{padding:6px 0;margin-bottom:8px;}
+  .quiz-screen header{padding:4px 0;margin-bottom:4px;}
   .quiz-screen header h1{font-size:1.1rem;margin:0;}
   .sound-toggle{position:fixed;top:24px;right:24px;z-index:1000;width:56px;height:56px;border-radius:50%;
     display:flex;align-items:center;justify-content:center;font-size:1.4rem;
@@ -373,11 +373,9 @@
         <div class="controls">
         </div>
       </header>
-
-
     <!-- Main Challenge Text -->
-    <div class="main-challenge" style="text-align:center;margin-bottom:30px;">
-      <div id="engagementText" style="font-size:2rem;font-weight:700;color:var(--accent3);margin-bottom:10px;">Decode their gesture!</div>
+    <div class="main-challenge" style="text-align:center;margin-bottom:16px;">
+      <div id="engagementText" style="font-size:2rem;font-weight:700;color:var(--accent3);margin-bottom:8px;">Decode their gesture!</div>
     </div>
 
     <main class="stage">
@@ -1217,6 +1215,7 @@ function showSummary(){
 
 function getFallbackQuestion(index) {
   const fallbackQuestions = [
+    // Core Gesture Fallbacks (5 original)
     {
       title: "Confident Speaker with Open Palms",
       imagePrompt: "Professional speaker showing open palms to audience",
@@ -1295,6 +1294,252 @@ function getFallbackQuestion(index) {
         "Use high-energy gestures for positive moments",
         "Match your body language to your message",
         "Practice victory poses to build confidence"
+      ]
+    },
+
+    // Additional Professional Context Fallbacks (5)
+    {
+      title: "Boardroom Executive Stance",
+      imagePrompt: "Executive standing confidently in boardroom setting",
+      options: {
+        correct: "Let's discuss the strategic implications of this decision",
+        close: "I want to address the concerns raised by the committee",
+        obviouslyWrong: "I have no idea what we're supposed to be doing",
+        funnyWrong: "Has anyone seen my missing briefcase full of secrets?"
+      },
+      explanation: "Professional boardroom presence conveys authority and strategic thinking.",
+      coachingTips: [
+        "Stand tall with confident posture",
+        "Use deliberate, measured gestures",
+        "Maintain appropriate eye contact with decision makers"
+      ]
+    },
+    {
+      title: "Keynote Speaker Energy",
+      imagePrompt: "Dynamic speaker on large conference stage",
+      options: {
+        correct: "Together, we can transform the future of our industry",
+        close: "This innovation will change how we work forever",
+        obviouslyWrong: "I'm not sure why I'm speaking to all these people",
+        funnyWrong: "Is anyone else hearing that mysterious humming sound?"
+      },
+      explanation: "Large venue speaking requires expansive gestures and high energy to connect with distant audience.",
+      coachingTips: [
+        "Use bigger gestures for larger audiences",
+        "Project voice and energy to back rows",
+        "Move purposefully across the stage"
+      ]
+    },
+    {
+      title: "Training Session Facilitation",
+      imagePrompt: "Trainer demonstrating concept to engaged participants",
+      options: {
+        correct: "Now let's practice this technique together",
+        close: "I'll demonstrate the proper approach step by step",
+        obviouslyWrong: "I forgot everything I was supposed to teach",
+        funnyWrong: "Who wants to volunteer to be my guinea pig?"
+      },
+      explanation: "Training facilitation requires clear demonstration gestures and inclusive body language.",
+      coachingTips: [
+        "Use demonstrative gestures for clarity",
+        "Include participants with welcoming posture",
+        "Break down complex concepts with visual aids"
+      ]
+    },
+    {
+      title: "Investor Pitch Confidence",
+      imagePrompt: "Entrepreneur presenting to investor panel",
+      options: {
+        correct: "Our growth projections show tremendous market potential",
+        close: "We're positioned to capture significant market share",
+        obviouslyWrong: "I hope someone here can explain our business model",
+        funnyWrong: "Would anyone like to buy some magic beans instead?"
+      },
+      explanation: "Investor presentations demand confident body language that conveys competence and reliability.",
+      coachingTips: [
+        "Display confidence without arrogance",
+        "Use precise gestures for financial data",
+        "Maintain steady eye contact with decision makers"
+      ]
+    },
+    {
+      title: "Team Meeting Leadership",
+      imagePrompt: "Team leader facilitating collaborative discussion",
+      options: {
+        correct: "I'd like to hear everyone's thoughts on this approach",
+        close: "Let's work together to find the best solution",
+        obviouslyWrong: "I don't care what any of you think about this",
+        funnyWrong: "Raise your hand if you brought snacks to share"
+      },
+      explanation: "Team leadership requires inclusive gestures that encourage participation and collaboration.",
+      coachingTips: [
+        "Use open, inviting gestures",
+        "Include all team members with eye contact",
+        "Encourage participation through body language"
+      ]
+    },
+
+    // Emotional Expression Fallbacks (5)
+    {
+      title: "Passionate Conviction",
+      imagePrompt: "Speaker expressing deep conviction with intense focus",
+      options: {
+        correct: "I absolutely believe this is the right path forward",
+        close: "This issue is critically important to our success",
+        obviouslyWrong: "I'm completely indifferent about this outcome",
+        funnyWrong: "I'm passionately excited about beige office supplies"
+      },
+      explanation: "Passionate conviction uses intense focus and purposeful gestures to convey deep commitment.",
+      coachingTips: [
+        "Match gesture intensity to message importance",
+        "Use sustained eye contact for conviction",
+        "Let genuine emotion drive authentic expression"
+      ]
+    },
+    {
+      title: "Empathetic Understanding",
+      imagePrompt: "Speaker showing genuine empathy and concern",
+      options: {
+        correct: "I understand this situation is difficult for everyone",
+        close: "We all share these concerns and challenges",
+        obviouslyWrong: "I don't really care about your problems",
+        funnyWrong: "Group hug time, whether you like it or not!"
+      },
+      explanation: "Empathetic body language uses soft expressions and open posture to show understanding.",
+      coachingTips: [
+        "Use gentle, non-threatening gestures",
+        "Show active listening through body language",
+        "Match emotional tone with physical expression"
+      ]
+    },
+    {
+      title: "Grateful Appreciation",
+      imagePrompt: "Speaker expressing heartfelt gratitude",
+      options: {
+        correct: "I'm deeply grateful for your support and trust",
+        close: "Your contributions have made all the difference",
+        obviouslyWrong: "I expect you to do much more than this",
+        funnyWrong: "Thanks for not throwing tomatoes at me today"
+      },
+      explanation: "Gratitude expressions use humble posture and genuine warmth to convey appreciation.",
+      coachingTips: [
+        "Use humble, appreciative gestures",
+        "Make genuine eye contact when thanking",
+        "Let authentic gratitude show in posture"
+      ]
+    },
+    {
+      title: "Inspiring Motivation",
+      imagePrompt: "Leader inspiring team with uplifting energy",
+      options: {
+        correct: "We have the power to achieve extraordinary things",
+        close: "Our potential is unlimited when we work together",
+        obviouslyWrong: "Everything is hopeless and we should give up",
+        funnyWrong: "Who's ready to conquer the office coffee machine?"
+      },
+      explanation: "Inspirational speaking uses uplifting gestures and positive energy to motivate others.",
+      coachingTips: [
+        "Use upward, expansive gestures",
+        "Project positive energy through posture",
+        "Include audience in vision with inclusive language"
+      ]
+    },
+    {
+      title: "Calm Authority",
+      imagePrompt: "Composed leader maintaining calm control",
+      options: {
+        correct: "Let's approach this challenge methodically and calmly",
+        close: "We'll work through this step by step together",
+        obviouslyWrong: "Everyone panic and run around screaming",
+        funnyWrong: "Time to activate our emergency dance protocol"
+      },
+      explanation: "Calm authority uses steady, controlled gestures to project confidence and stability.",
+      coachingTips: [
+        "Use controlled, deliberate movements",
+        "Maintain steady breathing and posture",
+        "Project stability through consistent body language"
+      ]
+    },
+
+    // Situational Context Fallbacks (5)
+    {
+      title: "Virtual Meeting Presence",
+      imagePrompt: "Professional speaking confidently on video call",
+      options: {
+        correct: "Can everyone see the screen I'm sharing clearly?",
+        close: "Let me know if you have any questions about this",
+        obviouslyWrong: "I forgot we were having a meeting today",
+        funnyWrong: "Is my virtual background making me look like a potato?"
+      },
+      explanation: "Virtual presenting requires camera-appropriate gestures and clear upper body communication.",
+      coachingTips: [
+        "Keep gestures within camera frame",
+        "Use clear facial expressions for engagement",
+        "Maintain good eye contact with camera"
+      ]
+    },
+    {
+      title: "Customer Consultation",
+      imagePrompt: "Professional consulting with attentive client focus",
+      options: {
+        correct: "Let me explain how this solution addresses your needs",
+        close: "This approach will help you achieve your goals",
+        obviouslyWrong: "I have no idea what you actually need",
+        funnyWrong: "Have you considered solving this with interpretive dance?"
+      },
+      explanation: "Client consultation requires attentive listening posture and solution-focused gestures.",
+      coachingTips: [
+        "Show active listening through posture",
+        "Use consultative, helpful gestures",
+        "Focus attention entirely on client needs"
+      ]
+    },
+    {
+      title: "Conference Panel Discussion",
+      imagePrompt: "Panelist contributing thoughtfully to group discussion",
+      options: {
+        correct: "I'd like to build on what Sarah just mentioned",
+        close: "That's an excellent point that deserves more discussion",
+        obviouslyWrong: "I disagree with everything everyone has said",
+        funnyWrong: "Can we talk about my pet hamster's career goals instead?"
+      },
+      explanation: "Panel discussions require respectful acknowledgment of others and collaborative body language.",
+      coachingTips: [
+        "Acknowledge other speakers respectfully",
+        "Use inclusive, collaborative gestures",
+        "Balance participation with listening"
+      ]
+    },
+    {
+      title: "Sales Presentation Closing",
+      imagePrompt: "Salesperson confidently presenting final proposal",
+      options: {
+        correct: "I believe this solution perfectly matches your requirements",
+        close: "This represents excellent value for your investment",
+        obviouslyWrong: "I'm not sure if this will work for you",
+        funnyWrong: "But wait, there's more! Call now and get free confusion!"
+      },
+      explanation: "Sales closing requires confident, persuasive body language that builds trust and conviction.",
+      coachingTips: [
+        "Project confidence without pushiness",
+        "Use open, trustworthy gestures",
+        "Maintain professional, helpful demeanor"
+      ]
+    },
+    {
+      title: "Academic Lecture Delivery",
+      imagePrompt: "Professor explaining complex concept to students",
+      options: {
+        correct: "This principle is fundamental to understanding the theory",
+        close: "Let me break this down into simpler components",
+        obviouslyWrong: "I have no idea what any of this means",
+        funnyWrong: "Pop quiz: What's the square root of friendship?"
+      },
+      explanation: "Academic presentation uses scholarly posture and educational gestures to convey expertise.",
+      coachingTips: [
+        "Use authoritative but approachable posture",
+        "Break complex ideas into clear segments",
+        "Encourage questions through open body language"
       ]
     }
   ];
@@ -1576,6 +1821,7 @@ Constraints:
 - The imagePrompt must be concise but vivid - under 150 characters. NEVER include gesture names or answers in the imagePrompt to avoid giving away the answer.
 - Keep explanations <= 80 words; coachingTips = 3 to 4 short items.`;
   const gestureTypes = [
+    // Original Core Gestures (20)
     'open palms showing honesty and transparency',
     'confident power pose with chest out and hands on hips',
     'defensive folded arms across chest',
@@ -1595,22 +1841,102 @@ Constraints:
     'victory or celebration pose with arms raised',
     'listening pose with hand cupped to ear',
     'counting on fingers while explaining points',
-    'dramatic sweeping arm gesture'
+    'dramatic sweeping arm gesture',
+    
+    // Situational Context Gestures (15)
+    'boardroom presentation with authoritative stance and firm eye contact',
+    'casual team meeting with relaxed posture and friendly demeanor',
+    'keynote speech with grand expansive gestures to large audience',
+    'intimate workshop setting with personal connection and close proximity',
+    'conference panel discussion with professional seated posture',
+    'sales pitch with persuasive leaning forward position',
+    'academic lecture with scholarly thoughtful positioning',
+    'training session with instructional demonstrative gestures',
+    'virtual meeting with focused webcam-appropriate upper body language',
+    'networking event with approachable open social posture',
+    'investor presentation with confident commanding presence',
+    'customer service interaction with helpful attentive body language',
+    'media interview with composed professional media stance',
+    'graduation speech with inspirational uplifting gestures',
+    'wedding toast with warm celebratory emotional expression',
+    
+    // Combination Gestures (15)
+    'pointing while maintaining direct eye contact with audience',
+    'open palms combined with forward leaning engaged posture',
+    'raised eyebrows with questioning hands and tilted head',
+    'confident smile paired with expansive welcoming arm gesture',
+    'serious expression with clasped hands and steady gaze',
+    'nodding agreement while gesturing with both hands expressively',
+    'stepping forward with extended arm invitation gesture',
+    'looking up thoughtfully while touching temple in reflection',
+    'wide stance with hands behind back in authority position',
+    'gentle head tilt with sympathetic listening hand position',
+    'animated facial expressions with coordinated hand movements',
+    'purposeful walking while gesturing to emphasize key points',
+    'turning body toward audience with inclusive sweeping motion',
+    'mirroring audience posture while maintaining speaker presence',
+    'transition gesture moving from serious to enthusiastic energy',
+    
+    // Emotional Context Gestures (15)
+    'passionate conviction expressed through clenched fist and intense gaze',
+    'empathetic understanding shown with tilted head and soft expression',
+    'surprised realization demonstrated with raised hands and wide eyes',
+    'grateful appreciation conveyed through hand-over-heart and humble bow',
+    'determined resolve shown with squared shoulders and firm stance',
+    'gentle encouragement expressed through open arms and warm smile',
+    'concerned inquiry displayed with furrowed brow and questioning gesture',
+    'joyful celebration shown with bright smile and energetic movement',
+    'respectful acknowledgment demonstrated with slight bow and recognition gesture',
+    'confident assurance expressed through steady gaze and calm presence',
+    'urgent importance conveyed with focused intensity and precise gestures',
+    'humble gratitude shown through modest posture and appreciative expression',
+    'inspiring motivation expressed with uplifting gestures and bright energy',
+    'sincere apology demonstrated through remorseful posture and open hands',
+    'enthusiastic excitement shown with animated gestures and beaming smile'
   ];
   
-  // Get unused gestures or reset if all used
+  // Improved anti-repetition logic with better variety
   let availableGestures = gestureTypes.filter(g => !state.usedGestures.includes(g));
-  if (availableGestures.length === 0) {
-    state.usedGestures = [];
-    availableGestures = gestureTypes;
+  
+  // Only reset when we've used most gestures (90% threshold instead of 100%)
+  // This provides better variety while preventing exact repetition
+  const resetThreshold = Math.floor(gestureTypes.length * 0.9);
+  
+  if (availableGestures.length <= (gestureTypes.length - resetThreshold)) {
+    console.log(`Resetting gesture pool after using ${state.usedGestures.length}/${gestureTypes.length} gestures`);
+    
+    // Smart reset: keep most recent gestures to avoid immediate repetition
+    const recentGestures = state.usedGestures.slice(-10); // Keep last 10 gestures
+    state.usedGestures = recentGestures;
+    availableGestures = gestureTypes.filter(g => !recentGestures.includes(g));
   }
   
-  const randomGesture = availableGestures[Math.floor(Math.random() * availableGestures.length)];
+  // Enhanced randomization to prevent predictable patterns
+  // Shuffle available gestures to add extra randomness
+  const shuffledGestures = availableGestures.sort(() => Math.random() - 0.5);
+  const randomGesture = shuffledGestures[Math.floor(Math.random() * shuffledGestures.length)];
+  
   state.usedGestures.push(randomGesture);
+  console.log(`Selected gesture: "${randomGesture}" (${state.usedGestures.length}/${gestureTypes.length} used)`);
+  
+  // Add variety modifiers to prevent repetitive content
+  const audienceTypes = ['small team', 'large conference', 'intimate group', 'corporate board', 'workshop attendees', 'online viewers'];
+  const speakerPersonas = ['experienced executive', 'enthusiastic trainer', 'nervous newcomer', 'passionate expert', 'calm facilitator', 'dynamic presenter'];
+  const contexts = ['quarterly results', 'product launch', 'training module', 'strategic vision', 'team update', 'industry insights'];
+  
+  const randomAudience = audienceTypes[Math.floor(Math.random() * audienceTypes.length)];
+  const randomPersona = speakerPersonas[Math.floor(Math.random() * speakerPersonas.length)];
+  const randomContext = contexts[Math.floor(Math.random() * contexts.length)];
+  
   const user = `Create one item focusing EXACTLY on: ${randomGesture}. 
+
+VARIETY CONTEXT: Imagine an ${randomPersona} speaking to a ${randomAudience} about ${randomContext}.
+
 CRITICAL: The imagePrompt must describe the exact gesture "${randomGesture}" clearly. The correct answer must match what someone with this exact gesture would be saying.
 Make the body language very clear and distinct. The gesture should be the primary focus that determines what the speaker is likely saying.
-Ensure the image description and correct answer are perfectly aligned with "${randomGesture}".`;
+Ensure the image description and correct answer are perfectly aligned with "${randomGesture}".
+
+CREATIVITY: Generate fresh, unique content. Avoid generic phrases. Make the speaker's words feel natural and context-appropriate.`;
 
   const data = await openaiChat({
     model: state.chatModel,
