@@ -894,8 +894,14 @@ function renderQuestion(idea, imageUrl){
     imgBox.innerHTML = `
       <div style="padding:30px;text-align:center;color:rgba(255,255,255,0.7);background:linear-gradient(135deg, rgba(0,229,255,.1), rgba(255,110,199,.1));border:2px dashed rgba(255,255,255,.3);border-radius:16px;min-height:200px;display:flex;flex-direction:column;justify-content:center;align-items:center;">
         <div style="font-size:2rem;margin-bottom:8px;animation:pulse 2s infinite;">🖼️</div>
-        <div style="font-size:0.9rem;color:rgba(255,255,255,0.9);">${idea.imagePrompt}</div>
-        <div style="margin-top:12px;width:160px;height:3px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden;">
+        <div style="font-size:0.9rem;color:rgba(255,255,255,0.9);margin-bottom:8px;">${idea.imagePrompt}</div>
+        
+        <!-- Generating Image text -->
+        <div style="font-size:0.85rem;color:rgba(255,255,255,0.8);margin-bottom:12px;font-style:italic;">
+          Generating Image...
+        </div>
+        
+        <div style="width:160px;height:3px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden;">
           <div style="width:100%;height:100%;background:linear-gradient(90deg, var(--accent), var(--accent2));animation:loadingBar 2s infinite;border-radius:2px;"></div>
         </div>
       </div>
@@ -1370,56 +1376,56 @@ function showImageError(idea, errorType = 'unknown') {
     'content_policy_violation': {
       icon: '🚫',
       title: 'Content Policy Issue',
-      message: 'Our AI couldn\'t generate an appropriate image for this scenario.',
-      detail: 'Don\'t worry - you can still answer based on the description!'
+      message: 'Our AI couldn\'t generate an appropriate image.',
+      detail: 'Use the scenario description to answer!'
     },
     'cors': {
       icon: '🌐',
       title: 'Network Security Issue',
-      message: 'Your browser blocked loading the image for security reasons.',
-      detail: 'This is common with corporate networks. Use the description below!'
+      message: 'Browser blocked image loading for security.',
+      detail: 'Use the scenario description to answer!'
     },
     'rate_limit': {
       icon: '⏳',
       title: 'Too Many Requests',
-      message: 'We\'re generating images too quickly. Taking a short break.',
-      detail: 'The visual description will help you answer the question.'
+      message: 'Taking a short break from image generation.',
+      detail: 'Use the scenario description to answer!'
     },
     'quota_exceeded': {
       icon: '💳',
       title: 'Service Limit Reached',
-      message: 'We\'ve reached our daily image generation limit.',
-      detail: 'No worries - use the scenario description to answer!'
+      message: 'Daily image generation limit reached.',
+      detail: 'Use the scenario description to answer!'
     },
     'timeout': {
       icon: '⏰',
       title: 'Loading Timeout',
-      message: 'The image took too long to load.',
-      detail: 'Your internet might be slow. Try the description instead!'
+      message: 'Image took too long to load.',
+      detail: 'Use the scenario description to answer!'
     },
     'not_found': {
       icon: '🔍',
       title: 'Image Not Found',
-      message: 'The generated image link has expired.',
-      detail: 'This happens after some time. Use the description below!'
+      message: 'Generated image link expired.',
+      detail: 'Use the scenario description to answer!'
     },
     'forbidden': {
       icon: '🔒',
       title: 'Access Denied',
-      message: 'The image service denied access to this image.',
-      detail: 'This is a security measure. The description will help!'
+      message: 'Image service denied access.',
+      detail: 'Use the scenario description to answer!'
     },
     'network': {
       icon: '📶',
       title: 'Connection Issue',
-      message: 'Unable to download the image due to network problems.',
-      detail: 'Check your internet connection or use the description!'
+      message: 'Network problems downloading image.',
+      detail: 'Use the scenario description to answer!'
     },
     'unknown': {
       icon: '❓',
       title: 'Image Unavailable',
-      message: 'Something went wrong while loading the image.',
-      detail: 'No problem - the description provides all you need!'
+      message: 'Something went wrong loading image.',
+      detail: 'Use the scenario description to answer!'
     }
   };
   
@@ -1444,30 +1450,26 @@ function showImageError(idea, errorType = 'unknown') {
     }
   }
   
-  // Show error message outside the image box
+  // Clear any external error notifications to maintain clean layout
   const imageContainer = imgBox.parentElement;
-  let errorNotification = imageContainer.querySelector('.error-notification');
-  
-  if (!errorNotification) {
-    errorNotification = document.createElement('div');
-    errorNotification.className = 'error-notification';
-    imageContainer.insertBefore(errorNotification, imgBox);
+  const existingError = imageContainer.querySelector('.error-notification');
+  if (existingError) {
+    existingError.remove();
   }
   
-  errorNotification.innerHTML = `
-    <div style="padding:16px 20px;margin-bottom:16px;text-align:center;color:white;background:linear-gradient(135deg, rgba(255,107,107,.2), rgba(255,193,7,.2));border:2px solid rgba(255,193,7,.4);border-radius:12px;animation:slideInDown 0.3s ease-out;">
-      <div style="font-size:1.5rem;margin-bottom:8px;">${error.icon}</div>
-      <div style="font-size:1rem;margin-bottom:4px;font-weight:700;color:#ffeb3b;">${error.title}</div>
-      <div style="font-size:0.85rem;color:rgba(255,255,255,0.9);line-height:1.3;">${error.message}</div>
-      <div style="font-size:0.75rem;color:rgba(255,255,255,0.7);font-style:italic;margin-top:4px;">${error.detail}</div>
-    </div>
-  `;
-  
-  // Show clean image box with just the scenario description
+  // Show integrated error and scenario description in the image box
   imgBox.innerHTML = `
     <div style="padding:40px;text-align:center;color:white;background:rgba(0,229,255,.1);border:2px dashed rgba(255,255,255,.3);border-radius:16px;min-height:280px;display:flex;flex-direction:column;justify-content:center;">
+      <!-- Error indication at top -->
+      <div style="padding:12px 16px;margin-bottom:20px;background:linear-gradient(135deg, rgba(255,107,107,.15), rgba(255,193,7,.15));border:1px solid rgba(255,193,7,.3);border-radius:8px;">
+        <div style="font-size:1.2rem;margin-bottom:4px;">${error.icon}</div>
+        <div style="font-size:0.8rem;font-weight:600;color:#ffeb3b;margin-bottom:2px;">${error.title}</div>
+        <div style="font-size:0.7rem;color:rgba(255,255,255,0.8);">${error.message}</div>
+      </div>
+      
+      <!-- Scenario content -->
       <div style="font-size:3rem;margin-bottom:16px;">${gestureEmoji}</div>
-      <div style="font-size:1.2rem;margin-bottom:12px;font-weight:600;color:white;text-shadow:0 1px 2px rgba(0,0,0,0.5);">${idea.title}</div>
+      <div style="font-size:1.2rem;margin-bottom:12px;font-weight:600;color:white;text-shadow:0 1px 2px rgba(0,0,0,0.5);">Scenario Description</div>
       <div style="font-size:0.9rem;line-height:1.4;color:rgba(255,255,255,0.9);max-width:300px;margin:0 auto;">
         ${idea.imagePrompt}
       </div>
