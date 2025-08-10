@@ -592,12 +592,34 @@ async function newQuestion(){
   console.log('Loading state shown, about to try API...');
 
   try {
-    // Check if we have a prefetched question
-    let idea, imageUrl;
+    // Check if we have a prefetched image (cost optimized approach)
+    let idea, imageUrl, hasPrefetchedImage = false;
     if (state.prefetchQueue.length > 0) {
       const prefetched = state.prefetchQueue.shift();
-      idea = prefetched.idea;
-      imageUrl = prefetched.imageUrl;
+      if (prefetched.preloaded) {
+        // We only have a prefetched image, need to generate text
+        hasPrefetchedImage = true;
+        imageUrl = prefetched.imageUrl;
+        console.log('Using prefetched image, generating text on-demand...');
+        
+        // Generate text only
+        idea = await Promise.race([
+          getGestureAndOptions(),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Text timeout')), 15000))
+        ]);
+        
+        if (!idea) throw new Error('No idea generated');
+        
+        // Show question immediately with prefetched image
+        hideLoadingState();
+        renderQuestion(idea, imageUrl);
+        state.busy = false;
+        return;
+      } else {
+        // Old format fallback (full prefetch)
+        idea = prefetched.idea;
+        imageUrl = prefetched.imageUrl;
+      }
     } else {
       // PARALLEL PROCESSING: Start both text and image generation simultaneously
       console.log('Starting parallel API processing...');
@@ -733,46 +755,55 @@ async function prefetchFirstQuestion() {
 }
 
 async function prefetchNextQuestion() {
-  // Don't prefetch if already have enough or if API seems slow
-  if (state.prefetchQueue.length >= 4 || state.busy) return;
+  // Only prefetch images to save API costs - generate text on demand
+  if (state.prefetchQueue.length >= 1 || state.busy) return;
   
   try {
-    console.log('Prefetching next question with parallel processing...');
+    console.log('Prefetching next image (cost optimized - no text generation)...');
     
-    // PARALLEL PREFETCH: Start text generation with timeout
-    const textPromise = Promise.race([
-      getGestureAndOptions(),
-      new Promise((_, reject) => setTimeout(() => reject(new Error('Prefetch text timeout')), 20000))
+    // Get a random gesture type for image prefetching
+    const gestureTypes = [
+      'confident handshake position reaching forward',
+      'storytelling gesture with expressive hand movements', 
+      'presenting gesture with one arm extended',
+      'victory or celebration pose with arms raised',
+      'listening pose with hand cupped to ear',
+      'counting on fingers while explaining points',
+      'dramatic sweeping arm gesture',
+      'open palms welcoming gesture',
+      'pointing gesture to emphasize a point',
+      'crossed arms confident stance'
+    ];
+    
+    const randomGesture = gestureTypes[Math.floor(Math.random() * gestureTypes.length)];
+    const imagePrompt = `A professional speaker ${randomGesture}, in business attire on stage`;
+    
+    console.log('Prefetch: Generating image for:', imagePrompt);
+    
+    const imagePromise = Promise.race([
+      getDalle2Image(imagePrompt),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Image prefetch timeout')), 25000))
     ]);
     
-    const idea = await textPromise;
-    if (idea) {
-      // Start image generation in parallel - don't await immediately
-      console.log('Prefetch: Text ready, starting parallel image generation...');
-      
-      const imagePromise = Promise.race([
-        getDalle2Image(idea.imagePrompt),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('Image prefetch timeout')), 25000))
-      ]);
-      
-      // Use Promise.allSettled to handle both completing at different times
-      const [imageResult] = await Promise.allSettled([imagePromise]);
-      const imageUrl = imageResult.status === 'fulfilled' ? imageResult.value.url || null : null;
-      
-      if (imageResult.status === 'rejected') {
-        console.log('Prefetch image failed, will generate on-demand:', imageResult.reason.message);
-      }
-      state.prefetchQueue.push({ idea, imageUrl });
-      console.log('Prefetch successful, queue length:', state.prefetchQueue.length);
+    const imageResult = await imagePromise;
+    const imageUrl = imageResult.url || null;
+    
+    if (imageUrl) {
+      // Store just the preloaded image - text will be generated on demand
+      state.prefetchQueue.push({ imageUrl, preloaded: true });
+      console.log('Image prefetch successful, queue length:', state.prefetchQueue.length);
       
       // Preload the image for faster display
       const img = new Image();
       img.loading = 'eager';
       img.decoding = 'async';
       img.src = imageUrl;
+    } else {
+      console.log('Prefetch image failed, will generate everything on-demand');
     }
+    
   } catch(e) {
-    console.warn('Prefetch failed (this is normal):', e.message);
+    console.warn('Image prefetch failed (this is normal):', e.message);
     // Prefetch failures are acceptable - we'll generate on demand
   }
 }

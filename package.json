@@ -3,10 +3,11 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "start": "serve .",
-    "build": "mkdir -p public && cp index.html public/index.html && cp favicon.svg public/favicon.svg && cp manifest.json public/manifest.json && cp -r api public/"
+    "start": "vercel dev",
+    "build": "node build.js"
   },
   "devDependencies": {
+    "cross-env": "^10.0.0",
     "serve": "^14.2.1"
   }
 }
