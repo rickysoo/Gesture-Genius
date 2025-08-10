@@ -194,10 +194,9 @@
     box-shadow:0 0 20px rgba(0,208,132,.3), 0 8px 16px rgba(0,0,0,.3);
   }
   .option.close{
-    background:linear-gradient(135deg, rgba(253,203,110,.2), rgba(253,203,110,.1));
-    border-color:var(--warn);
-    border-style:dashed;
-    box-shadow:0 0 16px rgba(253,203,110,.25), 0 6px 12px rgba(0,0,0,.3);
+    background:linear-gradient(135deg, rgba(255,71,87,.2), rgba(255,71,87,.1));
+    border-color:var(--bad);
+    box-shadow:0 0 16px rgba(255,71,87,.25), 0 6px 12px rgba(0,0,0,.3);
   }
   .option.wrong{
     background:linear-gradient(135deg, rgba(255,71,87,.2), rgba(255,71,87,.1));
@@ -811,8 +810,6 @@ function renderQuestionWithProgressiveLoading(idea) {
         <div style="width:240px;height:6px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;margin:0 auto;">
           <div class="progress-fill" style="width:0%;height:100%;background:linear-gradient(90deg, var(--accent), var(--accent2));border-radius:3px;animation:progressFill 8s ease-out forwards;"></div>
         </div>
-        
-        <div style="font-size:0.75rem;color:rgba(255,255,255,0.5);margin-top:12px;">Creating your personalized scenario...</div>
       </div>
     </div>
   `;
