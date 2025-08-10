@@ -203,17 +203,13 @@
     border-color:var(--bad);
     box-shadow:0 0 16px rgba(255,71,87,.25), 0 6px 12px rgba(0,0,0,.3);
   }
-  @keyframes correctPulse {
-    0%{transform:scale(1);} 
-    50%{transform:scale(1.05);} 
-    100%{transform:scale(1);}
-  }
+  /* Removed correctPulse animation to prevent layout issues */
   @keyframes incorrectShake {
     0%, 100%{transform:translateX(0);} 
     25%{transform:translateX(-5px);} 
     75%{transform:translateX(5px);}
   }
-  .option.correct{animation:correctPulse 0.6s ease-out;}
+  .option.correct{/* No animation - removed to prevent layout issues */}
   .option.incorrect{animation:incorrectShake 0.5s ease-out;}
   .explain{background:rgba(255,255,255,0.95);border:1px solid rgba(255,255,255,.3);padding:16px 20px;border-radius:12px;font-size:1rem;line-height:1.5;color:var(--text-card);backdrop-filter:blur(10px);}
   .footer{display:flex;justify-content:space-between;align-items:center}
@@ -621,27 +617,23 @@ async function newQuestion(){
         imageUrl = prefetched.imageUrl;
       }
     } else {
-      // PARALLEL PROCESSING: Start both text and image generation simultaneously
-      console.log('Starting parallel API processing...');
+      // Generate question first, then appropriate image
+      console.log('Generating question first, then matching image...');
       
-      // Start text generation
-      const textPromise = Promise.race([
+      // Generate text first
+      idea = await Promise.race([
         getGestureAndOptions(),
         new Promise((_, reject) => setTimeout(() => reject(new Error('Text timeout')), 15000))
       ]);
       
-      // Wait for text first to get the image prompt
-      idea = await textPromise;
       if (!idea) throw new Error('No idea generated');
       
-      // Immediately show the question with options and start image loading in parallel
-      console.log('Text ready, starting parallel image generation...');
+      // Show question with loading placeholder
       hideLoadingState();
-      
-      // Render question immediately with progressive loading placeholder
       renderQuestionWithProgressiveLoading(idea);
       
-      // Start image generation in parallel (don't await here)
+      // Now generate matching image
+      console.log('Generating image...');
       const imagePromise = Promise.race([
         getDalle2Image(idea.imagePrompt),
         new Promise((_, reject) => setTimeout(() => reject(new Error('Image timeout')), 25000))
@@ -702,7 +694,7 @@ function showLoadingState() {
   
   // Show optimistic loading with shorter intervals
   const loadingMessages = [
-    'Creating scenario...',
+    'Generating image...',
     'Drawing character...',
     'Adding gestures...',
     'Finalizing question...',
@@ -723,7 +715,7 @@ function showLoadingState() {
       <div class="gesture-silhouette"></div>
       <div style="text-align:center;">
         <div class="loading-text" style="font-weight:600;color:var(--accent3);margin-bottom:8px;">${loadingMessages[0]}</div>
-        <div style="font-size:0.8rem;color:var(--text-soft);opacity:0.8;">Creating your scenario...</div>
+        <div style="font-size:0.8rem;color:var(--text-soft);opacity:0.8;">Generating image...</div>
       </div>
     </div>
   `;
@@ -1092,7 +1084,7 @@ function choose(chosen, btnEl, all, idea){
   const correct = chosen.tag === 'correct';
   if (correct) { 
     state.score++; 
-    confettiBurst(); 
+    // Removed confettiBurst() to prevent layout issues
     try { sounds.correct(); } catch(e) { console.warn('Sound play failed:', e); }
   }
   else if (chosen.tag === 'close') { 
@@ -1149,7 +1141,7 @@ function showSummary(){
   
   // Add celebration for high scores
   if (percent >= 80) {
-    confettiBurst();
+    // Removed confettiBurst() to prevent layout issues
     try { sounds.correct(); } catch(e) { console.warn('Sound play failed:', e); }
   }
 
