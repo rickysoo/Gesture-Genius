@@ -14,7 +14,7 @@
 <style>
   :root{
     --bg: #1e40af;
-    --card: rgba(255,255,255,0.95);
+    --card: rgba(255,255,255,0.98);
     --accent: #3b82f6;
     --accent2: #8b5cf6;
     --accent3: #f59e0b;
@@ -22,9 +22,11 @@
     --good: #10b981;
     --warn: #f59e0b;
     --bad: #ef4444;
-    --muted: rgba(255,255,255,0.7);
+    --muted: rgba(255,255,255,0.85);
     --text: #ffffff;
-    --text-soft: rgba(255,255,255,0.9);
+    --text-soft: rgba(255,255,255,0.95);
+    --text-main: #1f2937;
+    --text-card: #111827;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   html,body{font-family:'Inter',-apple-system,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:
@@ -42,16 +44,40 @@
     border:1px solid rgba(255,255,255,.2);
     box-shadow:0 0 15px rgba(0,229,255,.2);
   }
-  @keyframes pulse { from{box-shadow:0 0 30px rgba(0,229,255,.5)} to{box-shadow:0 0 50px rgba(255,110,199,.6)} }
+  @keyframes pulse { 
+    0%, 100% { opacity: 0.7; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.05); }
+  }
   @keyframes spin { from{transform:rotate(0)} to{transform:rotate(360deg)} }
+  @keyframes loadingBar {
+    0% { transform: translateX(-100%); }
+    50% { transform: translateX(0%); }
+    100% { transform: translateX(100%); }
+  }
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(200%); }
+  }
+  @keyframes progressFill {
+    0% { width: 0%; }
+    20% { width: 15%; }
+    40% { width: 35%; }
+    60% { width: 55%; }
+    80% { width: 75%; }
+    100% { width: 90%; }
+  }
+  @keyframes fadeInScale {
+    0% { opacity: 0; transform: scale(0.95) translateY(10px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+  }
   h1{font-size:1.8rem;margin:0;font-weight:700;color:white;text-shadow:0 2px 4px rgba(0,0,0,.3);}
   .card{
-    background:rgba(255,255,255,0.95);
+    background:rgba(255,255,255,0.98);
     border:1px solid rgba(255,255,255,.3);
     border-radius:24px;padding:32px;
     box-shadow:0 20px 40px rgba(0,0,0,.3);
     backdrop-filter: blur(20px);
-    color: #1f2937;
+    color: var(--text-card);
     transition:all 0.3s ease;
     position:relative;
     overflow:hidden;
@@ -129,11 +155,11 @@
   .qmeta{display:flex;justify-content:space-between;align-items:center;color:white;font-size:1.1rem;font-weight:600;}
   .options{display:grid;grid-template-columns:1fr;gap:12px}
   .option{
-    background:rgba(255,255,255,0.95);
+    background:rgba(255,255,255,0.98);
     border:1px solid rgba(255,255,255,.4);
     padding:20px 24px;border-radius:16px;cursor:pointer;
     transition:all .2s ease;
-    color:#1f2937;font-weight:500;
+    color:var(--text-card);font-weight:500;
     backdrop-filter:blur(20px);
     position:relative;
     overflow:hidden;
@@ -186,7 +212,7 @@
   }
   .option.correct{animation:correctPulse 0.6s ease-out;}
   .option.incorrect{animation:incorrectShake 0.5s ease-out;}
-  .explain{background:#13112c;border:1px solid rgba(255,255,255,.12);padding:16px 20px;border-radius:12px;font-size:1rem;line-height:1.5;}
+  .explain{background:rgba(255,255,255,0.95);border:1px solid rgba(255,255,255,.3);padding:16px 20px;border-radius:12px;font-size:1rem;line-height:1.5;color:var(--text-card);backdrop-filter:blur(10px);}
   .footer{display:flex;justify-content:space-between;align-items:center}
   .progress{height:12px;background:linear-gradient(90deg, #1a1640, #0f0b1f);border-radius:12px;overflow:hidden;
     border:1px solid rgba(255,255,255,.15);box-shadow:inset 0 2px 4px rgba(0,0,0,.3);}
@@ -217,10 +243,8 @@
   }
   @keyframes pulse-text{0%,100%{opacity:.7} 50%{opacity:1}}
   .shimmer{
-    background:linear-gradient(90deg, transparent, rgba(255,255,255,.1), transparent);
-    animation:shimmer 1.5s infinite;
+    background:rgba(255,255,255,.05);
   }
-  @keyframes shimmer{0%{transform:translateX(-100%)} 100%{transform:translateX(100%)}}
   /* Optimize animations for performance */
   *{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
   .option,.btn,.card{will-change:transform;}
@@ -253,14 +277,15 @@
   }
   
   .quiz-screen{min-height:100vh;width:100%;padding:20px;box-sizing:border-box;}
-  main.stage{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;margin-top:20px;max-width:1200px;margin-left:auto;margin-right:auto;}
+  main.stage{display:grid;grid-template-columns:400px 1fr;gap:30px;align-items:start;margin-top:20px;max-width:1200px;margin-left:auto;margin-right:auto;}
   .card.imgBox{
-    width:240px;height:240px;margin:0;position:relative;
+    width:100%;height:300px;margin:0;position:relative;
     border-radius:16px;overflow:hidden;
     background:linear-gradient(135deg, rgba(0,229,255,.06), rgba(255,110,199,.06));
     border:2px solid rgba(255,255,255,.1);
     box-shadow:0 8px 24px rgba(0,0,0,.15);
     backdrop-filter:blur(8px);
+    display:flex;align-items:center;justify-content:center;
   }
   .card.imgBox img{
     width:100%;height:100%;object-fit:cover;
@@ -268,9 +293,7 @@
   }
   .image-skeleton{
     width:100%;height:100%;
-    background:linear-gradient(90deg, rgba(255,255,255,.05) 25%, rgba(255,255,255,.1) 50%, rgba(255,255,255,.05) 75%);
-    background-size:200% 100%;
-    animation:shimmer 2s infinite;
+    background:rgba(255,255,255,.05);
     border-radius:22px;
     display:flex;align-items:center;justify-content:center;
     flex-direction:column;gap:16px;
@@ -348,7 +371,6 @@
           <h1>Gesture Genius</h1>
         </div>
         <div class="controls">
-          <button class="btn" id="restartBtn" style="display:none">Restart Quiz</button>
         </div>
       </header>
 
@@ -358,8 +380,8 @@
       <div id="engagementText" style="font-size:2rem;font-weight:700;color:var(--accent3);margin-bottom:10px;">Decode their gesture!</div>
     </div>
 
-    <main class="stage" style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;justify-items:center;">
-      <div class="card imgBox" id="imgBox" style="margin:0;justify-self:end;">
+    <main class="stage">
+      <div class="card imgBox" id="imgBox">
         <div id="imgPlaceholder">
           <div style="padding:40px;text-align:center;">
             <div class="loading-spinner"></div>
@@ -370,8 +392,8 @@
 
       <div style="display:flex;flex-direction:column;">
         <div class="question-info" style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
-          <div id="qTitle" style="font-size:1rem;font-weight:600;color:var(--text-main);">Loading your first question...</div>
-          <div style="font-size:0.85rem;color:var(--text-soft);"><span id="counter">0</span> of 5</div>
+          <div id="qTitle" style="font-size:1rem;font-weight:600;color:white;text-shadow:0 1px 2px rgba(0,0,0,0.5);">Loading your first question...</div>
+          <div style="font-size:0.85rem;color:white;text-shadow:0 1px 2px rgba(0,0,0,0.5);"><span id="counter">0</span> of 5</div>
         </div>
         <div class="card" style="padding:16px;">
           <div class="options" id="options"></div>
@@ -406,7 +428,7 @@ let state = {
   history: [],
   busy: false,
   chatModel: 'gpt-4o-mini',
-  imgSize: '512x512',
+  imgSize: '1024x1024', // DALL-E 3 smallest supported size
   soundEnabled: true,
   prefetchQueue: [],
   loadingInterval: null,
@@ -440,11 +462,13 @@ function playTone(freq, duration, type = 'sine') {
 }
 
 const soundToggle = qs('#soundToggle');
-soundToggle.addEventListener('click', () => {
+if (soundToggle) {
+  soundToggle.addEventListener('click', () => {
   state.soundEnabled = !state.soundEnabled;
   soundToggle.textContent = state.soundEnabled ? '🔊' : '🔇';
-  sounds.click();
+  try { sounds.click(); } catch(e) { console.warn('Sound play failed:', e); }
 });
+}
 
 
 const introScreen = qs('#introScreen');
@@ -465,7 +489,7 @@ document.addEventListener('DOMContentLoaded', () => {
     startBtn.addEventListener('click', async (e) => {
       e.preventDefault();
       console.log('Start button clicked'); // Debug log
-      sounds.click();
+      try { sounds.click(); } catch(e) { console.warn('Sound play failed:', e); }
       introScreen.style.display = 'none';
       quizScreen.style.display = 'block';
       await startQuiz();
@@ -476,7 +500,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Keep the original for fallback
 if (startQuizBtn) {
   startQuizBtn.addEventListener('click', async () => {
-    sounds.click();
+    try { sounds.click(); } catch(e) { console.warn('Sound play failed:', e); }
     introScreen.style.display = 'none';
     quizScreen.style.display = 'block';
     await startQuiz();
@@ -484,52 +508,62 @@ if (startQuizBtn) {
 }
 
 
-restartBtn.addEventListener('click', async () => {
-  sounds.click();
+if (restartBtn) {
+  restartBtn.addEventListener('click', async () => {
+  try { sounds.click(); } catch(e) { console.warn('Sound play failed:', e); }
   quizScreen.style.display = 'none';
   introScreen.style.display = 'block';
   prefetchStatus.innerHTML = '<div class="loading-spinner" style="display: inline-block; width: 16px; height: 16px; margin-right: 8px;"></div>Preparing your first question...';
   await prefetchFirstQuestion();
   prefetchStatus.innerHTML = '✅ Ready to start!';
 });
+}
+
+// Test button for debugging
 
 async function startQuiz() {
+  console.log('Starting quiz...');
   state.chatModel = 'gpt-4o-mini';
-  state.imgSize = '256x256';
+  state.imgSize = '1024x1024'; // DALL-E 3 supports higher resolution
   state.index = 0; state.score = 0; state.history = []; state.usedGestures = [];
   // Don't clear prefetch queue - use what we already have
   summaryEl.style.display = 'none';
   nextBtn.disabled = true;
   optionsEl.innerHTML = '';
   explainEl.style.display = 'none';
-  qTitle.textContent = 'Question 1 of 5';
-  counterEl.textContent = '1';
-  bar.style.width = '0%';
-  restartBtn.style.display = 'none';
+  if (qTitle) qTitle.textContent = 'Question 1';
+  if (counterEl) counterEl.textContent = '1';
+  if (bar) bar.style.width = '0%';
+  if (restartBtn) restartBtn.style.display = 'none';
   
-  
+  console.log('About to call newQuestion...');
   await newQuestion();
 }
 
-nextBtn.addEventListener('click', async () => {
-  sounds.next();
+if (nextBtn) {
+  nextBtn.addEventListener('click', async () => {
+  try { sounds.next(); } catch(e) { console.warn('Sound play failed:', e); }
   if (state.index >= state.total) return;
   optionsEl.innerHTML = '';
   explainEl.style.display = 'none';
   nextBtn.disabled = true;
   await newQuestion();
 });
+}
 
 async function newQuestion(){
+  console.log('newQuestion called, index:', state.index);
   if (state.busy) return;
   state.busy = true;
   const n = state.index + 1;
-  qTitle.textContent = `Question ${n} of 5`;
+  qTitle.textContent = `Question ${n}`;
   counterEl.textContent = String(n);
   bar.style.width = ((state.index) / state.total * 100) + '%';
 
   // Show loading state
   showLoadingState();
+  
+  console.log('Loading state shown, about to try API...');
 
   try {
     // Check if we have a prefetched question
@@ -539,23 +573,50 @@ async function newQuestion(){
       idea = prefetched.idea;
       imageUrl = prefetched.imageUrl;
     } else {
-      // Generate with timeout
-      idea = await Promise.race([
+      // PARALLEL PROCESSING: Start both text and image generation simultaneously
+      console.log('Starting parallel API processing...');
+      
+      // Start text generation
+      const textPromise = Promise.race([
         getGestureAndOptions(),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 15000))
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Text timeout')), 15000))
       ]);
       
+      // Wait for text first to get the image prompt
+      idea = await textPromise;
       if (!idea) throw new Error('No idea generated');
       
-      try {
-        imageUrl = await Promise.race([
-          getDalle2Image(idea.imagePrompt),
-          new Promise((_, reject) => setTimeout(() => reject(new Error('Image timeout')), 25000))
-        ]);
-      } catch (imageError) {
-        console.warn('Image generation failed, continuing without image:', imageError.message);
-        imageUrl = null; // Continue with text-only question
-      }
+      // Immediately show the question with options and start image loading in parallel
+      console.log('Text ready, starting parallel image generation...');
+      hideLoadingState();
+      
+      // Render question immediately with progressive loading placeholder
+      renderQuestionWithProgressiveLoading(idea);
+      
+      // Start image generation in parallel (don't await here)
+      const imagePromise = Promise.race([
+        getDalle2Image(idea.imagePrompt),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Image timeout')), 25000))
+      ]);
+      
+      // Handle image result asynchronously
+      imagePromise.then(result => {
+        const finalImageUrl = result.url || null;
+        if (finalImageUrl) {
+          console.log('Image ready, updating display...');
+          updateImageInPlace(idea, finalImageUrl);
+        } else {
+          console.warn('Image generation failed, showing fallback');
+          showImageFallback(idea);
+        }
+      }).catch(imageError => {
+        console.warn('Image generation failed, showing fallback:', imageError.message);
+        showImageFallback(idea);
+      });
+      
+      // Continue with the flow - we already rendered the question
+      state.busy = false;
+      return;
     }
     
     hideLoadingState();
@@ -564,34 +625,19 @@ async function newQuestion(){
     
   } catch (error) {
     console.error('Question generation failed:', error);
+    console.log('Using fallback question...');
     hideLoadingState();
     
-    // Show error state with fallback
-    imgBox.innerHTML = `
-      <div style="padding:40px;text-align:center;color:var(--warn);">
-        <div style="font-size:3rem;margin-bottom:16px;">⚡</div>
-        <div style="font-size:1.1rem;font-weight:600;margin-bottom:8px;">Having trouble generating content</div>
-        <div style="color:var(--muted);font-size:0.9rem;">Let's try the next question...</div>
-      </div>
-    `;
-    
-    // Auto-skip to next after a short delay
-    setTimeout(() => {
-      if (state.index + 1 < state.total) {
-        state.index++;
-        newQuestion();
-      } else {
-        showSummary();
-      }
-    }, 3000);
+    // Use fallback question when API fails
+    const fallbackQuestion = getFallbackQuestion(state.index);
+    console.log('Fallback question:', fallbackQuestion);
+    renderQuestion(fallbackQuestion, null);
   }
   
   state.busy = false;
 }
 
 function showLoadingState() {
-  qTitle.innerHTML = `Question ${state.index + 1}`;
-  
   // Update engagement message
   const engagementMessages = [
     'What do you think this person is saying?',
@@ -637,20 +683,14 @@ function showLoadingState() {
   // Update message every 5 seconds for realistic timing
   state.loadingInterval = setInterval(updateMessage, 5000);
   
-  // Show skeleton with faster animation
+  // Show static loading placeholders
   optionsEl.innerHTML = `
-    <div style="height:75px;border-radius:18px;background:rgba(255,255,255,.06);position:relative;overflow:hidden;margin:12px 0;border:2px solid rgba(255,255,255,.08);">
-      <div class="shimmer" style="position:absolute;inset:0;animation-duration:1.5s;"></div>
+    <div style="height:75px;border-radius:18px;background:rgba(255,255,255,.08);margin:12px 0;border:2px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);font-size:0.9rem;">
+      Loading options...
     </div>
-    <div style="height:75px;border-radius:18px;background:rgba(255,255,255,.06);position:relative;overflow:hidden;margin:12px 0;border:2px solid rgba(255,255,255,.08);">
-      <div class="shimmer" style="position:absolute;inset:0;animation-duration:1.5s;animation-delay:0.2s;"></div>
-    </div>
-    <div style="height:75px;border-radius:18px;background:rgba(255,255,255,.06);position:relative;overflow:hidden;margin:12px 0;border:2px solid rgba(255,255,255,.08);">
-      <div class="shimmer" style="position:absolute;inset:0;animation-duration:1.5s;animation-delay:0.4s;"></div>
-    </div>
-    <div style="height:75px;border-radius:18px;background:rgba(255,255,255,.06);position:relative;overflow:hidden;margin:12px 0;border:2px solid rgba(255,255,255,.08);">
-      <div class="shimmer" style="position:absolute;inset:0;animation-duration:1.5s;animation-delay:0.6s;"></div>
-    </div>
+    <div style="height:75px;border-radius:18px;background:rgba(255,255,255,.08);margin:12px 0;border:2px solid rgba(255,255,255,.12);"></div>
+    <div style="height:75px;border-radius:18px;background:rgba(255,255,255,.08);margin:12px 0;border:2px solid rgba(255,255,255,.12);"></div>
+    <div style="height:75px;border-radius:18px;background:rgba(255,255,255,.08);margin:12px 0;border:2px solid rgba(255,255,255,.12);"></div>
   `;
 }
 
@@ -671,20 +711,31 @@ async function prefetchNextQuestion() {
   if (state.prefetchQueue.length >= 2 || state.busy) return;
   
   try {
-    console.log('Prefetching next question...');
+    console.log('Prefetching next question with parallel processing...');
     
-    // Add timeout to prefetch to avoid hanging
-    const idea = await Promise.race([
+    // PARALLEL PREFETCH: Start text generation with timeout
+    const textPromise = Promise.race([
       getGestureAndOptions(),
-      new Promise((_, reject) => setTimeout(() => reject(new Error('Prefetch timeout')), 20000))
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Prefetch text timeout')), 20000))
     ]);
     
+    const idea = await textPromise;
     if (idea) {
-      const imageUrl = await Promise.race([
+      // Start image generation in parallel - don't await immediately
+      console.log('Prefetch: Text ready, starting parallel image generation...');
+      
+      const imagePromise = Promise.race([
         getDalle2Image(idea.imagePrompt),
         new Promise((_, reject) => setTimeout(() => reject(new Error('Image prefetch timeout')), 25000))
       ]);
       
+      // Use Promise.allSettled to handle both completing at different times
+      const [imageResult] = await Promise.allSettled([imagePromise]);
+      const imageUrl = imageResult.status === 'fulfilled' ? imageResult.value.url || null : null;
+      
+      if (imageResult.status === 'rejected') {
+        console.log('Prefetch image failed, will generate on-demand:', imageResult.reason.message);
+      }
       state.prefetchQueue.push({ idea, imageUrl });
       console.log('Prefetch successful, queue length:', state.prefetchQueue.length);
       
@@ -700,75 +751,204 @@ async function prefetchNextQuestion() {
   }
 }
 
-function renderQuestion(idea, imageUrl){
-  imgBox.innerHTML = '';
+// NEW: Progressive loading function that shows question immediately with loading placeholder
+function renderQuestionWithProgressiveLoading(idea) {
+  console.log('renderQuestionWithProgressiveLoading called with idea:', idea?.title);
   
-  if (!imageUrl) {
-    // No image URL provided - show fallback immediately
-    showImageFallback(idea);
+  // Immediately show options so user can start answering
+  console.log('Rendering options immediately for better UX...');
+  renderOptions(idea);
+  
+  // Show progressive loading placeholder for image
+  if (!imgBox) {
+    console.error('imgBox not found!');
     return;
   }
   
+  imgBox.innerHTML = `
+    <div class="progressive-loading-container" style="padding:30px;text-align:center;color:rgba(255,255,255,0.8);background:linear-gradient(135deg, rgba(0,229,255,.08), rgba(255,110,199,.08));border:2px solid rgba(255,255,255,.15);border-radius:16px;min-height:280px;display:flex;flex-direction:column;justify-content:center;align-items:center;position:relative;overflow:hidden;">
+      <!-- Animated background shimmer -->
+      <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);animation:shimmer 2s infinite;"></div>
+      
+      <!-- Main content -->
+      <div style="position:relative;z-index:1;">
+        <div style="font-size:2.2rem;margin-bottom:12px;animation:pulse 2s infinite;">🎨</div>
+        <div style="font-size:1rem;margin-bottom:8px;font-weight:600;color:#fff;">Generating image...</div>
+        <div style="font-size:0.85rem;color:rgba(255,255,255,0.7);margin-bottom:16px;">You can start answering now!</div>
+        
+        <!-- Realistic progress indicator -->
+        <div style="width:240px;height:6px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;margin:0 auto;">
+          <div class="progress-fill" style="width:0%;height:100%;background:linear-gradient(90deg, var(--accent), var(--accent2));border-radius:3px;animation:progressFill 8s ease-out forwards;"></div>
+        </div>
+        
+        <div style="font-size:0.75rem;color:rgba(255,255,255,0.5);margin-top:12px;">Creating your personalized scenario...</div>
+      </div>
+    </div>
+  `;
+}
+
+// NEW: Update image in place when it's ready
+function updateImageInPlace(idea, imageUrl) {
+  console.log('updateImageInPlace called with imageUrl:', imageUrl);
+  
+  if (!imgBox || !imageUrl) return;
+  
+  // Create new image element
   const img = new Image();
   img.alt = 'Cartoon speaker with body gestures';
-  img.loading = 'lazy';
+  img.style.cssText = 'max-width:100%;display:block;border-radius:12px;animation:fadeInScale 0.6s ease-out;';
+  
+  img.onload = () => {
+    console.log('Progressive image loaded successfully!');
+    // Replace the loading placeholder with smooth transition
+    imgBox.innerHTML = '';
+    imgBox.appendChild(img);
+  };
+  
+  img.onerror = () => {
+    console.log('Progressive image failed to load, showing fallback');
+    showImageFallback(idea);
+  };
+  
+  img.src = imageUrl;
+}
+
+function renderQuestion(idea, imageUrl){
+  console.log('renderQuestion called with idea:', idea?.title, 'imageUrl:', imageUrl);
+  
+  // Immediately show options so user can start answering
+  console.log('Rendering options immediately for better UX...');
+  renderOptions(idea);
+  
+  // Set a flag to prevent race conditions
+  window.currentImageLoading = true;
+  
+  try {
+    console.log('Clearing imgBox...');
+    if (!imgBox) {
+      console.error('imgBox not found!');
+      return;
+    }
+    imgBox.innerHTML = '';
+    
+    if (!imageUrl) {
+      // No image URL provided - show fallback immediately
+      console.log('No imageUrl, showing fallback...');
+      window.currentImageLoading = false;
+      showImageFallback(idea);
+      return;
+    }
+    
+    // Show loading placeholder while image loads in background
+    imgBox.innerHTML = `
+      <div style="padding:40px;text-align:center;color:rgba(255,255,255,0.7);background:linear-gradient(135deg, rgba(0,229,255,.1), rgba(255,110,199,.1));border:2px dashed rgba(255,255,255,.3);border-radius:16px;min-height:280px;display:flex;flex-direction:column;justify-content:center;align-items:center;">
+        <div style="font-size:2.5rem;margin-bottom:12px;animation:pulse 2s infinite;">🖼️</div>
+        <div style="font-size:1rem;margin-bottom:8px;font-weight:600;">Loading image...</div>
+        <div style="font-size:0.85rem;color:rgba(255,255,255,0.6);">You can start answering using the description above!</div>
+        <div style="margin-top:16px;width:200px;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden;">
+          <div style="width:100%;height:100%;background:linear-gradient(90deg, var(--accent), var(--accent2));animation:loadingBar 2s infinite;border-radius:2px;"></div>
+        </div>
+      </div>
+    `;
+    
+    console.log('Creating image element...');
+    const img = new Image();
+    img.alt = 'Cartoon speaker with body gestures';
+    img.loading = 'lazy';
   
   let retryCount = 0;
-  const maxRetries = 2;
+  const maxRetries = 5; // Increased retries
   
   const tryLoadImage = (url) => {
     img.onerror = () => {
       console.warn('Image load failed:', url, 'Retry:', retryCount);
       if (retryCount < maxRetries) {
         retryCount++;
-        // Try again after a short delay
+        // Try different strategies
         setTimeout(() => {
-          img.src = url + '&retry=' + retryCount; // Add retry parameter to bypass cache
-        }, 1000);
+          if (retryCount === 1) {
+            // Try with cache busting
+            img.src = url + '&cache=' + Date.now();
+          } else if (retryCount === 2) {
+            // Try without additional params
+            img.src = url;
+          } else if (retryCount === 3) {
+            // Try with different approach - create new image element
+            const newImg = new Image();
+            newImg.onload = () => {
+              console.log('Image loaded successfully on retry!');
+              imgBox.innerHTML = ''; // Clear loading placeholder
+              imgBox.appendChild(newImg);
+              // Options already rendered immediately, so no need to call renderOptions again
+            };
+            newImg.onerror = () => tryLoadImage(url);
+            newImg.src = url;
+            return;
+          } else {
+            // Final retry with fetch approach to handle CORS
+            fetchImageAsBlob(url, idea, 'cors');
+            return;
+          }
+        }, 1000 * retryCount); // Exponential backoff
       } else {
-        // All retries failed, show fallback
-        showImageFallback(idea);
+        // All retries failed, determine error type
+        console.log('All image load retries failed');
+        showImageError(idea, 'not_found');
       }
     };
     
     img.onload = () => {
+      console.log('Image loaded successfully!');
+      window.currentImageLoading = false; // Mark as complete
+      imgBox.innerHTML = ''; // Clear loading placeholder
       imgBox.appendChild(img);
+      // Options already rendered immediately, so no need to call renderOptions again
     };
     
+    console.log('Setting image src:', url);
     img.src = url;
   };
   
+  console.log('Attempting to load image...');
   tryLoadImage(imageUrl);
+  
+  // Add timeout fallback in case image loading hangs
+  setTimeout(() => {
+    console.log('Image loading timeout - checking if still loading...');
+    if (window.currentImageLoading) { // Image still loading after timeout
+      console.log('Still loading after 30 seconds, forcing fallback...');
+      window.currentImageLoading = false;
+      showEnhancedImageFallback(idea);
+    }
+  }, 30000); // Increased to 30 seconds for better reliability
+  
+  } catch (error) {
+    console.error('Error in renderQuestion:', error);
+    showImageFallback(idea);
+  }
 }
 
-function showImageFallback(idea) {
-  imgBox.innerHTML = `
-    <div style="padding:30px;text-align:center;color:var(--text-soft);background:rgba(0,229,255,.05);border:2px dashed rgba(255,255,255,.2);border-radius:12px;">
-      <div style="font-size:2.5rem;margin-bottom:12px;">🎭</div>
-      <div style="font-size:1rem;margin-bottom:8px;font-weight:600;color:var(--text-main);">Scenario: ${idea.title}</div>
-      <div style="font-size:0.85rem;line-height:1.4;color:var(--text-soft);max-width:200px;margin:0 auto;">
-        Use the scenario description to answer the question!
-      </div>
-    </div>
-  `;
-
-  qTitle.innerHTML = `Question ${state.index+1}`;
+function renderOptions(idea) {
+  console.log('renderOptions called with idea:', idea);
+  console.log('optionsEl:', optionsEl);
   
   // Update engagement message with variety
   const engagementMessages = [
-    'What do you think this person is saying?',
-    'Can you read their body language?',
-    'What message are they conveying?',
-    'What\'s their likely response?',
-    'Decode their gesture!',
-    'What are they probably thinking?',
-    'Interpret their body language!',
-    'What would they say next?'
+    'What is the speaker saying?',
+    'What would he say in this moment?',
+    'What is she actually thinking?',
+    'What would the speaker say next?',
+    'What is he conveying with this gesture?',
+    'What message is she communicating?',
+    'What would the speaker be saying here?'
   ];
   const randomMessage = engagementMessages[Math.floor(Math.random() * engagementMessages.length)];
   const engagementTextEl = qs('#engagementText');
   if (engagementTextEl) {
-    engagementTextEl.textContent = randomMessage;
+    engagementTextEl.innerHTML = `
+      <div style="margin-bottom: 8px; font-size: 1.8rem;">${randomMessage}</div>
+      <div style="font-size: 1.1rem; color: var(--accent2); font-weight: 600;">${idea.title}</div>
+    `;
   }
 
   const opts = [
@@ -778,14 +958,21 @@ function showImageFallback(idea) {
     { text: idea.options.funnyWrong, tag: 'wrong' },
   ].sort(() => Math.random() - 0.5);
 
+  console.log('Options to render:', opts);
+  if (!optionsEl) {
+    console.error('optionsEl not found!');
+    return;
+  }
   optionsEl.innerHTML = '';
   opts.forEach((o, idx) => {
+    console.log(`Creating option ${idx}:`, o);
     const div = document.createElement('button');
     div.className = 'option';
     div.innerText = o.text;
     div.onclick = () => choose(o, div, opts, idea);
     optionsEl.appendChild(div);
   });
+  console.log('Options rendered, optionsEl children:', optionsEl.children.length);
 
   explainEl.style.display = 'none';
   
@@ -796,16 +983,32 @@ function showImageFallback(idea) {
   }
 }
 
+function showImageFallback(idea) {
+  console.log('showImageFallback called with idea:', idea);
+  imgBox.innerHTML = `
+    <div style="padding:30px;text-align:center;color:white;background:rgba(0,229,255,.1);border:2px dashed rgba(255,255,255,.3);border-radius:12px;">
+      <div style="font-size:2.5rem;margin-bottom:12px;">🎭</div>
+      <div style="font-size:1rem;margin-bottom:8px;font-weight:600;color:white;text-shadow:0 1px 2px rgba(0,0,0,0.5);">Scenario: ${idea.title}</div>
+      <div style="font-size:0.85rem;line-height:1.4;color:rgba(255,255,255,0.9);max-width:200px;margin:0 auto;text-shadow:0 1px 2px rgba(0,0,0,0.3);">
+        Use the scenario description to answer the question!
+      </div>
+    </div>
+  `;
+
+  // Options already rendered immediately when renderQuestion was called
+  // No need to call renderOptions again here
+}
+
 function choose(chosen, btnEl, all, idea){
   Array.from(optionsEl.children).forEach(c => c.disabled = true);
   
   // Add visual feedback immediately
   if (chosen.tag === 'correct') {
     btnEl.classList.add('correct');
-    sounds.correct();
+    try { sounds.correct(); } catch(e) { console.warn('Sound play failed:', e); }
   } else {
     btnEl.classList.add('incorrect');
-    sounds.wrong();
+    try { sounds.wrong(); } catch(e) { console.warn('Sound play failed:', e); }
     // Highlight the correct answer
     Array.from(optionsEl.children).forEach((el, idx) => {
       if (all[idx].tag === 'correct') {
@@ -825,13 +1028,13 @@ function choose(chosen, btnEl, all, idea){
   if (correct) { 
     state.score++; 
     confettiBurst(); 
-    sounds.correct();
+    try { sounds.correct(); } catch(e) { console.warn('Sound play failed:', e); }
   }
   else if (chosen.tag === 'close') { 
-    sounds.close();
+    try { sounds.close(); } catch(e) { console.warn('Sound play failed:', e); }
   }
   else { 
-    sounds.wrong();
+    try { sounds.wrong(); } catch(e) { console.warn('Sound play failed:', e); }
   }
 
   explainEl.style.display = 'block';
@@ -871,8 +1074,6 @@ function showSummary(){
   explainEl.style.display = 'none';
   nextBtn.style.display = 'none';
   
-  // Show restart button
-  restartBtn.style.display = 'inline-flex';
 
   const percent = Math.round((state.score / state.total) * 100);
   const verdict = percent >= 80 ? 'Outstanding! You\'re a body language expert! 🏆'
@@ -884,7 +1085,7 @@ function showSummary(){
   // Add celebration for high scores
   if (percent >= 80) {
     confettiBurst();
-    sounds.correct();
+    try { sounds.correct(); } catch(e) { console.warn('Sound play failed:', e); }
   }
 
   summaryEl.style.display = 'block';
@@ -929,7 +1130,295 @@ function showSummary(){
         `).join('')}
       </div>
     </details>
+    
+    <div style="text-align:center;margin-top:32px;">
+      <button class="btn" onclick="location.reload()" style="font-size:1.1rem;padding:12px 24px;background:linear-gradient(135deg, var(--accent), var(--accent2));border:none;border-radius:12px;color:white;cursor:pointer;transition:all 0.3s ease;font-weight:600;">
+        🔄 Take Another Quiz
+      </button>
+    </div>
   `;
+}
+
+function getFallbackQuestion(index) {
+  const fallbackQuestions = [
+    {
+      title: "Confident Speaker with Open Palms",
+      imagePrompt: "Professional speaker showing open palms to audience",
+      options: {
+        correct: "I'm being completely honest and transparent with you",
+        close: "I have nothing to hide from the audience", 
+        obviouslyWrong: "I'm feeling nervous and uncertain",
+        funnyWrong: "I forgot to bring my lucky socks today"
+      },
+      explanation: "Open palms are a universal sign of honesty and transparency. This gesture builds trust with the audience.",
+      coachingTips: [
+        "Use open palm gestures to build credibility",
+        "Keep hands visible - avoid hiding them behind your back",
+        "Practice the 'steeple' gesture for authority"
+      ]
+    },
+    {
+      title: "Speaker with Arms Crossed",
+      imagePrompt: "Professional person with arms folded across chest",
+      options: {
+        correct: "I'm feeling defensive about this topic",
+        close: "I disagree with what was just said",
+        obviouslyWrong: "I'm completely open to new ideas",
+        funnyWrong: "I'm trying to keep my shirt from falling off"
+      },
+      explanation: "Crossed arms typically signal defensiveness or resistance. It creates a barrier between speaker and audience.",
+      coachingTips: [
+        "Keep arms open and uncrossed when speaking",
+        "Use gestures that invite rather than block",
+        "Practice confident, open posture"
+      ]
+    },
+    {
+      title: "Enthusiastic Pointing Gesture",
+      imagePrompt: "Animated speaker pointing to visual presentation",
+      options: {
+        correct: "This point is really important to understand",
+        close: "Pay attention to this key information",
+        obviouslyWrong: "I have no idea what I'm talking about",
+        funnyWrong: "There's a spider on the wall behind you"
+      },
+      explanation: "Pointing gestures direct attention and emphasize importance. Use them strategically for key points.",
+      coachingTips: [
+        "Point with open hand, not single finger",
+        "Use gestures to guide audience attention",
+        "Match gesture intensity to content importance"
+      ]
+    },
+    {
+      title: "Nervous Fidgeting Behavior",
+      imagePrompt: "Person fidgeting with hands and shifting weight",
+      options: {
+        correct: "I'm feeling anxious about this presentation",
+        close: "I'm not fully prepared for these questions",
+        obviouslyWrong: "I'm supremely confident right now",
+        funnyWrong: "I'm secretly a robot having technical difficulties"
+      },
+      explanation: "Fidgeting signals nervousness and can distract from your message. Practice calming techniques.",
+      coachingTips: [
+        "Practice breathing exercises before speaking",
+        "Find a comfortable, stable stance",
+        "Channel nervous energy into purposeful gestures"
+      ]
+    },
+    {
+      title: "Victory Pose with Raised Arms",
+      imagePrompt: "Confident speaker with arms raised in victory",
+      options: {
+        correct: "We did it! We achieved our goal!",
+        close: "This is a moment worth celebrating",
+        obviouslyWrong: "I'm completely defeated by this challenge",
+        funnyWrong: "I'm trying to high-five a very tall ghost"
+      },
+      explanation: "Raised arms signal victory, success, and high energy. Perfect for celebrating achievements.",
+      coachingTips: [
+        "Use high-energy gestures for positive moments",
+        "Match your body language to your message",
+        "Practice victory poses to build confidence"
+      ]
+    }
+  ];
+  
+  return fallbackQuestions[index % fallbackQuestions.length];
+}
+
+async function fetchImageAsBlob(url, idea, errorType = 'cors') {
+  try {
+    console.log('Attempting to fetch image as blob to bypass CORS...');
+    
+    // Add no-cors mode to prevent CORS issues
+    const response = await fetch(url, {
+      mode: 'cors',
+      credentials: 'omit',
+      headers: {
+        'Accept': 'image/*',
+      },
+      referrerPolicy: 'no-referrer'
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    
+    const blob = await response.blob();
+    const objectUrl = URL.createObjectURL(blob);
+    
+    const img = new Image();
+    img.onload = () => {
+      console.log('Blob image loaded successfully, CORS bypassed!');
+      window.currentImageLoading = false;
+      imgBox.innerHTML = ''; // Clear loading states
+      imgBox.appendChild(img);
+      // Options already rendered immediately, so no need to call renderOptions again
+      URL.revokeObjectURL(objectUrl); // Clean up
+    };
+    img.onerror = () => {
+      console.log('Blob approach failed, showing error message...');
+      URL.revokeObjectURL(objectUrl);
+      showImageError(idea, errorType);
+    };
+    img.src = objectUrl;
+  } catch (error) {
+    console.log('Fetch blob failed:', error);
+    
+    // Determine specific error type
+    let specificError = 'network';
+    if (error.name === 'TypeError') specificError = 'cors';
+    if (error.message?.includes('403')) specificError = 'forbidden';
+    if (error.message?.includes('404')) specificError = 'not_found';
+    if (error.message?.includes('timeout')) specificError = 'timeout';
+    
+    showImageError(idea, specificError);
+  }
+}
+
+async function regenerateImage(idea) {
+  try {
+    console.log('Regenerating image with safer prompt...');
+    // Try a simpler, more reliable prompt
+    const simplePrompt = `Professional speaker in business attire showing ${idea.title.toLowerCase()}, clean cartoon style, white background`;
+    
+    const result = await getDalle2Image(simplePrompt, (errorType) => {
+      console.log('Regeneration failed with error:', errorType);
+      showImageError(idea, errorType);
+    });
+    
+    if (result.url) {
+      console.log('New image generated, attempting to load...');
+      const img = new Image();
+      img.onload = () => {
+        console.log('Regenerated image loaded successfully!');
+        window.currentImageLoading = false;
+        imgBox.innerHTML = ''; // Clear loading states
+        imgBox.appendChild(img);
+        // Options already rendered immediately, so no need to call renderOptions again
+      };
+      img.onerror = () => {
+        console.log('Regenerated image failed to load');
+        showImageError(idea, 'not_found');
+      };
+      img.src = result.url;
+    } else {
+      // Error already handled by callback
+      if (!result.error) {
+        showImageError(idea, 'generation_failed');
+      }
+    }
+  } catch (error) {
+    console.log('Image regeneration failed:', error);
+    showImageError(idea, 'generation_failed');
+  }
+}
+
+function showImageError(idea, errorType = 'unknown') {
+  window.currentImageLoading = false;
+  
+  const errorMessages = {
+    'content_policy_violation': {
+      icon: '🚫',
+      title: 'Content Policy Issue',
+      message: 'Our AI couldn\'t generate an appropriate image for this scenario.',
+      detail: 'Don\'t worry - you can still answer based on the description!'
+    },
+    'cors': {
+      icon: '🌐',
+      title: 'Network Security Issue',
+      message: 'Your browser blocked loading the image for security reasons.',
+      detail: 'This is common with corporate networks. Use the description below!'
+    },
+    'rate_limit': {
+      icon: '⏳',
+      title: 'Too Many Requests',
+      message: 'We\'re generating images too quickly. Taking a short break.',
+      detail: 'The visual description will help you answer the question.'
+    },
+    'quota_exceeded': {
+      icon: '💳',
+      title: 'Service Limit Reached',
+      message: 'We\'ve reached our daily image generation limit.',
+      detail: 'No worries - use the scenario description to answer!'
+    },
+    'timeout': {
+      icon: '⏰',
+      title: 'Loading Timeout',
+      message: 'The image took too long to load.',
+      detail: 'Your internet might be slow. Try the description instead!'
+    },
+    'not_found': {
+      icon: '🔍',
+      title: 'Image Not Found',
+      message: 'The generated image link has expired.',
+      detail: 'This happens after some time. Use the description below!'
+    },
+    'forbidden': {
+      icon: '🔒',
+      title: 'Access Denied',
+      message: 'The image service denied access to this image.',
+      detail: 'This is a security measure. The description will help!'
+    },
+    'network': {
+      icon: '📶',
+      title: 'Connection Issue',
+      message: 'Unable to download the image due to network problems.',
+      detail: 'Check your internet connection or use the description!'
+    },
+    'unknown': {
+      icon: '❓',
+      title: 'Image Unavailable',
+      message: 'Something went wrong while loading the image.',
+      detail: 'No problem - the description provides all you need!'
+    }
+  };
+  
+  const error = errorMessages[errorType] || errorMessages['unknown'];
+  
+  const gestureEmojis = {
+    'open palms': '🤲',
+    'crossed arms': '🙅‍♂️', 
+    'pointing': '👉',
+    'victory': '🙌',
+    'presenting': '🫴',
+    'fidgeting': '😰',
+    'confident': '💪',
+    'welcoming': '🤗'
+  };
+  
+  let gestureEmoji = '🎭';
+  for (const [key, value] of Object.entries(gestureEmojis)) {
+    if (idea.title.toLowerCase().includes(key)) {
+      gestureEmoji = value;
+      break;
+    }
+  }
+  
+  imgBox.innerHTML = `
+    <div style="padding:30px;text-align:center;color:white;background:linear-gradient(135deg, rgba(255,107,107,.2), rgba(255,193,7,.2));border:2px solid rgba(255,193,7,.4);border-radius:16px;min-height:250px;display:flex;flex-direction:column;justify-content:center;">
+      <div style="font-size:2.5rem;margin-bottom:12px;">${error.icon}</div>
+      <div style="font-size:1.1rem;margin-bottom:8px;font-weight:700;color:#ffeb3b;text-shadow:0 1px 2px rgba(0,0,0,0.5);">${error.title}</div>
+      <div style="font-size:0.9rem;margin-bottom:12px;color:rgba(255,255,255,0.9);line-height:1.3;">${error.message}</div>
+      <div style="font-size:0.8rem;margin-bottom:20px;color:rgba(255,255,255,0.7);font-style:italic;">${error.detail}</div>
+      
+      <div style="border-top:1px solid rgba(255,255,255,.2);padding-top:20px;margin-top:10px;">
+        <div style="font-size:3rem;margin-bottom:12px;">${gestureEmoji}</div>
+        <div style="font-size:1.2rem;margin-bottom:8px;font-weight:600;color:white;text-shadow:0 1px 2px rgba(0,0,0,0.5);">${idea.title}</div>
+        <div style="font-size:0.85rem;line-height:1.3;color:rgba(255,255,255,0.9);max-width:280px;margin:0 auto;overflow-wrap:break-word;">
+          ${idea.imagePrompt.length > 100 ? idea.imagePrompt.substring(0, 97) + '...' : idea.imagePrompt}
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Options already rendered immediately when renderQuestion was called
+  // No need to call renderOptions again here
+}
+
+function showEnhancedImageFallback(idea) {
+  // This is now just a wrapper for the error display
+  showImageError(idea, 'timeout');
 }
 
 function aggregateTips(history){
@@ -939,19 +1428,45 @@ function aggregateTips(history){
 }
 
 async function openaiChat(body){
-  const res = await fetch('/api/openai/chat', {
-    method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)
-  });
-  if (!res.ok) { throw new Error('Proxy error'); }
-  return res.json();
+  console.log('Making OpenAI Chat API call...', body);
+  try {
+    const res = await fetch('/api/openai/chat', {
+      method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)
+    });
+    console.log('Chat API response status:', res.status);
+    if (!res.ok) { 
+      const errorText = await res.text();
+      console.error('Chat API error:', res.status, errorText);
+      throw new Error(`Chat API error: ${res.status} ${errorText}`); 
+    }
+    const result = await res.json();
+    console.log('Chat API success:', result);
+    return result;
+  } catch (error) {
+    console.error('Chat API fetch failed:', error);
+    throw error;
+  }
 }
 
 async function openaiImages(body){
-  const res = await fetch('/api/openai/images', {
-    method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)
-  });
-  if (!res.ok) { throw new Error('Proxy error'); }
-  return res.json();
+  console.log('Making OpenAI Images API call...', body);
+  try {
+    const res = await fetch('/api/openai/images', {
+      method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)
+    });
+    console.log('Images API response status:', res.status);
+    if (!res.ok) { 
+      const errorText = await res.text();
+      console.error('Images API error:', res.status, errorText);
+      throw new Error(`Images API error: ${res.status} ${errorText}`); 
+    }
+    const result = await res.json();
+    console.log('Images API success:', result);
+    return result;
+  } catch (error) {
+    console.error('Images API fetch failed:', error);
+    throw error;
+  }
 }
 
 async function getGestureAndOptions(){
@@ -1025,19 +1540,91 @@ Ensure the image description and correct answer are perfectly aligned with "${ra
   }
 }
 
-async function getDalle2Image(prompt){
-  const styled = `${prompt}. Clean cartoon style, attractive professional person with face and full upper body clearly visible, never crop the face, colorful background, clear gestures, good-looking character.`;
+function sanitizePromptForContentPolicy(prompt) {
+  // Remove potentially problematic words/phrases
+  const problematicTerms = {
+    'attractive': 'professional',
+    'handsome': 'professional',
+    'beautiful': 'professional',
+    'sexy': 'professional',
+    'hot': 'professional',
+    'gorgeous': 'professional',
+    'stunning': 'professional',
+    'model-quality': 'professional',
+    'good-looking': 'professional',
+    'pretty': 'professional'
+  };
+  
+  let sanitized = prompt;
+  for (const [problematic, replacement] of Object.entries(problematicTerms)) {
+    sanitized = sanitized.replace(new RegExp(problematic, 'gi'), replacement);
+  }
+  
+  // Ensure business-appropriate language
+  sanitized = sanitized.replace(/\b(person|character|individual)\b/gi, 'business professional');
+  
+  return sanitized;
+}
+
+async function getDalle2Image(prompt, errorCallback = null){
+  // Sanitize prompt to avoid content policy violations
+  const sanitizedPrompt = sanitizePromptForContentPolicy(prompt);
+  const styled = `${sanitizedPrompt}. Clean professional cartoon illustration, business professional speaker with face and full upper body clearly visible, modern office background, clear expressive gestures, high-quality digital art style, business attire, professional setting.`;
 
   try {
+    console.log('Trying DALL-E 3 with sanitized prompt...');
     const data = await openaiImages({
-      model: 'dall-e-2',
+      model: 'dall-e-3',
       prompt: styled,
       size: state.imgSize,
+      quality: 'standard', // DALL-E 3 feature
       n: 1
     });
-    return data.data?.[0]?.url || '';
+    return { url: data.data?.[0]?.url || '', error: null };
   } catch(e){
-    return '';
+    console.log('DALL-E 3 failed:', e);
+    
+    // Check for content policy violation
+    if (e.message?.includes('content_policy_violation') || e.message?.includes('safety')) {
+      console.log('Content policy violation detected, trying safer prompt...');
+      const saferPrompt = `Professional business speaker in formal attire giving a presentation, clean cartoon style, office setting, neutral expression, appropriate business gestures.`;
+      
+      try {
+        const data = await openaiImages({
+          model: 'dall-e-2',
+          prompt: saferPrompt,
+          size: '512x512',
+          n: 1
+        });
+        return { url: data.data?.[0]?.url || '', error: 'content_policy_sanitized' };
+      } catch(e3) {
+        if (errorCallback) errorCallback('content_policy_violation');
+        return { url: '', error: 'content_policy_violation' };
+      }
+    }
+    
+    // Try DALL-E 2 fallback
+    try {
+      console.log('Trying DALL-E 2 fallback...');
+      const data = await openaiImages({
+        model: 'dall-e-2',
+        prompt: styled.substring(0, 1000), // DALL-E 2 has shorter prompt limits
+        size: '512x512', // DALL-E 2 max size
+        n: 1
+      });
+      return { url: data.data?.[0]?.url || '', error: null };
+    } catch(e2) {
+      console.log('Both DALL-E 3 and 2 failed:', e2);
+      
+      // Determine error type
+      let errorType = 'generation_failed';
+      if (e2.message?.includes('rate_limit')) errorType = 'rate_limit';
+      if (e2.message?.includes('insufficient_quota')) errorType = 'quota_exceeded';
+      if (e2.message?.includes('timeout')) errorType = 'timeout';
+      
+      if (errorCallback) errorCallback(errorType);
+      return { url: '', error: errorType };
+    }
   }
 }
 
