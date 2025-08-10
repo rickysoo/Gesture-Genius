@@ -70,6 +70,10 @@
     0% { opacity: 0; transform: scale(0.95) translateY(10px); }
     100% { opacity: 1; transform: scale(1) translateY(0); }
   }
+  @keyframes slideInDown {
+    0% { opacity: 0; transform: translateY(-20px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
   h1{font-size:1.8rem;margin:0;font-weight:700;color:white;text-shadow:0 2px 4px rgba(0,0,0,.3);}
   .card{
     background:rgba(255,255,255,0.98);
@@ -708,7 +712,7 @@ async function prefetchFirstQuestion() {
 
 async function prefetchNextQuestion() {
   // Don't prefetch if already have enough or if API seems slow
-  if (state.prefetchQueue.length >= 2 || state.busy) return;
+  if (state.prefetchQueue.length >= 4 || state.busy) return;
   
   try {
     console.log('Prefetching next question with parallel processing...');
@@ -774,7 +778,11 @@ function renderQuestionWithProgressiveLoading(idea) {
       <div style="position:relative;z-index:1;">
         <div style="font-size:2.2rem;margin-bottom:12px;animation:pulse 2s infinite;">🎨</div>
         <div style="font-size:1rem;margin-bottom:8px;font-weight:600;color:#fff;">Generating image...</div>
-        <div style="font-size:0.85rem;color:rgba(255,255,255,0.7);margin-bottom:16px;">You can start answering now!</div>
+        
+        <!-- Speaker description while loading -->
+        <div style="font-size:0.9rem;color:rgba(255,255,255,0.9);margin-bottom:16px;max-width:280px;line-height:1.3;">
+          ${idea.imagePrompt}
+        </div>
         
         <!-- Realistic progress indicator -->
         <div style="width:240px;height:6px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;margin:0 auto;">
@@ -800,6 +808,14 @@ function updateImageInPlace(idea, imageUrl) {
   
   img.onload = () => {
     console.log('Progressive image loaded successfully!');
+    
+    // Clear any error notifications
+    const imageContainer = imgBox.parentElement;
+    const errorNotification = imageContainer.querySelector('.error-notification');
+    if (errorNotification) {
+      errorNotification.remove();
+    }
+    
     // Replace the loading placeholder with smooth transition
     imgBox.innerHTML = '';
     imgBox.appendChild(img);
@@ -1395,19 +1411,32 @@ function showImageError(idea, errorType = 'unknown') {
     }
   }
   
+  // Show error message outside the image box
+  const imageContainer = imgBox.parentElement;
+  let errorNotification = imageContainer.querySelector('.error-notification');
+  
+  if (!errorNotification) {
+    errorNotification = document.createElement('div');
+    errorNotification.className = 'error-notification';
+    imageContainer.insertBefore(errorNotification, imgBox);
+  }
+  
+  errorNotification.innerHTML = `
+    <div style="padding:16px 20px;margin-bottom:16px;text-align:center;color:white;background:linear-gradient(135deg, rgba(255,107,107,.2), rgba(255,193,7,.2));border:2px solid rgba(255,193,7,.4);border-radius:12px;animation:slideInDown 0.3s ease-out;">
+      <div style="font-size:1.5rem;margin-bottom:8px;">${error.icon}</div>
+      <div style="font-size:1rem;margin-bottom:4px;font-weight:700;color:#ffeb3b;">${error.title}</div>
+      <div style="font-size:0.85rem;color:rgba(255,255,255,0.9);line-height:1.3;">${error.message}</div>
+      <div style="font-size:0.75rem;color:rgba(255,255,255,0.7);font-style:italic;margin-top:4px;">${error.detail}</div>
+    </div>
+  `;
+  
+  // Show clean image box with just the scenario description
   imgBox.innerHTML = `
-    <div style="padding:30px;text-align:center;color:white;background:linear-gradient(135deg, rgba(255,107,107,.2), rgba(255,193,7,.2));border:2px solid rgba(255,193,7,.4);border-radius:16px;min-height:250px;display:flex;flex-direction:column;justify-content:center;">
-      <div style="font-size:2.5rem;margin-bottom:12px;">${error.icon}</div>
-      <div style="font-size:1.1rem;margin-bottom:8px;font-weight:700;color:#ffeb3b;text-shadow:0 1px 2px rgba(0,0,0,0.5);">${error.title}</div>
-      <div style="font-size:0.9rem;margin-bottom:12px;color:rgba(255,255,255,0.9);line-height:1.3;">${error.message}</div>
-      <div style="font-size:0.8rem;margin-bottom:20px;color:rgba(255,255,255,0.7);font-style:italic;">${error.detail}</div>
-      
-      <div style="border-top:1px solid rgba(255,255,255,.2);padding-top:20px;margin-top:10px;">
-        <div style="font-size:3rem;margin-bottom:12px;">${gestureEmoji}</div>
-        <div style="font-size:1.2rem;margin-bottom:8px;font-weight:600;color:white;text-shadow:0 1px 2px rgba(0,0,0,0.5);">${idea.title}</div>
-        <div style="font-size:0.85rem;line-height:1.3;color:rgba(255,255,255,0.9);max-width:280px;margin:0 auto;overflow-wrap:break-word;">
-          ${idea.imagePrompt.length > 100 ? idea.imagePrompt.substring(0, 97) + '...' : idea.imagePrompt}
-        </div>
+    <div style="padding:40px;text-align:center;color:white;background:rgba(0,229,255,.1);border:2px dashed rgba(255,255,255,.3);border-radius:16px;min-height:280px;display:flex;flex-direction:column;justify-content:center;">
+      <div style="font-size:3rem;margin-bottom:16px;">${gestureEmoji}</div>
+      <div style="font-size:1.2rem;margin-bottom:12px;font-weight:600;color:white;text-shadow:0 1px 2px rgba(0,0,0,0.5);">${idea.title}</div>
+      <div style="font-size:0.9rem;line-height:1.4;color:rgba(255,255,255,0.9);max-width:300px;margin:0 auto;">
+        ${idea.imagePrompt}
       </div>
     </div>
   `;
