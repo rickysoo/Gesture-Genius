@@ -875,13 +875,12 @@ function renderQuestion(idea, imageUrl){
       return;
     }
     
-    // Show loading placeholder while image loads in background
+    // Show compact loading placeholder while image loads in background
     imgBox.innerHTML = `
-      <div style="padding:40px;text-align:center;color:rgba(255,255,255,0.7);background:linear-gradient(135deg, rgba(0,229,255,.1), rgba(255,110,199,.1));border:2px dashed rgba(255,255,255,.3);border-radius:16px;min-height:280px;display:flex;flex-direction:column;justify-content:center;align-items:center;">
-        <div style="font-size:2.5rem;margin-bottom:12px;animation:pulse 2s infinite;">🖼️</div>
-        <div style="font-size:1rem;margin-bottom:8px;font-weight:600;">Loading image...</div>
-        <div style="font-size:0.85rem;color:rgba(255,255,255,0.6);">You can start answering using the description above!</div>
-        <div style="margin-top:16px;width:200px;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden;">
+      <div style="padding:30px;text-align:center;color:rgba(255,255,255,0.7);background:linear-gradient(135deg, rgba(0,229,255,.1), rgba(255,110,199,.1));border:2px dashed rgba(255,255,255,.3);border-radius:16px;min-height:200px;display:flex;flex-direction:column;justify-content:center;align-items:center;">
+        <div style="font-size:2rem;margin-bottom:8px;animation:pulse 2s infinite;">🖼️</div>
+        <div style="font-size:0.9rem;font-weight:600;">Generating image...</div>
+        <div style="margin-top:12px;width:160px;height:3px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden;">
           <div style="width:100%;height:100%;background:linear-gradient(90deg, var(--accent), var(--accent2));animation:loadingBar 2s infinite;border-radius:2px;"></div>
         </div>
       </div>
@@ -1523,6 +1522,7 @@ Return strict JSON with keys: title, imagePrompt, options{correct,close,obviousl
 Constraints:
 - The speaker is a very handsome/beautiful, model-quality attractive professional person drawn in premium cartoon style with face and full upper body clearly visible (never crop the face), on a bright professional stage or modern background.
 - Body cues must be clear (hands, stance, facial expression, eye contact).
+- CRITICAL: Ensure visual-textual consistency. If showing fingers/counting, the numbers must match exactly (2 fingers = "two things", 3 fingers = "three points", etc.).
 - The "correct" option should be a short sentence of what the speaker might be saying that matches the body cues.
 - The "close" option should be plausible but slightly off.
 - The "obviouslyWrong" should ignore the cues.
