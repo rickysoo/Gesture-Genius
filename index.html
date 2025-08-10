@@ -639,9 +639,8 @@ async function newQuestion(){
         console.log('Rendering prefetched question with image...');
         renderQuestion(idea, imageUrl);
       } else {
-        // Question was prefetched but image failed, show fallback
+        // Question was prefetched but image failed, show progressive loading
         renderQuestionWithProgressiveLoading(idea);
-        showImageFallback(idea);
       }
       
       state.busy = false;
@@ -1101,11 +1100,26 @@ function renderOptions(idea) {
 function showImageFallback(idea) {
   console.log('showImageFallback called with idea:', idea);
   imgBox.innerHTML = `
-    <div style="padding:30px;text-align:center;color:white;background:rgba(0,229,255,.1);border:2px dashed rgba(255,255,255,.3);border-radius:12px;">
-      <div style="font-size:2.5rem;margin-bottom:12px;">🎭</div>
-      <div style="font-size:1rem;margin-bottom:8px;font-weight:600;color:white;text-shadow:0 1px 2px rgba(0,0,0,0.5);">Scenario: ${idea.title}</div>
-      <div style="font-size:0.85rem;line-height:1.4;color:rgba(255,255,255,0.9);max-width:280px;margin:0 auto;text-shadow:0 1px 2px rgba(0,0,0,0.3);">
-        ${idea.imagePrompt}
+    <div class="progressive-loading-container" style="padding:30px;text-align:center;color:rgba(255,255,255,0.8);background:linear-gradient(135deg, rgba(0,229,255,.08), rgba(255,110,199,.08));border:2px solid rgba(255,255,255,.15);border-radius:16px;min-height:280px;display:flex;flex-direction:column;justify-content:center;align-items:center;position:relative;overflow:hidden;">
+      <!-- Animated background shimmer -->
+      <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);animation:shimmer 2s infinite;"></div>
+      
+      <!-- Main content -->
+      <div style="position:relative;z-index:1;">
+        <div style="font-size:2.2rem;margin-bottom:12px;animation:pulse 2s infinite;">🎨</div>
+        <!-- Speaker description -->
+        <div style="font-size:0.9rem;color:rgba(255,255,255,0.9);margin-bottom:8px;max-width:280px;line-height:1.3;">
+          ${sanitizeHTML(idea.imagePrompt)}
+        </div>
+        
+        <!-- Generating Image text -->
+        <div style="font-size:0.85rem;color:rgba(255,255,255,0.8);margin-bottom:16px;font-style:italic;">
+          Generating Image...
+        </div>
+        <!-- Realistic progress indicator -->
+        <div style="width:240px;height:6px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;margin:0 auto;">
+          <div class="progress-fill" style="width:50%;height:100%;background:linear-gradient(90deg, var(--accent3), var(--accent4));border-radius:3px;"></div>
+        </div>
       </div>
     </div>
   `;
