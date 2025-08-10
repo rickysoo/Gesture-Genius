@@ -784,10 +784,7 @@ async function prefetchFirstQuestion() {
 }
 
 async function prefetchNextQuestion() {
-  // DISABLED: Content mismatch issues persist - investigate further
-  console.log('Prefetch disabled due to persistent content mismatch issues');
-  return;
-  
+  // Re-enabled after fixing JSON parsing issues
   try {
     console.log('Prefetching next complete question...');
     
@@ -2108,8 +2105,19 @@ CREATIVITY: Generate fresh, unique content. Avoid generic phrases. Make the spea
   });
 
   try {
-    const obj = JSON.parse(data.choices[0].message.content);
-    if (!obj?.imagePrompt || !obj?.options?.correct) throw new Error('Bad JSON');
+    // Extract JSON from potential markdown code blocks
+    let content = data.choices[0].message.content.trim();
+    
+    // Remove markdown code block markers if present
+    if (content.startsWith('```json')) {
+      content = content.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+    } else if (content.startsWith('```')) {
+      content = content.replace(/^```\s*/, '').replace(/\s*```$/, '');
+    }
+    
+    console.log('Parsing JSON content:', content.substring(0, 200) + '...');
+    const obj = JSON.parse(content);
+    if (!obj?.imagePrompt || !obj?.options?.correct) throw new Error('Bad JSON structure');
     
     // Add content consistency validation
     console.log('Validating content consistency for gesture:', randomGesture);
