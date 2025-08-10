@@ -429,6 +429,29 @@ const summaryEl = qs('#summary');
 const restartBtn = qs('#restartBtn');
 const nextBtn = qs('#nextBtn');
 
+// Security function to sanitize HTML content and prevent XSS
+function sanitizeHTML(str) {
+  if (typeof str !== 'string') return '';
+  
+  // Create a temporary element to decode HTML entities and strip tags
+  const temp = document.createElement('div');
+  temp.textContent = str;
+  
+  // Remove any remaining HTML tags and limit length
+  return temp.innerHTML
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/<[^>]*>/g, '')
+    .substring(0, 1000); // Limit length to prevent abuse
+}
+
+// Create safe HTML text node
+function createSafeTextElement(tag, content, className = '') {
+  const element = document.createElement(tag);
+  element.textContent = sanitizeHTML(content);
+  if (className) element.className = className;
+  return element;
+}
+
 let state = {
   total: 5,
   index: 0,
@@ -828,7 +851,7 @@ function renderQuestionWithProgressiveLoading(idea) {
         <div style="font-size:2.2rem;margin-bottom:12px;animation:pulse 2s infinite;">🎨</div>
         <!-- Speaker description while loading -->
         <div style="font-size:0.9rem;color:rgba(255,255,255,0.9);margin-bottom:8px;max-width:280px;line-height:1.3;">
-          ${idea.imagePrompt}
+          ${sanitizeHTML(idea.imagePrompt)}
         </div>
         
         <!-- Generating Image text -->
@@ -1039,7 +1062,7 @@ function renderOptions(idea) {
   const engagementTextEl = qs('#engagementText');
   if (engagementTextEl) {
     engagementTextEl.innerHTML = `
-      <div style="margin-bottom: 8px; font-size: 1.8rem;">${randomMessage}</div>
+      <div style="margin-bottom: 8px; font-size: 1.8rem;">${sanitizeHTML(randomMessage)}</div>
     `;
   }
 
@@ -1138,9 +1161,9 @@ function choose(chosen, btnEl, all, idea){
 
   explainEl.style.display = 'block';
   explainEl.innerHTML = `
-    <div><strong>Answer:</strong> ${idea.options.correct}</div>
-    <div style="margin-top:6px">${idea.explanation}</div>
-    ${idea.coachingTips ? `<ul style="margin:8px 0 0 18px">${idea.coachingTips.map(t=>`<li>${t}</li>`).join('')}</ul>`:''}
+    <div><strong>Answer:</strong> ${sanitizeHTML(idea.options.correct)}</div>
+    <div style="margin-top:6px">${sanitizeHTML(idea.explanation)}</div>
+    ${idea.coachingTips ? `<ul style="margin:8px 0 0 18px">${idea.coachingTips.map(t=>`<li>${sanitizeHTML(t)}</li>`).join('')}</ul>`:''}
   `;
 
   state.history.push({
@@ -1198,7 +1221,7 @@ function showSummary(){
       <div style="font-size:1.2rem;color:var(--muted);margin-bottom:16px">${percent}% Accuracy</div>
       <div style="padding:16px 20px;background:linear-gradient(135deg, rgba(0,229,255,.1), rgba(255,110,199,.1));
         border-radius:16px;border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(8px);">
-        <strong style="font-size:1.1rem;color:var(--text);">${verdict}</strong>
+        <strong style="font-size:1.1rem;color:var(--text);">${sanitizeHTML(verdict)}</strong>
       </div>
     </div>
     
@@ -1206,7 +1229,7 @@ function showSummary(){
       <h3 style="margin:24px 0 12px 0;color:var(--accent);">🎯 Key Learning Points</h3>
       <ul style="list-style:none;padding:0;">
         ${bullets.map(b=>`<li style="margin:8px 0;padding:12px 16px;background:rgba(255,255,255,.05);
-          border-radius:12px;border-left:4px solid var(--accent2);">• ${b}</li>`).join('')}
+          border-radius:12px;border-left:4px solid var(--accent2);">• ${sanitizeHTML(b)}</li>`).join('')}
       </ul>
     ` : ''}
     
@@ -1218,12 +1241,12 @@ function showSummary(){
           <div style="margin:12px 0;padding:16px;background:rgba(255,255,255,.03);
             border:1px solid rgba(255,255,255,.1);border-radius:12px;">
             <strong style="color:var(--accent);">Q${i+1}.</strong> 
-            <span style="color:var(--text-soft);">${h.title}</span><br/>
+            <span style="color:var(--text-soft);">${sanitizeHTML(h.title)}</span><br/>
             <div style="margin-top:8px;font-size:0.9rem;">
               <span style="color:${h.correctness === 'correct' ? 'var(--good)' : h.correctness === 'close' ? 'var(--warn)' : 'var(--bad)'};">
-                ● Your answer: "${h.chosen}"
+                ● Your answer: "${sanitizeHTML(h.chosen)}"
               </span><br/>
-              <span style="color:var(--good);">✓ Correct: "${h.correct}"</span>
+              <span style="color:var(--good);">✓ Correct: "${sanitizeHTML(h.correct)}"</span>
             </div>
           </div>
         `).join('')}

@@ -52,7 +52,7 @@ export default async function handler(req, res) {
     
     // Generate S3 key with specified format
     const filename = generateFilename(gestureType);
-    const s3Key = `images/quiz/${filename}`;
+    const s3Key = filename;
     
     // Upload to S3
     const uploadParams = {
