@@ -21,9 +21,12 @@ function setSecurityHeaders(res) {
   
   // CORS headers (restrictive by default)
   const allowedOrigins = [
-    'https://gesture-genius-gd1s4stri-rickys-projects-c77239e3.vercel.app',
+    'https://gesture-genius-c0wvptgb0-rickys-projects-c77239e3.vercel.app',
+    'https://gesture-genius-f1pvs4ojp-rickys-projects-c77239e3.vercel.app',
+    'https://gesture-genius-ppfli0yh7-rickys-projects-c77239e3.vercel.app',
+    'https://gesture-genius-bo77rbvnp-rickys-projects-c77239e3.vercel.app',
     'https://gesture-genius-rog748qge-rickys-projects-c77239e3.vercel.app',
-    'https://gesture-genius-bo77rbvnp-rickys-projects-c77239e3.vercel.app'
+    'https://gesture-genius-gd1s4stri-rickys-projects-c77239e3.vercel.app'
   ];
   const allowedOrigin = process.env.ALLOWED_ORIGIN || allowedOrigins[0];
   res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
@@ -81,9 +84,12 @@ function authenticate(req, res, next) {
   
   // Check if request is from allowed origins
   const allowedOrigins = [
-    'https://gesture-genius-gd1s4stri-rickys-projects-c77239e3.vercel.app',
+    'https://gesture-genius-c0wvptgb0-rickys-projects-c77239e3.vercel.app',
+    'https://gesture-genius-f1pvs4ojp-rickys-projects-c77239e3.vercel.app',
+    'https://gesture-genius-ppfli0yh7-rickys-projects-c77239e3.vercel.app',
+    'https://gesture-genius-bo77rbvnp-rickys-projects-c77239e3.vercel.app',
     'https://gesture-genius-rog748qge-rickys-projects-c77239e3.vercel.app',
-    'https://gesture-genius-bo77rbvnp-rickys-projects-c77239e3.vercel.app'
+    'https://gesture-genius-gd1s4stri-rickys-projects-c77239e3.vercel.app'
   ];
   
   const isFromAllowedOrigin = origin && allowedOrigins.includes(origin) || 

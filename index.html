@@ -785,6 +785,12 @@ async function prefetchFirstQuestion() {
 
 async function prefetchNextQuestion() {
   // Re-enabled after fixing JSON parsing issues
+  // Prevent excessive prefetch calls
+  if (state.prefetchQueue.length >= 2) {
+    console.log('Prefetch queue has enough items, skipping prefetch');
+    return;
+  }
+  
   try {
     console.log('Prefetching next complete question...');
     
@@ -792,7 +798,7 @@ async function prefetchNextQuestion() {
     const idea = await getGestureAndOptions();
     if (!idea) throw new Error('No idea generated in prefetch');
     
-    console.log('Prefetch: Generating matching image for gesture:', idea.gesture);
+    console.log('Prefetch: Generating matching image for:', idea.title?.substring(0, 50) + '...');
     
     const imagePromise = Promise.race([
       getDalle2Image(idea.imagePrompt),
@@ -1893,6 +1899,14 @@ async function saveToStorage(idea, imageUrl) {
     console.log('S3 upload successful:', uploadResult.s3Url);
     
     // Step 2: Save quiz data to database
+    // Convert options object to array format for database
+    const optionsArray = idea.options ? [
+      idea.options.correct,
+      idea.options.close, 
+      idea.options.obviouslyWrong,
+      idea.options.funnyWrong
+    ].filter(opt => opt && opt.trim()) : [];
+    
     const saveResponse = await fetch('/api/database/save-quiz', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -1900,7 +1914,7 @@ async function saveToStorage(idea, imageUrl) {
         image_url: uploadResult.s3Url,
         s3_key: uploadResult.s3Key,
         question: idea.title,
-        options: idea.options,
+        options: optionsArray,
         correct_answer: idea.options?.correct,
         gesture_type: gestureType,
         dalle_prompt: idea.imagePrompt,
