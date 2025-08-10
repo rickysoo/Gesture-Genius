@@ -715,7 +715,7 @@ function showLoadingState() {
       <div class="gesture-silhouette"></div>
       <div style="text-align:center;">
         <div class="loading-text" style="font-weight:600;color:var(--accent3);margin-bottom:8px;">${loadingMessages[0]}</div>
-        <div style="font-size:0.8rem;color:var(--text-soft);opacity:0.8;">Generating image...</div>
+        <div style="font-size:0.8rem;color:var(--text-soft);opacity:0.8;">${idea.imagePrompt}</div>
       </div>
     </div>
   `;
@@ -822,8 +822,6 @@ function renderQuestionWithProgressiveLoading(idea) {
       <!-- Main content -->
       <div style="position:relative;z-index:1;">
         <div style="font-size:2.2rem;margin-bottom:12px;animation:pulse 2s infinite;">🎨</div>
-        <div style="font-size:1rem;margin-bottom:8px;font-weight:600;color:#fff;">Generating image...</div>
-        
         <!-- Speaker description while loading -->
         <div style="font-size:0.9rem;color:rgba(255,255,255,0.9);margin-bottom:16px;max-width:280px;line-height:1.3;">
           ${idea.imagePrompt}
@@ -902,7 +900,7 @@ function renderQuestion(idea, imageUrl){
     imgBox.innerHTML = `
       <div style="padding:30px;text-align:center;color:rgba(255,255,255,0.7);background:linear-gradient(135deg, rgba(0,229,255,.1), rgba(255,110,199,.1));border:2px dashed rgba(255,255,255,.3);border-radius:16px;min-height:200px;display:flex;flex-direction:column;justify-content:center;align-items:center;">
         <div style="font-size:2rem;margin-bottom:8px;animation:pulse 2s infinite;">🖼️</div>
-        <div style="font-size:0.9rem;font-weight:600;">Generating image...</div>
+        <div style="font-size:0.9rem;color:rgba(255,255,255,0.9);">${idea.imagePrompt}</div>
         <div style="margin-top:12px;width:160px;height:3px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden;">
           <div style="width:100%;height:100%;background:linear-gradient(90deg, var(--accent), var(--accent2));animation:loadingBar 2s infinite;border-radius:2px;"></div>
         </div>
