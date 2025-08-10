@@ -869,6 +869,11 @@ function updateImageInPlace(idea, imageUrl) {
     // Replace the loading placeholder with smooth transition
     imgBox.innerHTML = '';
     imgBox.appendChild(img);
+    
+    // Save to storage (non-blocking, fails silently)
+    saveToStorage(idea, imageUrl).catch(err => 
+      console.log('Storage save failed but app continues:', err.message)
+    );
   };
   
   img.onerror = () => {
@@ -951,6 +956,11 @@ function renderQuestion(idea, imageUrl){
               imgBox.innerHTML = ''; // Clear loading placeholder
               imgBox.appendChild(newImg);
               // Options already rendered immediately, so no need to call renderOptions again
+              
+              // Save to storage (non-blocking, fails silently)
+              saveToStorage(idea, url).catch(err => 
+                console.log('Storage save failed but app continues:', err.message)
+              );
             };
             newImg.onerror = () => tryLoadImage(url);
             newImg.src = url;
@@ -974,6 +984,11 @@ function renderQuestion(idea, imageUrl){
       imgBox.innerHTML = ''; // Clear loading placeholder
       imgBox.appendChild(img);
       // Options already rendered immediately, so no need to call renderOptions again
+      
+      // Save to storage (non-blocking, fails silently)
+      saveToStorage(idea, imageUrl).catch(err => 
+        console.log('Storage save failed but app continues:', err.message)
+      );
     };
     
     console.log('Setting image src:', url);
@@ -1807,6 +1822,102 @@ async function openaiImages(body){
     console.error('Images API fetch failed:', error);
     throw error;
   }
+}
+
+// Storage functions for saving quiz data to database and S3
+async function saveToStorage(idea, imageUrl) {
+  try {
+    console.log('Saving quiz data to storage...', { 
+      question: idea?.title, 
+      imageUrl: imageUrl ? 'present' : 'missing',
+      gestureType: extractGestureType(idea)
+    });
+    
+    if (!idea || !imageUrl) {
+      console.log('Skipping storage - missing required data');
+      return;
+    }
+    
+    // Extract gesture type from the idea
+    const gestureType = extractGestureType(idea);
+    
+    // Step 1: Upload image to S3
+    const uploadResponse = await fetch('/api/storage/upload', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        imageUrl: imageUrl,
+        gestureType: gestureType
+      })
+    });
+    
+    if (!uploadResponse.ok) {
+      throw new Error(`S3 upload failed: ${uploadResponse.status}`);
+    }
+    
+    const uploadResult = await uploadResponse.json();
+    console.log('S3 upload successful:', uploadResult.s3Url);
+    
+    // Step 2: Save quiz data to database
+    const saveResponse = await fetch('/api/database/save-quiz', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        image_url: uploadResult.s3Url,
+        s3_key: uploadResult.s3Key,
+        question: idea.title,
+        options: idea.options,
+        correct_answer: idea.options?.correct,
+        gesture_type: gestureType,
+        dalle_prompt: idea.imagePrompt,
+        scenario_prompt: idea.title,
+        explanation: idea.explanation,
+        coaching_tips: idea.coachingTips
+      })
+    });
+    
+    if (!saveResponse.ok) {
+      throw new Error(`Database save failed: ${saveResponse.status}`);
+    }
+    
+    const saveResult = await saveResponse.json();
+    console.log('✅ Quiz data saved successfully:', saveResult.id);
+    
+  } catch (error) {
+    console.warn('⚠️ Storage failed (app continues normally):', error.message);
+  }
+}
+
+function extractGestureType(idea) {
+  if (!idea?.title) return 'unknown';
+  
+  // Extract gesture type from the title or imagePrompt
+  const text = (idea.title + ' ' + (idea.imagePrompt || '')).toLowerCase();
+  
+  // Common gesture patterns
+  const gestureMap = {
+    'confident': /confident|power pose|chest out|hands on hips/,
+    'defensive': /defensive|folded arms|arms crossed/,
+    'open': /open palms|transparency|honesty/,
+    'pointing': /pointing|gesture.*slides|visual aids/,
+    'uncertain': /uncertain|shrug|questioning/,
+    'excited': /excited|enthusiastic|clapping|celebration/,
+    'sincere': /sincere|heart|emotion|touching chest/,
+    'thinking': /thinking|chin|contemplat/,
+    'welcoming': /welcoming|open arms|embrace/,
+    'nervous': /nervous|fidget|anxious/,
+    'authoritative': /authoritative|command|direct/,
+    'listening': /listening|ear|attentive/,
+    'explaining': /explaining|counting|fingers/,
+    'respectful': /respectful|bow|modest/,
+    'engaged': /engaged|lean.*forward|interest/,
+  };
+  
+  for (const [type, pattern] of Object.entries(gestureMap)) {
+    if (pattern.test(text)) return type;
+  }
+  
+  return 'general';
 }
 
 async function getGestureAndOptions(){
