@@ -280,7 +280,7 @@
     .quiz-screen{padding:16px;}
   }
   
-  .quiz-screen{min-height:100vh;width:100%;padding:20px;box-sizing:border-box;}
+  .quiz-screen{min-height:100vh;width:100%;padding:20px;box-sizing:border-box;position:relative;}
   main.stage{display:grid;grid-template-columns:400px 1fr;gap:30px;align-items:start;margin-top:20px;max-width:1200px;margin-left:auto;margin-right:auto;}
   .card.imgBox{
     width:100%;height:300px;margin:0;position:relative;
@@ -494,8 +494,15 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       console.log('Start button clicked'); // Debug log
       try { sounds.click(); } catch(e) { console.warn('Sound play failed:', e); }
+      
+      // Clean screen transitions
       introScreen.style.display = 'none';
       quizScreen.style.display = 'block';
+      
+      // Clear any stray error notifications
+      const existingErrors = document.querySelectorAll('.error-notification');
+      existingErrors.forEach(error => error.remove());
+      
       await startQuiz();
     });
   }
@@ -505,8 +512,15 @@ document.addEventListener('DOMContentLoaded', () => {
 if (startQuizBtn) {
   startQuizBtn.addEventListener('click', async () => {
     try { sounds.click(); } catch(e) { console.warn('Sound play failed:', e); }
+    
+    // Clean screen transitions
     introScreen.style.display = 'none';
     quizScreen.style.display = 'block';
+    
+    // Clear any stray error notifications
+    const existingErrors = document.querySelectorAll('.error-notification');
+    existingErrors.forEach(error => error.remove());
+    
     await startQuiz();
   });
 }
@@ -515,8 +529,17 @@ if (startQuizBtn) {
 if (restartBtn) {
   restartBtn.addEventListener('click', async () => {
   try { sounds.click(); } catch(e) { console.warn('Sound play failed:', e); }
+  
+  // Clean screen transitions and reset layout
   quizScreen.style.display = 'none';
   introScreen.style.display = 'block';
+  
+  // Clear any stray error notifications and reset UI
+  const existingErrors = document.querySelectorAll('.error-notification');
+  existingErrors.forEach(error => error.remove());
+  
+  // Reset summary display
+  if (summaryEl) summaryEl.style.display = 'none';
   prefetchStatus.innerHTML = '<div class="loading-spinner" style="display: inline-block; width: 16px; height: 16px; margin-right: 8px;"></div>Preparing your first question...';
   await prefetchFirstQuestion();
   prefetchStatus.innerHTML = '✅ Ready to start!';
@@ -963,7 +986,6 @@ function renderOptions(idea) {
   if (engagementTextEl) {
     engagementTextEl.innerHTML = `
       <div style="margin-bottom: 8px; font-size: 1.8rem;">${randomMessage}</div>
-      <div style="font-size: 1.1rem; color: var(--accent2); font-weight: 600;">${idea.title}</div>
     `;
   }
 
