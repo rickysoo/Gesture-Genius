@@ -507,9 +507,8 @@ const quizScreen = qs('#quizScreen');
 const startQuizBtn = qs('#startQuizBtn');
 const prefetchStatus = qs('#prefetchStatus');
 
-// Start prefetching when page loads
+// Page load - show ready immediately (no prefetching)
 window.addEventListener('load', async () => {
-  await prefetchFirstQuestion();
   prefetchStatus.innerHTML = '✅ Ready to start!';
 });
 
@@ -567,8 +566,6 @@ if (restartBtn) {
   
   // Reset summary display
   if (summaryEl) summaryEl.style.display = 'none';
-  prefetchStatus.innerHTML = '<div class="loading-spinner" style="display: inline-block; width: 16px; height: 16px; margin-right: 8px;"></div>Preparing your first question...';
-  await prefetchFirstQuestion();
   prefetchStatus.innerHTML = '✅ Ready to start!';
 });
 }
@@ -645,8 +642,7 @@ async function newQuestion(){
       
       state.busy = false;
       
-      // Start prefetching the next question while user reads this one
-      setTimeout(() => prefetchNextQuestion(), 1000);
+      // Prefetching disabled - questions generated on demand
       return;
     } else {
       // Generate question first, then appropriate image
@@ -784,12 +780,9 @@ async function prefetchFirstQuestion() {
 }
 
 async function prefetchNextQuestion() {
-  // Re-enabled after fixing JSON parsing issues
-  // Prevent excessive prefetch calls
-  if (state.prefetchQueue.length >= 2) {
-    console.log('Prefetch queue has enough items, skipping prefetch');
-    return;
-  }
+  // DISABLED: Prefetching completely disabled per user request
+  console.log('Prefetch disabled - questions will be generated on demand');
+  return;
   
   try {
     console.log('Prefetching next complete question...');
@@ -1093,11 +1086,7 @@ function renderOptions(idea) {
 
   explainEl.style.display = 'none';
   
-  // Start prefetching the next question immediately when options are shown
-  if (state.index + 1 < state.total) {
-    console.log(`Starting prefetch for question ${state.index + 2}`);
-    setTimeout(() => prefetchNextQuestion(), 500); // Reduced delay for faster prefetching
-  }
+  // Prefetching disabled - questions will be generated on demand when needed
 }
 
 function showImageFallback(idea) {
