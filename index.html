@@ -630,6 +630,12 @@ async function newQuestion(){
       
       if (!idea) throw new Error('No idea generated');
       
+      console.log('Generated new idea:', {
+        title: idea.title,
+        imagePrompt: idea.imagePrompt,
+        correctAnswer: idea.options?.correct
+      });
+      
       // Show question with loading placeholder
       hideLoadingState();
       renderQuestionWithProgressiveLoading(idea);
@@ -748,8 +754,10 @@ async function prefetchFirstQuestion() {
 }
 
 async function prefetchNextQuestion() {
-  // Generate full question+image pairs to ensure perfect matching
-  if (state.prefetchQueue.length >= 1 || state.busy) return;
+  // TEMPORARILY DISABLED: Generate full question+image pairs to ensure perfect matching
+  console.log('Prefetch temporarily disabled to ensure content consistency');
+  return;
+  // if (state.prefetchQueue.length >= 1 || state.busy) return;
   
   try {
     console.log('Prefetching next complete question...');
@@ -985,17 +993,24 @@ function renderQuestion(idea, imageUrl){
 }
 
 function renderOptions(idea) {
-  console.log('renderOptions called with idea:', idea);
+  console.log('renderOptions called with idea:', {
+    title: idea.title,
+    imagePrompt: idea.imagePrompt,
+    correctAnswer: idea.options?.correct
+  });
   console.log('optionsEl:', optionsEl);
+  
+  // Create a deep copy to avoid closure issues
+  const ideaCopy = JSON.parse(JSON.stringify(idea));
   
   // Update engagement message with variety
   const engagementMessages = [
     'What is the speaker saying?',
-    'What would he say in this moment?',
-    'What is she actually thinking?',
+    'What would they say in this moment?',
+    'What is the speaker actually thinking?',
     'What would the speaker say next?',
-    'What is he conveying with this gesture?',
-    'What message is she communicating?',
+    'What is the speaker conveying with this gesture?',
+    'What message is the speaker communicating?',
     'What would the speaker be saying here?'
   ];
   const randomMessage = engagementMessages[Math.floor(Math.random() * engagementMessages.length)];
@@ -1007,10 +1022,10 @@ function renderOptions(idea) {
   }
 
   const opts = [
-    { text: idea.options.correct, tag: 'correct' },
-    { text: idea.options.close, tag: 'close' },
-    { text: idea.options.obviouslyWrong, tag: 'wrong' },
-    { text: idea.options.funnyWrong, tag: 'wrong' },
+    { text: ideaCopy.options.correct, tag: 'correct' },
+    { text: ideaCopy.options.close, tag: 'close' },
+    { text: ideaCopy.options.obviouslyWrong, tag: 'wrong' },
+    { text: ideaCopy.options.funnyWrong, tag: 'wrong' },
   ].sort(() => Math.random() - 0.5);
 
   console.log('Options to render:', opts);
@@ -1024,7 +1039,7 @@ function renderOptions(idea) {
     const div = document.createElement('button');
     div.className = 'option';
     div.innerText = o.text;
-    div.onclick = () => choose(o, div, opts, idea);
+    div.onclick = () => choose(o, div, opts, ideaCopy);
     optionsEl.appendChild(div);
   });
   console.log('Options rendered, optionsEl children:', optionsEl.children.length);
@@ -1055,6 +1070,13 @@ function showImageFallback(idea) {
 }
 
 function choose(chosen, btnEl, all, idea){
+  console.log('choose() called with idea:', {
+    title: idea.title,
+    imagePrompt: idea.imagePrompt,
+    correctAnswer: idea.options?.correct,
+    explanation: idea.explanation
+  });
+  
   Array.from(optionsEl.children).forEach(c => c.disabled = true);
   
   // Add visual feedback immediately
