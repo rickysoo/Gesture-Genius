@@ -807,8 +807,13 @@ function renderQuestionWithProgressiveLoading(idea) {
       <div style="position:relative;z-index:1;">
         <div style="font-size:2.2rem;margin-bottom:12px;animation:pulse 2s infinite;">🎨</div>
         <!-- Speaker description while loading -->
-        <div style="font-size:0.9rem;color:rgba(255,255,255,0.9);margin-bottom:16px;max-width:280px;line-height:1.3;">
+        <div style="font-size:0.9rem;color:rgba(255,255,255,0.9);margin-bottom:8px;max-width:280px;line-height:1.3;">
           ${idea.imagePrompt}
+        </div>
+        
+        <!-- Generating Image text -->
+        <div style="font-size:0.85rem;color:rgba(255,255,255,0.8);margin-bottom:16px;font-style:italic;">
+          Generating Image...
         </div>
         
         <!-- Realistic progress indicator -->
@@ -1525,7 +1530,7 @@ async function getGestureAndOptions(){
   const sys = `You are a public speaking coach. Create a single multiple-choice item based on reading body language.
 Return strict JSON with keys: title, imagePrompt, options{correct,close,obviouslyWrong,funnyWrong}, explanation, coachingTips(array).
 Constraints:
-- The speaker is a very handsome/beautiful, model-quality attractive professional person drawn in premium cartoon style with face and full upper body clearly visible (never crop the face), on a bright professional stage or modern background.
+- The speaker is a professional person drawn in premium cartoon style with face and full upper body clearly visible (never crop the face), on a bright professional stage or modern background. Randomly choose between male or female appearance to ensure gender variety.
 - Body cues must be clear (hands, stance, facial expression, eye contact).
 - CRITICAL: Ensure visual-textual consistency. If showing fingers/counting, the numbers must match exactly (2 fingers = "two things", 3 fingers = "three points", etc.).
 - The "correct" option should be a short sentence of what the speaker might be saying that matches the body cues.
@@ -1533,7 +1538,7 @@ Constraints:
 - The "obviouslyWrong" should ignore the cues.
 - The "funnyWrong" should be silly (family-friendly).
 - Keep each option under 100 characters for faster processing.
-- The imagePrompt must be concise but vivid - under 150 characters.
+- The imagePrompt must be concise but vivid - under 150 characters. NEVER include gesture names or answers in the imagePrompt to avoid giving away the answer.
 - Keep explanations <= 80 words; coachingTips = 3 to 4 short items.`;
   const gestureTypes = [
     'open palms showing honesty and transparency',
