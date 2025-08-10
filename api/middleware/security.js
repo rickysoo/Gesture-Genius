@@ -20,7 +20,11 @@ function setSecurityHeaders(res) {
   res.setHeader('X-Powered-By', ''); // Remove X-Powered-By header
   
   // CORS headers (restrictive by default)
-  const allowedOrigin = process.env.ALLOWED_ORIGIN || 'https://gesture-genius-gd1s4stri-rickys-projects-c77239e3.vercel.app';
+  const allowedOrigins = [
+    'https://gesture-genius-gd1s4stri-rickys-projects-c77239e3.vercel.app',
+    'https://gesture-genius-rog748qge-rickys-projects-c77239e3.vercel.app'
+  ];
+  const allowedOrigin = process.env.ALLOWED_ORIGIN || allowedOrigins[0];
   res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-API-Key');
@@ -70,17 +74,25 @@ function authenticate(req, res, next) {
   
   const apiKey = req.headers['x-api-key'];
   
-  // For development, allow requests from the same origin without API key
-  const isDevelopment = process.env.NODE_ENV !== 'production';
+  // Allow requests from the same origin without API key
   const origin = req.headers.origin;
   const referer = req.headers.referer;
   
-  if (isDevelopment && (origin || referer)) {
+  // Check if request is from allowed origins
+  const allowedOrigins = [
+    'https://gesture-genius-gd1s4stri-rickys-projects-c77239e3.vercel.app',
+    'https://gesture-genius-rog748qge-rickys-projects-c77239e3.vercel.app'
+  ];
+  
+  const isFromAllowedOrigin = origin && allowedOrigins.includes(origin) || 
+    referer && allowedOrigins.some(allowed => referer.startsWith(allowed));
+  
+  if (isFromAllowedOrigin) {
     return next();
   }
   
-  // In production, require API key or same-origin request
-  if (!apiKey && !origin && !referer) {
+  // For other requests, require API key
+  if (!apiKey) {
     res.status(401).json({ error: 'Authentication required' });
     return;
   }
