@@ -754,9 +754,9 @@ async function prefetchFirstQuestion() {
 }
 
 async function prefetchNextQuestion() {
-  // Re-enabled with improved consistency: Generate full question+image pairs
-  console.log('Prefetch with improved content consistency');
-  if (state.prefetchQueue.length >= 1 || state.busy) return;
+  // DISABLED: Content mismatch issues persist - investigate further
+  console.log('Prefetch disabled due to persistent content mismatch issues');
+  return;
   
   try {
     console.log('Prefetching next complete question...');
@@ -1557,6 +1557,13 @@ async function openaiImages(body){
 async function getGestureAndOptions(){
   const sys = `You are a public speaking coach. Create a single multiple-choice item based on reading body language.
 Return strict JSON with keys: title, imagePrompt, options{correct,close,obviouslyWrong,funnyWrong}, explanation, coachingTips(array).
+
+CRITICAL CONSISTENCY REQUIREMENTS:
+- ALL content must be about the EXACT SAME gesture. The imagePrompt, correct answer, explanation, and tips must all describe the SAME body language.
+- If the gesture is "hand-on-heart", then the answer must be about sincerity/emotion, NOT about clapping or celebration.
+- If the gesture is "clapping", then the answer must be about celebration/excitement, NOT about sincerity or heart gestures.
+- Double-check that your imagePrompt matches your correct answer and explanation.
+
 Constraints:
 - The speaker is a professional person drawn in premium cartoon style with face and full upper body clearly visible (never crop the face), on a bright professional stage or modern background. Randomly choose between male or female appearance to ensure gender variety.
 - Body cues must be clear (hands, stance, facial expression, eye contact).
@@ -1619,6 +1626,29 @@ Ensure the image description and correct answer are perfectly aligned with "${ra
   try {
     const obj = JSON.parse(data.choices[0].message.content);
     if (!obj?.imagePrompt || !obj?.options?.correct) throw new Error('Bad JSON');
+    
+    // Add content consistency validation
+    console.log('Validating content consistency for gesture:', randomGesture);
+    console.log('Generated content:', {
+      imagePrompt: obj.imagePrompt,
+      correctAnswer: obj.options.correct,
+      explanation: obj.explanation
+    });
+    
+    // Basic consistency checks
+    const gestureKeywords = randomGesture.toLowerCase().split(' ');
+    const imagePromptLower = obj.imagePrompt.toLowerCase();
+    const explanationLower = obj.explanation.toLowerCase();
+    
+    // Check if there are obvious mismatches (hand-on-heart vs clapping)
+    if (randomGesture.includes('hand-on-heart') && (explanationLower.includes('clapping') || explanationLower.includes('applause'))) {
+      console.warn('Content mismatch detected: hand-on-heart gesture but clapping explanation');
+    }
+    
+    if (randomGesture.includes('clapping') && (imagePromptLower.includes('heart') || explanationLower.includes('sincere'))) {
+      console.warn('Content mismatch detected: clapping gesture but heart/sincere content');
+    }
+    
     return obj;
   } catch(e){
     console.error('Parsing error:', e);
