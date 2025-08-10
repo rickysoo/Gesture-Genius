@@ -575,8 +575,11 @@ if (nextBtn) {
 }
 
 async function newQuestion(){
-  console.log('newQuestion called, index:', state.index);
-  if (state.busy) return;
+  console.log('newQuestion called, index:', state.index, 'busy:', state.busy);
+  if (state.busy) {
+    console.log('Already busy, ignoring newQuestion call');
+    return;
+  }
   state.busy = true;
   const n = state.index + 1;
   qTitle.textContent = `Question ${n}`;
@@ -596,10 +599,13 @@ async function newQuestion(){
       idea = prefetched.idea;
       imageUrl = prefetched.imageUrl;
       console.log('Using prefetched question+image pair');
+      console.log('Prefetched idea:', idea.title);
+      console.log('Prefetched imageUrl:', imageUrl ? 'present' : 'null');
       
       // Show the prefetched question immediately
       hideLoadingState();
       if (imageUrl) {
+        console.log('Rendering prefetched question with image...');
         renderQuestion(idea, imageUrl);
       } else {
         // Question was prefetched but image failed, show fallback
@@ -655,9 +661,8 @@ async function newQuestion(){
       return;
     }
     
-    hideLoadingState();
-    renderQuestion(idea, imageUrl);
-    
+    // This code is unreachable - both branches above have return statements
+    console.error('CRITICAL: Unreachable code executed in nextQuestion()');
     
   } catch (error) {
     console.error('Question generation failed:', error);
