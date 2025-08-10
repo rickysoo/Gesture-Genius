@@ -384,7 +384,7 @@
         <div id="imgPlaceholder">
           <div style="padding:40px;text-align:center;">
             <div class="loading-spinner"></div>
-            <div class="loading-text">Generating your first scenario...</div>
+            <div class="loading-text">Preparing your scenario...</div>
           </div>
         </div>
       </div>
@@ -588,34 +588,13 @@ async function newQuestion(){
   console.log('Loading state shown, about to try API...');
 
   try {
-    // Check if we have a prefetched image (cost optimized approach)
-    let idea, imageUrl, hasPrefetchedImage = false;
+    // Check if we have a prefetched question+image pair
+    let idea, imageUrl;
     if (state.prefetchQueue.length > 0) {
       const prefetched = state.prefetchQueue.shift();
-      if (prefetched.preloaded) {
-        // We only have a prefetched image, need to generate text
-        hasPrefetchedImage = true;
-        imageUrl = prefetched.imageUrl;
-        console.log('Using prefetched image, generating text on-demand...');
-        
-        // Generate text only
-        idea = await Promise.race([
-          getGestureAndOptions(),
-          new Promise((_, reject) => setTimeout(() => reject(new Error('Text timeout')), 15000))
-        ]);
-        
-        if (!idea) throw new Error('No idea generated');
-        
-        // Show question immediately with prefetched image
-        hideLoadingState();
-        renderQuestion(idea, imageUrl);
-        state.busy = false;
-        return;
-      } else {
-        // Old format fallback (full prefetch)
-        idea = prefetched.idea;
-        imageUrl = prefetched.imageUrl;
-      }
+      idea = prefetched.idea;
+      imageUrl = prefetched.imageUrl;
+      console.log('Using prefetched question+image pair');
     } else {
       // Generate question first, then appropriate image
       console.log('Generating question first, then matching image...');
@@ -694,10 +673,10 @@ function showLoadingState() {
   
   // Show optimistic loading with shorter intervals
   const loadingMessages = [
-    'Generating image...',
-    'Drawing character...',
+    'Preparing scenario...',
+    'Creating character...',
     'Adding gestures...',
-    'Finalizing question...',
+    'Finalizing details...',
     'Almost ready...'
   ];
   let msgIndex = 0;
@@ -715,7 +694,7 @@ function showLoadingState() {
       <div class="gesture-silhouette"></div>
       <div style="text-align:center;">
         <div class="loading-text" style="font-weight:600;color:var(--accent3);margin-bottom:8px;">${loadingMessages[0]}</div>
-        <div style="font-size:0.8rem;color:var(--text-soft);opacity:0.8;">${idea.imagePrompt}</div>
+        <div style="font-size:0.8rem;color:var(--text-soft);opacity:0.8;">Preparing your scenario...</div>
       </div>
     </div>
   `;
@@ -751,7 +730,7 @@ async function prefetchNextQuestion() {
   if (state.prefetchQueue.length >= 1 || state.busy) return;
   
   try {
-    console.log('Prefetching next image (cost optimized - no text generation)...');
+    console.log('Prefetching next question...');
     
     // Get a random gesture type for image prefetching
     const gestureTypes = [
