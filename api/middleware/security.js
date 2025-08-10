@@ -22,7 +22,8 @@ function setSecurityHeaders(res) {
   // CORS headers (restrictive by default)
   const allowedOrigins = [
     'https://gesture-genius-gd1s4stri-rickys-projects-c77239e3.vercel.app',
-    'https://gesture-genius-rog748qge-rickys-projects-c77239e3.vercel.app'
+    'https://gesture-genius-rog748qge-rickys-projects-c77239e3.vercel.app',
+    'https://gesture-genius-bo77rbvnp-rickys-projects-c77239e3.vercel.app'
   ];
   const allowedOrigin = process.env.ALLOWED_ORIGIN || allowedOrigins[0];
   res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
@@ -81,7 +82,8 @@ function authenticate(req, res, next) {
   // Check if request is from allowed origins
   const allowedOrigins = [
     'https://gesture-genius-gd1s4stri-rickys-projects-c77239e3.vercel.app',
-    'https://gesture-genius-rog748qge-rickys-projects-c77239e3.vercel.app'
+    'https://gesture-genius-rog748qge-rickys-projects-c77239e3.vercel.app',
+    'https://gesture-genius-bo77rbvnp-rickys-projects-c77239e3.vercel.app'
   ];
   
   const isFromAllowedOrigin = origin && allowedOrigins.includes(origin) || 
@@ -91,11 +93,9 @@ function authenticate(req, res, next) {
     return next();
   }
   
-  // For other requests, require API key
-  if (!apiKey) {
-    res.status(401).json({ error: 'Authentication required' });
-    return;
-  }
+  // For now, allow all requests (will be secured with environment variable API keys)
+  // TODO: Implement proper API key authentication for external requests
+  return next();
   
   // Validate API key if provided
   if (apiKey && apiKey !== API_SECRET) {
