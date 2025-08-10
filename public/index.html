@@ -1,0 +1,2227 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Gesture Genius - Master Public Speaking Body Language | Interactive Quiz</title>
+<meta name="description" content="Learn to read body language like a pro with our AI-powered interactive quiz. Master public speaking gestures, postures, and expressions through fun cartoon scenarios.">
+<meta name="keywords" content="body language, public speaking, gestures, communication skills, presentation skills, quiz">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="shortcut icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/favicon.svg">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0a0714">
+
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XTX1483T7Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XTX1483T7Q');
+</script>
+
+<style>
+  :root{
+    --bg: #1e40af;
+    --card: rgba(255,255,255,0.98);
+    --accent: #3b82f6;
+    --accent2: #8b5cf6;
+    --accent3: #f59e0b;
+    --accent4: #ec4899;
+    --good: #10b981;
+    --warn: #f59e0b;
+    --bad: #ef4444;
+    --muted: rgba(255,255,255,0.85);
+    --text: #ffffff;
+    --text-soft: rgba(255,255,255,0.95);
+    --text-main: #1f2937;
+    --text-card: #111827;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{font-family:'Inter',-apple-system,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:
+    linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #3730a3 100%);
+    color:white;min-height:100vh;
+    background-attachment:fixed;font-size:16px;line-height:1.5;}
+  .wrap{width:100%;margin:0;padding:0;position:relative;min-height:100vh;display:flex;flex-direction:column;}
+  header{display:flex;gap:6px;align-items:center;justify-content:center;padding:4px 0;margin-bottom:4px;}
+  .brand{display:flex;gap:8px;align-items:center}
+  .logo{
+    width:32px;height:32px;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:18px;
+    background:linear-gradient(135deg, rgba(0,229,255,.1), rgba(255,110,199,.1));
+    border:1px solid rgba(255,255,255,.2);
+    box-shadow:0 0 15px rgba(0,229,255,.2);
+  }
+  @keyframes pulse { 
+    0%, 100% { opacity: 0.7; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.05); }
+  }
+  @keyframes spin { from{transform:rotate(0)} to{transform:rotate(360deg)} }
+  @keyframes loadingBar {
+    0% { transform: translateX(-100%); }
+    50% { transform: translateX(0%); }
+    100% { transform: translateX(100%); }
+  }
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(200%); }
+  }
+  @keyframes progressFill {
+    0% { width: 0%; }
+    15% { width: 12%; }
+    30% { width: 28%; }
+    50% { width: 45%; }
+    70% { width: 65%; }
+    85% { width: 80%; }
+    100% { width: 92%; }
+  }
+  @keyframes fadeInScale {
+    0% { opacity: 0; transform: scale(0.95) translateY(10px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  @keyframes slideInDown {
+    0% { opacity: 0; transform: translateY(-20px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  h1{font-size:1.8rem;margin:0;font-weight:700;color:white;text-shadow:0 2px 4px rgba(0,0,0,.3);}
+  .card{
+    background:rgba(255,255,255,0.98);
+    border:1px solid rgba(255,255,255,.3);
+    border-radius:24px;padding:32px;
+    box-shadow:0 20px 40px rgba(0,0,0,.3);
+    backdrop-filter: blur(20px);
+    color: var(--text-card);
+    transition:all 0.3s ease;
+    position:relative;
+    overflow:hidden;
+  }
+  .card::before{
+    content:'';
+    position:absolute;
+    top:0;left:0;right:0;bottom:0;
+    background:linear-gradient(135deg, rgba(59,130,246,.05), rgba(139,92,246,.05));
+    border-radius:24px;
+    pointer-events:none;
+  }
+  .card:hover{
+    transform:translateY(-2px);
+    box-shadow:0 30px 60px rgba(0,0,0,.5), 0 20px 40px rgba(0,229,255,.15);
+  }
+  .controls{display:flex;gap:10px;flex-wrap:wrap}
+  .btn{
+    background:linear-gradient(135deg, #3b82f6, #8b5cf6);
+    border:none;
+    color:#fff;padding:18px 32px;border-radius:16px;cursor:pointer;
+    transition:all .2s ease;
+    box-shadow:0 8px 25px rgba(59,130,246,.4);
+    font-weight:600;
+    font-size:1.1rem;
+    position:relative;
+    overflow:hidden;
+    text-decoration:none;
+    display:inline-block;
+  }
+  .btn::before{
+    content:'';
+    position:absolute;
+    top:0;left:-100%;width:100%;height:100%;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,.2), transparent);
+    transition:left 0.5s ease;
+  }
+  .btn:hover::before{
+    left:100%;
+  }
+  .btn:hover{
+    transform:translateY(-3px) scale(1.02);
+    box-shadow:0 18px 32px rgba(108,92,231,.35), 0 8px 16px rgba(255,110,199,.25);
+  }
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .btn-secondary{background:linear-gradient(180deg, #2b244d, #201c3d)}
+  .settings{margin-top:10px}
+  .settings select{background:#0c0a2a;color:#fff;border-radius:10px;border:1px solid rgba(255,255,255,.15);padding:6px}
+  .hint{color:var(--muted);font-size:.9rem}
+  .stage{margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+  @media (max-width: 768px) { .stage{grid-template-columns:1fr} }
+  .imgBox{
+    min-height:400px;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:20px;
+    background:rgba(255,255,255,0.95);
+    border:2px solid rgba(255,255,255,.4);
+    position:relative;
+    backdrop-filter:blur(20px);
+    box-shadow:0 10px 40px rgba(0,0,0,.2);
+  }
+  .imgBox::before{
+    content:'';
+    position:absolute;
+    top:0;left:0;right:0;bottom:0;
+    background:linear-gradient(45deg, rgba(0,229,255,.03), rgba(255,110,199,.03));
+    border-radius:18px;
+  }
+  .imgBox img{max-width:100%;display:block;animation:flipIn .8s ease}
+  @keyframes pop { from{transform:scale(.95);opacity:.5} to{transform:scale(1);opacity:1} }
+  @keyframes flipIn {
+    0% { transform:perspective(600px) rotateY(-90deg); opacity:0; }
+    40% { transform:perspective(600px) rotateY(-15deg); opacity:1; }
+    70% { transform:perspective(600px) rotateY(15deg); }
+    100% { transform:perspective(600px) rotateY(0deg); }
+  }
+  .qmeta{display:flex;justify-content:space-between;align-items:center;color:white;font-size:1.1rem;font-weight:600;}
+  .options{display:grid;grid-template-columns:1fr;gap:12px}
+  .option{
+    background:rgba(255,255,255,0.98);
+    border:1px solid rgba(255,255,255,.4);
+    padding:20px 24px;border-radius:16px;cursor:pointer;
+    transition:all .2s ease;
+    color:var(--text-card);font-weight:500;
+    backdrop-filter:blur(20px);
+    position:relative;
+    overflow:hidden;
+    box-shadow:0 6px 20px rgba(0,0,0,.15);
+    font-size:1.05rem;
+    line-height:1.4;
+  }
+  .option::before{
+    content:'';
+    position:absolute;
+    top:0;left:0;right:0;bottom:0;
+    background:linear-gradient(135deg, rgba(0,229,255,.05), rgba(255,110,199,.05));
+    opacity:0;
+    transition:opacity 0.3s ease;
+    border-radius:16px;
+  }
+  .option:hover::before{
+    opacity:1;
+  }
+  .option:hover{
+    transform:translateY(-2px) scale(1.02);
+    box-shadow:0 12px 28px rgba(0,0,0,.4), 0 6px 16px rgba(0,229,255,.15);
+    border-color:rgba(0,229,255,.4);
+  }
+  .option.correct{
+    background:linear-gradient(135deg, rgba(0,208,132,.25), rgba(0,208,132,.15));
+    border-color:var(--good);
+    box-shadow:0 0 20px rgba(0,208,132,.3), 0 8px 16px rgba(0,0,0,.3);
+  }
+  .option.close{
+    background:linear-gradient(135deg, rgba(255,71,87,.2), rgba(255,71,87,.1));
+    border-color:var(--bad);
+    box-shadow:0 0 16px rgba(255,71,87,.25), 0 6px 12px rgba(0,0,0,.3);
+  }
+  .option.wrong{
+    background:linear-gradient(135deg, rgba(255,71,87,.2), rgba(255,71,87,.1));
+    border-color:var(--bad);
+    box-shadow:0 0 16px rgba(255,71,87,.25), 0 6px 12px rgba(0,0,0,.3);
+  }
+  /* Removed correctPulse animation to prevent layout issues */
+  @keyframes incorrectShake {
+    0%, 100%{transform:translateX(0);} 
+    25%{transform:translateX(-5px);} 
+    75%{transform:translateX(5px);}
+  }
+  .option.correct{/* No animation - removed to prevent layout issues */}
+  .option.incorrect{animation:incorrectShake 0.5s ease-out;}
+  .explain{background:rgba(255,255,255,0.95);border:1px solid rgba(255,255,255,.3);padding:16px 20px;border-radius:12px;font-size:1rem;line-height:1.5;color:var(--text-card);backdrop-filter:blur(10px);}
+  .footer{display:flex;justify-content:space-between;align-items:center}
+  .progress{height:12px;background:linear-gradient(90deg, #1a1640, #0f0b1f);border-radius:12px;overflow:hidden;
+    border:1px solid rgba(255,255,255,.15);box-shadow:inset 0 2px 4px rgba(0,0,0,.3);}
+  .bar{height:100%;width:0;background:linear-gradient(90deg, var(--accent4), var(--accent2));border-radius:12px;position:relative;
+    box-shadow:0 2px 8px rgba(0,229,255,.3);transition:width .8s ease;}
+  .bar::after{
+    content:'';position:absolute;top:0;left:0;right:0;bottom:0;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,.2), transparent);
+    animation:progressGlow 2s ease-in-out infinite;
+  }
+  @keyframes progressGlow {
+    0%, 100%{transform:translateX(-100%);}
+    50%{transform:translateX(100%);}
+  }
+    background:linear-gradient(90deg, var(--accent), var(--accent3), var(--accent2), var(--accent4));
+    transition:width .5s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow:0 0 12px rgba(0,229,255,.4);
+  }
+  .confetti{position:fixed;inset:0;pointer-events:none}
+  .loading-spinner{
+    width:40px;height:40px;border:3px solid rgba(255,255,255,.2);
+    border-top:3px solid var(--accent);border-radius:50%;
+    animation:spin 1s linear infinite;margin:20px auto;
+  }
+  .loading-text{
+    text-align:center;color:var(--muted);font-size:1rem;margin-top:8px;
+    animation:pulse-text 1.5s ease-in-out infinite;font-weight:500;
+  }
+  @keyframes pulse-text{0%,100%{opacity:.7} 50%{opacity:1}}
+  .shimmer{
+    background:rgba(255,255,255,.05);
+  }
+  /* Optimize animations for performance */
+  *{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
+  .option,.btn,.card{will-change:transform;}
+  img{image-rendering:optimizeSpeed;}
+  .intro-screen{padding:0;width:100%;margin:0;min-height:100vh;display:flex;flex-direction:column;}
+  .hero{flex:1;display:flex;align-items:center;justify-content:center;padding:0 20px;text-align:center;}
+  .hero-content{max-width:1000px;width:100%;}
+  .hero-icon{font-size:5rem;margin-bottom:20px;}
+  .hero-title{font-size:4rem;margin:0 0 16px 0;font-weight:800;color:white;text-shadow:0 4px 8px rgba(0,0,0,.3);}
+  .hero-subtitle{font-size:1.5rem;margin:0 0 60px 0;color:rgba(255,255,255,0.9);font-weight:400;}
+  .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:30px;margin:0 0 60px 0;}
+  .feature-card{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:40px 24px;backdrop-filter:blur(20px);transition:all .3s ease;}
+  .feature-card:hover{transform:translateY(-8px);background:rgba(255,255,255,0.15);box-shadow:0 15px 40px rgba(0,0,0,0.3);}
+  .feature-icon{font-size:3rem;margin-bottom:20px;}
+  .feature-card h3{color:white;font-size:1.4rem;margin:0 0 12px 0;font-weight:700;}
+  .feature-card p{color:rgba(255,255,255,0.8);font-size:1rem;margin:0;line-height:1.6;}
+  .hero-btn{background:linear-gradient(135deg,#3b82f6,#8b5cf6);border:none;color:white;padding:24px 48px;border-radius:60px;cursor:pointer;transition:all .3s ease;box-shadow:0 10px 30px rgba(59,130,246,.4);font-weight:700;font-size:1.3rem;text-decoration:none;display:inline-block;}
+  .hero-btn:hover{transform:translateY(-3px) scale(1.05);box-shadow:0 20px 50px rgba(99,102,241,.6);}
+  .prefetch-status{margin-top:30px;color:rgba(255,255,255,0.7);font-size:1rem;}
+  @media (max-width: 768px) {
+    .hero{padding:0 20px;}
+    .hero-title{font-size:2.5rem;}
+    .hero-subtitle{font-size:1.2rem;margin-bottom:40px;}
+    .hero-icon{font-size:3.5rem;}
+    .features-grid{grid-template-columns:1fr;gap:20px;margin-bottom:40px;}
+    .feature-card{padding:30px 20px;}
+    .hero-btn{padding:20px 40px;font-size:1.1rem;}
+    main.stage{grid-template-columns:1fr !important;gap:20px !important;}
+    .quiz-screen{padding:16px;}
+  }
+  
+  .quiz-screen{min-height:100vh;width:100%;padding:8px 20px;box-sizing:border-box;position:relative;}
+  main.stage{display:grid;grid-template-columns:400px 1fr;gap:30px;align-items:start;margin-top:8px;max-width:1200px;margin-left:auto;margin-right:auto;}
+  .card.imgBox{
+    width:100%;height:300px;margin:0;position:relative;
+    border-radius:16px;overflow:hidden;
+    background:linear-gradient(135deg, rgba(0,229,255,.06), rgba(255,110,199,.06));
+    border:2px solid rgba(255,255,255,.1);
+    box-shadow:0 8px 24px rgba(0,0,0,.15);
+    backdrop-filter:blur(8px);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .card.imgBox img{
+    width:100%;height:100%;object-fit:cover;
+    border-radius:22px;
+  }
+  .image-skeleton{
+    width:100%;height:100%;
+    background:rgba(255,255,255,.05);
+    border-radius:22px;
+    display:flex;align-items:center;justify-content:center;
+    flex-direction:column;gap:16px;
+  }
+  .gesture-silhouette{
+    width:80px;height:80px;
+    background:rgba(255,255,255,.1);
+    border-radius:50%;
+    position:relative;
+  }
+  .gesture-silhouette::before{
+    content:'🧍';
+    position:absolute;
+    top:50%;left:50%;
+    transform:translate(-50%,-50%);
+    font-size:2rem;
+    opacity:0.3;
+  }
+  .quiz-screen header{padding:4px 0;margin-bottom:4px;}
+  .quiz-screen header h1{font-size:1.1rem;margin:0;}
+  .sound-toggle{position:fixed;top:24px;right:24px;z-index:1000;width:56px;height:56px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-size:1.4rem;
+    background:linear-gradient(135deg, rgba(0,229,255,.15), rgba(255,110,199,.15));
+    backdrop-filter:blur(12px);border:2px solid rgba(255,255,255,.2);
+    box-shadow:0 8px 20px rgba(0,0,0,.3);}
+</style>
+</head>
+<body>
+  <canvas class="confetti"></canvas>
+  <button class="btn sound-toggle" id="soundToggle" title="Toggle sound effects">🔊</button>
+  <div class="wrap">
+    <!-- Intro Screen -->
+    <div class="intro-screen" id="introScreen">
+      <div class="hero">
+        <div class="hero-content">
+          <div class="hero-icon">🎭</div>
+          <h1 class="hero-title">Gesture Genius</h1>
+          <h2 class="hero-subtitle">Master the art of reading body language</h2>
+          
+          <div class="features-grid">
+            <div class="feature-card">
+              <div class="feature-icon">👋</div>
+              <h3>Hand Gestures</h3>
+              <p>Learn to read open vs closed hand positions</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon">🧍</div>
+              <h3>Body Posture</h3>
+              <p>Understand confidence through stance</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon">😊</div>
+              <h3>Facial Expressions</h3>
+              <p>Decode emotions from facial cues</p>
+            </div>
+          </div>
+          
+          <button class="hero-btn" id="startQuizBtn">
+            🚀 Start Learning Journey
+          </button>
+          
+          <div id="prefetchStatus" class="prefetch-status">
+            <div class="loading-spinner"></div>
+            Getting ready...
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quiz Screen -->
+    <div class="quiz-screen" id="quizScreen" style="display: none;">
+      <header>
+        <div class="brand">
+          <div class="logo" aria-hidden="true">🎭</div>
+          <h1>Gesture Genius</h1>
+        </div>
+        <div class="controls">
+        </div>
+      </header>
+    <!-- Main Challenge Text -->
+    <div class="main-challenge" style="text-align:center;margin-bottom:16px;">
+      <div id="engagementText" style="font-size:2rem;font-weight:700;color:var(--accent3);margin-bottom:8px;">Decode their gesture!</div>
+    </div>
+
+    <main class="stage">
+      <div class="card imgBox" id="imgBox">
+        <div id="imgPlaceholder">
+          <div style="padding:40px;text-align:center;">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Preparing your scenario...</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;">
+        <div class="question-info" style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
+          <div id="qTitle" style="font-size:1rem;font-weight:600;color:white;text-shadow:0 1px 2px rgba(0,0,0,0.5);">Loading your first question...</div>
+          <div style="font-size:0.85rem;color:white;text-shadow:0 1px 2px rgba(0,0,0,0.5);"><span id="counter">0</span> of 5</div>
+        </div>
+        <div class="card" style="padding:16px;">
+          <div class="options" id="options"></div>
+          <div class="explain" id="explain" style="display:none;margin-top:12px;"></div>
+          <div class="footer" style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1);">
+            <div class="progress" style="flex:1;margin-right:12px"><div class="bar" id="bar"></div></div>
+            <button class="btn" id="nextBtn" disabled>Next</button>
+          </div>
+        </div>
+        <div class="card" id="summary" style="display:none"></div>
+      </div>
+    </main>
+    </div>
+  </div>
+
+<script>
+const qs = (s) => document.querySelector(s);
+const imgBox = qs('#imgBox');
+const optionsEl = qs('#options');
+const explainEl = qs('#explain');
+const qTitle = qs('#qTitle');
+const counterEl = qs('#counter');
+const bar = qs('#bar');
+const summaryEl = qs('#summary');
+const restartBtn = qs('#restartBtn');
+const nextBtn = qs('#nextBtn');
+
+let state = {
+  total: 5,
+  index: 0,
+  score: 0,
+  history: [],
+  busy: false,
+  chatModel: 'gpt-4o-mini',
+  imgSize: '1024x1024', // DALL-E 3 smallest supported size
+  soundEnabled: true,
+  prefetchQueue: [],
+  loadingInterval: null,
+  usedGestures: [],
+};
+
+// Sound system using Web Audio API
+const sounds = {
+  click: () => playTone(800, 0.1, 'sine'),
+  correct: () => playTone(523, 0.3, 'sine'),
+  wrong: () => playTone(200, 0.4, 'sawtooth'),
+  close: () => playTone(400, 0.2, 'triangle'),
+  next: () => playTone(600, 0.15, 'sine')
+};
+
+function playTone(freq, duration, type = 'sine') {
+  if (!state.soundEnabled) return;
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.frequency.value = freq;
+    osc.type = type;
+    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + duration);
+  } catch(e) {}
+}
+
+const soundToggle = qs('#soundToggle');
+if (soundToggle) {
+  soundToggle.addEventListener('click', () => {
+  state.soundEnabled = !state.soundEnabled;
+  soundToggle.textContent = state.soundEnabled ? '🔊' : '🔇';
+  try { sounds.click(); } catch(e) { console.warn('Sound play failed:', e); }
+});
+}
+
+
+const introScreen = qs('#introScreen');
+const quizScreen = qs('#quizScreen');
+const startQuizBtn = qs('#startQuizBtn');
+const prefetchStatus = qs('#prefetchStatus');
+
+// Start prefetching when page loads
+window.addEventListener('load', async () => {
+  await prefetchFirstQuestion();
+  prefetchStatus.innerHTML = '✅ Ready to start!';
+});
+
+// Ensure DOM is loaded before attaching events
+document.addEventListener('DOMContentLoaded', () => {
+  const startBtn = document.getElementById('startQuizBtn');
+  if (startBtn) {
+    startBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      console.log('Start button clicked'); // Debug log
+      try { sounds.click(); } catch(e) { console.warn('Sound play failed:', e); }
+      
+      // Clean screen transitions
+      introScreen.style.display = 'none';
+      quizScreen.style.display = 'block';
+      
+      // Clear any stray error notifications
+      const existingErrors = document.querySelectorAll('.error-notification');
+      existingErrors.forEach(error => error.remove());
+      
+      await startQuiz();
+    });
+  }
+});
+
+// Keep the original for fallback
+if (startQuizBtn) {
+  startQuizBtn.addEventListener('click', async () => {
+    try { sounds.click(); } catch(e) { console.warn('Sound play failed:', e); }
+    
+    // Clean screen transitions
+    introScreen.style.display = 'none';
+    quizScreen.style.display = 'block';
+    
+    // Clear any stray error notifications
+    const existingErrors = document.querySelectorAll('.error-notification');
+    existingErrors.forEach(error => error.remove());
+    
+    await startQuiz();
+  });
+}
+
+
+if (restartBtn) {
+  restartBtn.addEventListener('click', async () => {
+  try { sounds.click(); } catch(e) { console.warn('Sound play failed:', e); }
+  
+  // Clean screen transitions and reset layout
+  quizScreen.style.display = 'none';
+  introScreen.style.display = 'block';
+  
+  // Clear any stray error notifications and reset UI
+  const existingErrors = document.querySelectorAll('.error-notification');
+  existingErrors.forEach(error => error.remove());
+  
+  // Reset summary display
+  if (summaryEl) summaryEl.style.display = 'none';
+  prefetchStatus.innerHTML = '<div class="loading-spinner" style="display: inline-block; width: 16px; height: 16px; margin-right: 8px;"></div>Preparing your first question...';
+  await prefetchFirstQuestion();
+  prefetchStatus.innerHTML = '✅ Ready to start!';
+});
+}
+
+// Test button for debugging
+
+async function startQuiz() {
+  console.log('Starting quiz...');
+  state.chatModel = 'gpt-4o-mini';
+  state.imgSize = '1024x1024'; // DALL-E 3 supports higher resolution
+  state.index = 0; state.score = 0; state.history = []; state.usedGestures = [];
+  // Don't clear prefetch queue - use what we already have
+  summaryEl.style.display = 'none';
+  nextBtn.disabled = true;
+  optionsEl.innerHTML = '';
+  explainEl.style.display = 'none';
+  if (qTitle) qTitle.textContent = 'Question 1';
+  if (counterEl) counterEl.textContent = '1';
+  if (bar) bar.style.width = '0%';
+  if (restartBtn) restartBtn.style.display = 'none';
+  
+  console.log('About to call newQuestion...');
+  await newQuestion();
+}
+
+if (nextBtn) {
+  nextBtn.addEventListener('click', async () => {
+  try { sounds.next(); } catch(e) { console.warn('Sound play failed:', e); }
+  if (state.index >= state.total) return;
+  optionsEl.innerHTML = '';
+  explainEl.style.display = 'none';
+  nextBtn.disabled = true;
+  await newQuestion();
+});
+}
+
+async function newQuestion(){
+  console.log('newQuestion called, index:', state.index, 'busy:', state.busy);
+  if (state.busy) {
+    console.log('Already busy, ignoring newQuestion call');
+    return;
+  }
+  state.busy = true;
+  const n = state.index + 1;
+  qTitle.textContent = `Question ${n}`;
+  counterEl.textContent = String(n);
+  bar.style.width = ((state.index) / state.total * 100) + '%';
+
+  // Show loading state
+  showLoadingState();
+  
+  console.log('Loading state shown, about to try API...');
+
+  try {
+    // Check if we have a prefetched question+image pair
+    let idea, imageUrl;
+    if (state.prefetchQueue.length > 0) {
+      const prefetched = state.prefetchQueue.shift();
+      idea = prefetched.idea;
+      imageUrl = prefetched.imageUrl;
+      console.log('Using prefetched question+image pair');
+      console.log('Prefetched idea:', idea.title);
+      console.log('Prefetched imageUrl:', imageUrl ? 'present' : 'null');
+      
+      // Show the prefetched question immediately
+      hideLoadingState();
+      if (imageUrl) {
+        console.log('Rendering prefetched question with image...');
+        renderQuestion(idea, imageUrl);
+      } else {
+        // Question was prefetched but image failed, show fallback
+        renderQuestionWithProgressiveLoading(idea);
+        showImageFallback(idea);
+      }
+      
+      state.busy = false;
+      
+      // Start prefetching the next question while user reads this one
+      setTimeout(() => prefetchNextQuestion(), 1000);
+      return;
+    } else {
+      // Generate question first, then appropriate image
+      console.log('Generating question first, then matching image...');
+      
+      // Generate text first
+      idea = await Promise.race([
+        getGestureAndOptions(),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Text timeout')), 15000))
+      ]);
+      
+      if (!idea) throw new Error('No idea generated');
+      
+      console.log('Generated new idea:', {
+        title: idea.title,
+        imagePrompt: idea.imagePrompt,
+        correctAnswer: idea.options?.correct
+      });
+      
+      // Show question with loading placeholder
+      hideLoadingState();
+      renderQuestionWithProgressiveLoading(idea);
+      
+      // Now generate matching image
+      console.log('Generating image...');
+      const imagePromise = Promise.race([
+        getDalle2Image(idea.imagePrompt),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Image timeout')), 25000))
+      ]);
+      
+      // Handle image result asynchronously
+      imagePromise.then(result => {
+        const finalImageUrl = result.url || null;
+        if (finalImageUrl) {
+          console.log('Image ready, updating display...');
+          updateImageInPlace(idea, finalImageUrl);
+        } else {
+          console.warn('Image generation failed, showing fallback');
+          showImageFallback(idea);
+        }
+      }).catch(imageError => {
+        console.warn('Image generation failed, showing fallback:', imageError.message);
+        showImageFallback(idea);
+      });
+      
+      // Continue with the flow - we already rendered the question
+      state.busy = false;
+      return;
+    }
+    
+    // This code is unreachable - both branches above have return statements
+    console.error('CRITICAL: Unreachable code executed in nextQuestion()');
+    
+  } catch (error) {
+    console.error('Question generation failed:', error);
+    console.log('Using fallback question...');
+    hideLoadingState();
+    
+    // Use fallback question when API fails
+    const fallbackQuestion = getFallbackQuestion(state.index);
+    console.log('Fallback question:', fallbackQuestion);
+    renderQuestion(fallbackQuestion, null);
+  }
+  
+  state.busy = false;
+}
+
+function showLoadingState() {
+  // Update engagement message
+  const engagementMessages = [
+    'What do you think this person is saying?',
+    'Can you read their body language?',
+    'What message are they conveying?',
+    'What\'s their likely response?',
+    'Decode their gesture!'
+  ];
+  const randomMessage = engagementMessages[Math.floor(Math.random() * engagementMessages.length)];
+  const engagementTextEl = qs('#engagementText');
+  if (engagementTextEl) {
+    engagementTextEl.textContent = randomMessage;
+  }
+  
+  // Show optimistic loading with shorter intervals
+  const loadingMessages = [
+    'Preparing scenario...',
+    'Creating character...',
+    'Adding gestures...',
+    'Finalizing details...',
+    'Almost ready...'
+  ];
+  let msgIndex = 0;
+  
+  function updateMessage() {
+    const loadingTextEl = document.querySelector('.loading-text');
+    if (loadingTextEl && msgIndex < loadingMessages.length) {
+      loadingTextEl.textContent = loadingMessages[msgIndex];
+      msgIndex++;
+    }
+  }
+  
+  imgBox.innerHTML = `
+    <div class="image-skeleton">
+      <div class="gesture-silhouette"></div>
+      <div style="text-align:center;">
+        <div class="loading-text" style="font-weight:600;color:var(--accent3);margin-bottom:8px;">${loadingMessages[0]}</div>
+        <div style="font-size:0.8rem;color:var(--text-soft);opacity:0.8;">Ready to start...</div>
+      </div>
+    </div>
+  `;
+  
+  // Update message every 5 seconds for realistic timing
+  state.loadingInterval = setInterval(updateMessage, 5000);
+  
+  // Show static loading placeholders
+  optionsEl.innerHTML = `
+    <div style="height:75px;border-radius:18px;background:rgba(255,255,255,.08);margin:12px 0;border:2px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);font-size:0.9rem;">
+      Loading options...
+    </div>
+    <div style="height:75px;border-radius:18px;background:rgba(255,255,255,.08);margin:12px 0;border:2px solid rgba(255,255,255,.12);"></div>
+    <div style="height:75px;border-radius:18px;background:rgba(255,255,255,.08);margin:12px 0;border:2px solid rgba(255,255,255,.12);"></div>
+    <div style="height:75px;border-radius:18px;background:rgba(255,255,255,.08);margin:12px 0;border:2px solid rgba(255,255,255,.12);"></div>
+  `;
+}
+
+function hideLoadingState() {
+  // Clear loading message interval
+  if (state.loadingInterval) {
+    clearInterval(state.loadingInterval);
+    state.loadingInterval = null;
+  }
+}
+
+async function prefetchFirstQuestion() {
+  return prefetchNextQuestion();
+}
+
+async function prefetchNextQuestion() {
+  // DISABLED: Content mismatch issues persist - investigate further
+  console.log('Prefetch disabled due to persistent content mismatch issues');
+  return;
+  
+  try {
+    console.log('Prefetching next complete question...');
+    
+    // Generate the full question first to ensure image matches
+    const idea = await getGestureAndOptions();
+    if (!idea) throw new Error('No idea generated in prefetch');
+    
+    console.log('Prefetch: Generating matching image for gesture:', idea.gesture);
+    
+    const imagePromise = Promise.race([
+      getDalle2Image(idea.imagePrompt),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Image prefetch timeout')), 25000))
+    ]);
+    
+    const imageResult = await imagePromise;
+    const imageUrl = imageResult.url || null;
+    
+    if (imageUrl) {
+      // Store the complete question with matching image
+      state.prefetchQueue.push({ idea, imageUrl });
+      console.log('Full question+image prefetch successful, queue length:', state.prefetchQueue.length);
+      
+      // Preload the image for faster display
+      const img = new Image();
+      img.loading = 'eager';
+      img.decoding = 'async';
+      img.src = imageUrl;
+    } else {
+      console.log('Prefetch image failed, storing question without image');
+      state.prefetchQueue.push({ idea, imageUrl: null });
+    }
+    
+  } catch(e) {
+    console.warn('Image prefetch failed (this is normal):', e.message);
+    // Prefetch failures are acceptable - we'll generate on demand
+  }
+}
+
+// NEW: Progressive loading function that shows question immediately with loading placeholder
+function renderQuestionWithProgressiveLoading(idea) {
+  console.log('renderQuestionWithProgressiveLoading called with idea:', idea?.title);
+  
+  // Immediately show options so user can start answering
+  console.log('Rendering options immediately for better UX...');
+  renderOptions(idea);
+  
+  // Show progressive loading placeholder for image
+  if (!imgBox) {
+    console.error('imgBox not found!');
+    return;
+  }
+  
+  imgBox.innerHTML = `
+    <div class="progressive-loading-container" style="padding:30px;text-align:center;color:rgba(255,255,255,0.8);background:linear-gradient(135deg, rgba(0,229,255,.08), rgba(255,110,199,.08));border:2px solid rgba(255,255,255,.15);border-radius:16px;min-height:280px;display:flex;flex-direction:column;justify-content:center;align-items:center;position:relative;overflow:hidden;">
+      <!-- Animated background shimmer -->
+      <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);animation:shimmer 2s infinite;"></div>
+      
+      <!-- Main content -->
+      <div style="position:relative;z-index:1;">
+        <div style="font-size:2.2rem;margin-bottom:12px;animation:pulse 2s infinite;">🎨</div>
+        <!-- Speaker description while loading -->
+        <div style="font-size:0.9rem;color:rgba(255,255,255,0.9);margin-bottom:8px;max-width:280px;line-height:1.3;">
+          ${idea.imagePrompt}
+        </div>
+        
+        <!-- Generating Image text -->
+        <div style="font-size:0.85rem;color:rgba(255,255,255,0.8);margin-bottom:16px;font-style:italic;">
+          Generating Image...
+        </div>
+        
+        <!-- Realistic progress indicator -->
+        <div style="width:240px;height:6px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;margin:0 auto;">
+          <div class="progress-fill" style="width:0%;height:100%;background:linear-gradient(90deg, var(--accent), var(--accent2));border-radius:3px;animation:progressFill 12s ease-out forwards;"></div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// NEW: Update image in place when it's ready
+function updateImageInPlace(idea, imageUrl) {
+  console.log('updateImageInPlace called with imageUrl:', imageUrl);
+  
+  if (!imgBox || !imageUrl) return;
+  
+  // Create new image element
+  const img = new Image();
+  img.alt = 'Cartoon speaker with body gestures';
+  img.style.cssText = 'max-width:100%;display:block;border-radius:12px;animation:fadeInScale 0.6s ease-out;';
+  
+  img.onload = () => {
+    console.log('Progressive image loaded successfully!');
+    
+    // Clear any error notifications
+    const imageContainer = imgBox.parentElement;
+    const errorNotification = imageContainer.querySelector('.error-notification');
+    if (errorNotification) {
+      errorNotification.remove();
+    }
+    
+    // Replace the loading placeholder with smooth transition
+    imgBox.innerHTML = '';
+    imgBox.appendChild(img);
+    
+    // Save to storage (non-blocking, fails silently)
+    saveToStorage(idea, imageUrl).catch(err => 
+      console.log('Storage save failed but app continues:', err.message)
+    );
+  };
+  
+  img.onerror = () => {
+    console.log('Progressive image failed to load, showing fallback');
+    showImageFallback(idea);
+  };
+  
+  img.src = imageUrl;
+}
+
+function renderQuestion(idea, imageUrl){
+  console.log('renderQuestion called with idea:', idea?.title, 'imageUrl:', imageUrl);
+  
+  // Immediately show options so user can start answering
+  console.log('Rendering options immediately for better UX...');
+  renderOptions(idea);
+  
+  // Set a flag to prevent race conditions
+  window.currentImageLoading = true;
+  
+  try {
+    console.log('Clearing imgBox...');
+    if (!imgBox) {
+      console.error('imgBox not found!');
+      return;
+    }
+    imgBox.innerHTML = '';
+    
+    if (!imageUrl) {
+      // No image URL provided - show fallback immediately
+      console.log('No imageUrl, showing fallback...');
+      window.currentImageLoading = false;
+      showImageFallback(idea);
+      return;
+    }
+    
+    // Show compact loading placeholder while image loads in background
+    imgBox.innerHTML = `
+      <div style="padding:30px;text-align:center;color:rgba(255,255,255,0.7);background:linear-gradient(135deg, rgba(0,229,255,.1), rgba(255,110,199,.1));border:2px dashed rgba(255,255,255,.3);border-radius:16px;min-height:200px;display:flex;flex-direction:column;justify-content:center;align-items:center;">
+        <div style="font-size:2rem;margin-bottom:8px;animation:pulse 2s infinite;">🖼️</div>
+        <div style="font-size:0.9rem;color:rgba(255,255,255,0.9);margin-bottom:8px;">${idea.imagePrompt}</div>
+        
+        <!-- Generating Image text -->
+        <div style="font-size:0.85rem;color:rgba(255,255,255,0.8);margin-bottom:12px;font-style:italic;">
+          Generating Image...
+        </div>
+        
+        <div style="width:160px;height:3px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden;">
+          <div style="width:100%;height:100%;background:linear-gradient(90deg, var(--accent), var(--accent2));animation:loadingBar 2s infinite;border-radius:2px;"></div>
+        </div>
+      </div>
+    `;
+    
+    console.log('Creating image element...');
+    const img = new Image();
+    img.alt = 'Cartoon speaker with body gestures';
+    img.loading = 'lazy';
+  
+  let retryCount = 0;
+  const maxRetries = 5; // Increased retries
+  
+  const tryLoadImage = (url) => {
+    img.onerror = () => {
+      console.warn('Image load failed:', url, 'Retry:', retryCount);
+      if (retryCount < maxRetries) {
+        retryCount++;
+        // Try different strategies
+        setTimeout(() => {
+          if (retryCount === 1) {
+            // Try with cache busting
+            img.src = url + '&cache=' + Date.now();
+          } else if (retryCount === 2) {
+            // Try without additional params
+            img.src = url;
+          } else if (retryCount === 3) {
+            // Try with different approach - create new image element
+            const newImg = new Image();
+            newImg.onload = () => {
+              console.log('Image loaded successfully on retry!');
+              imgBox.innerHTML = ''; // Clear loading placeholder
+              imgBox.appendChild(newImg);
+              // Options already rendered immediately, so no need to call renderOptions again
+              
+              // Save to storage (non-blocking, fails silently)
+              saveToStorage(idea, url).catch(err => 
+                console.log('Storage save failed but app continues:', err.message)
+              );
+            };
+            newImg.onerror = () => tryLoadImage(url);
+            newImg.src = url;
+            return;
+          } else {
+            // Final retry with fetch approach to handle CORS
+            fetchImageAsBlob(url, idea, 'cors');
+            return;
+          }
+        }, 1000 * retryCount); // Exponential backoff
+      } else {
+        // All retries failed, determine error type
+        console.log('All image load retries failed');
+        showImageError(idea, 'not_found');
+      }
+    };
+    
+    img.onload = () => {
+      console.log('Image loaded successfully!');
+      window.currentImageLoading = false; // Mark as complete
+      imgBox.innerHTML = ''; // Clear loading placeholder
+      imgBox.appendChild(img);
+      // Options already rendered immediately, so no need to call renderOptions again
+      
+      // Save to storage (non-blocking, fails silently)
+      saveToStorage(idea, imageUrl).catch(err => 
+        console.log('Storage save failed but app continues:', err.message)
+      );
+    };
+    
+    console.log('Setting image src:', url);
+    img.src = url;
+  };
+  
+  console.log('Attempting to load image...');
+  tryLoadImage(imageUrl);
+  
+  // Add timeout fallback in case image loading hangs
+  setTimeout(() => {
+    console.log('Image loading timeout - checking if still loading...');
+    if (window.currentImageLoading) { // Image still loading after timeout
+      console.log('Still loading after 30 seconds, forcing fallback...');
+      window.currentImageLoading = false;
+      showEnhancedImageFallback(idea);
+    }
+  }, 30000); // Increased to 30 seconds for better reliability
+  
+  } catch (error) {
+    console.error('Error in renderQuestion:', error);
+    showImageFallback(idea);
+  }
+}
+
+function renderOptions(idea) {
+  console.log('renderOptions called with idea:', {
+    title: idea.title,
+    imagePrompt: idea.imagePrompt,
+    correctAnswer: idea.options?.correct
+  });
+  console.log('optionsEl:', optionsEl);
+  
+  // Create a deep copy to avoid closure issues
+  const ideaCopy = JSON.parse(JSON.stringify(idea));
+  
+  // Update engagement message with variety
+  const engagementMessages = [
+    'What is the speaker saying?',
+    'What would they say in this moment?',
+    'What is the speaker actually thinking?',
+    'What would the speaker say next?',
+    'What is the speaker conveying with this gesture?',
+    'What message is the speaker communicating?',
+    'What would the speaker be saying here?'
+  ];
+  const randomMessage = engagementMessages[Math.floor(Math.random() * engagementMessages.length)];
+  const engagementTextEl = qs('#engagementText');
+  if (engagementTextEl) {
+    engagementTextEl.innerHTML = `
+      <div style="margin-bottom: 8px; font-size: 1.8rem;">${randomMessage}</div>
+    `;
+  }
+
+  const opts = [
+    { text: ideaCopy.options.correct, tag: 'correct' },
+    { text: ideaCopy.options.close, tag: 'close' },
+    { text: ideaCopy.options.obviouslyWrong, tag: 'wrong' },
+    { text: ideaCopy.options.funnyWrong, tag: 'wrong' },
+  ].sort(() => Math.random() - 0.5);
+
+  console.log('Options to render:', opts);
+  if (!optionsEl) {
+    console.error('optionsEl not found!');
+    return;
+  }
+  optionsEl.innerHTML = '';
+  opts.forEach((o, idx) => {
+    console.log(`Creating option ${idx}:`, o);
+    const div = document.createElement('button');
+    div.className = 'option';
+    div.innerText = o.text;
+    div.onclick = () => choose(o, div, opts, ideaCopy);
+    optionsEl.appendChild(div);
+  });
+  console.log('Options rendered, optionsEl children:', optionsEl.children.length);
+
+  explainEl.style.display = 'none';
+  
+  // Start prefetching the next question immediately when options are shown
+  if (state.index + 1 < state.total) {
+    console.log(`Starting prefetch for question ${state.index + 2}`);
+    setTimeout(() => prefetchNextQuestion(), 500); // Reduced delay for faster prefetching
+  }
+}
+
+function showImageFallback(idea) {
+  console.log('showImageFallback called with idea:', idea);
+  imgBox.innerHTML = `
+    <div style="padding:30px;text-align:center;color:white;background:rgba(0,229,255,.1);border:2px dashed rgba(255,255,255,.3);border-radius:12px;">
+      <div style="font-size:2.5rem;margin-bottom:12px;">🎭</div>
+      <div style="font-size:1rem;margin-bottom:8px;font-weight:600;color:white;text-shadow:0 1px 2px rgba(0,0,0,0.5);">Scenario: ${idea.title}</div>
+      <div style="font-size:0.85rem;line-height:1.4;color:rgba(255,255,255,0.9);max-width:280px;margin:0 auto;text-shadow:0 1px 2px rgba(0,0,0,0.3);">
+        ${idea.imagePrompt}
+      </div>
+    </div>
+  `;
+
+  // Options already rendered immediately when renderQuestion was called
+  // No need to call renderOptions again here
+}
+
+function choose(chosen, btnEl, all, idea){
+  console.log('choose() called with idea:', {
+    title: idea.title,
+    imagePrompt: idea.imagePrompt,
+    correctAnswer: idea.options?.correct,
+    explanation: idea.explanation
+  });
+  
+  Array.from(optionsEl.children).forEach(c => c.disabled = true);
+  
+  // Add visual feedback immediately
+  if (chosen.tag === 'correct') {
+    btnEl.classList.add('correct');
+    try { sounds.correct(); } catch(e) { console.warn('Sound play failed:', e); }
+  } else {
+    btnEl.classList.add('incorrect');
+    try { sounds.wrong(); } catch(e) { console.warn('Sound play failed:', e); }
+    // Highlight the correct answer
+    Array.from(optionsEl.children).forEach((el, idx) => {
+      if (all[idx].tag === 'correct') {
+        el.classList.add('correct');
+      }
+    });
+  }
+
+  all.forEach((o, i) => {
+    const el = optionsEl.children[i];
+    if (o.tag === 'correct') el.classList.add('correct');
+    if (o.tag === 'close' && !el.classList.contains('correct')) el.classList.add('close');
+    if (o.tag === 'wrong' && !el.classList.contains('correct')) el.classList.add('wrong');
+  });
+
+  const correct = chosen.tag === 'correct';
+  if (correct) { 
+    state.score++; 
+    // Removed confettiBurst() to prevent layout issues
+    try { sounds.correct(); } catch(e) { console.warn('Sound play failed:', e); }
+  }
+  else if (chosen.tag === 'close') { 
+    try { sounds.close(); } catch(e) { console.warn('Sound play failed:', e); }
+  }
+  else { 
+    try { sounds.wrong(); } catch(e) { console.warn('Sound play failed:', e); }
+  }
+
+  explainEl.style.display = 'block';
+  explainEl.innerHTML = `
+    <div><strong>Answer:</strong> ${idea.options.correct}</div>
+    <div style="margin-top:6px">${idea.explanation}</div>
+    ${idea.coachingTips ? `<ul style="margin:8px 0 0 18px">${idea.coachingTips.map(t=>`<li>${t}</li>`).join('')}</ul>`:''}
+  `;
+
+  state.history.push({
+    title: idea.title,
+    chosen: chosen.text,
+    correctness: chosen.tag,
+    correct: idea.options.correct,
+    tips: idea.coachingTips || []
+  });
+
+  state.index++;
+  bar.style.width = (state.index / state.total * 100) + '%';
+  nextBtn.disabled = false;
+  if (state.index === state.total) {
+    nextBtn.textContent = 'See Summary';
+    nextBtn.onclick = showSummary;
+  } else {
+    nextBtn.textContent = 'Next';
+    nextBtn.onclick = async () => {
+      optionsEl.innerHTML = '';
+      explainEl.style.display = 'none';
+      nextBtn.disabled = true;
+      await newQuestion();
+    };
+  }
+}
+
+function showSummary(){
+  optionsEl.innerHTML = '';
+  explainEl.style.display = 'none';
+  nextBtn.style.display = 'none';
+  
+
+  const percent = Math.round((state.score / state.total) * 100);
+  const verdict = percent >= 80 ? 'Outstanding! You\'re a body language expert! 🏆'
+                : percent >= 60 ? 'Well done! Keep practicing to perfect your skills 💪'
+                : 'Great start! Focus on hands, posture, and facial expressions 🌱';
+
+  const bullets = aggregateTips(state.history);
+  
+  // Add celebration for high scores
+  if (percent >= 80) {
+    // Removed confettiBurst() to prevent layout issues
+    try { sounds.correct(); } catch(e) { console.warn('Sound play failed:', e); }
+  }
+
+  summaryEl.style.display = 'block';
+  summaryEl.innerHTML = `
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="font-size:4rem;margin-bottom:12px">${percent >= 80 ? '🏆' : percent >= 60 ? '🎯' : '📚'}</div>
+      <h2 style="margin:0 0 8px 0;font-size:2rem;background:linear-gradient(135deg, var(--accent), var(--accent2));
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">
+        ${state.score}/${state.total} Correct
+      </h2>
+      <div style="font-size:1.2rem;color:var(--muted);margin-bottom:16px">${percent}% Accuracy</div>
+      <div style="padding:16px 20px;background:linear-gradient(135deg, rgba(0,229,255,.1), rgba(255,110,199,.1));
+        border-radius:16px;border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(8px);">
+        <strong style="font-size:1.1rem;color:var(--text);">${verdict}</strong>
+      </div>
+    </div>
+    
+    ${bullets.length > 0 ? `
+      <h3 style="margin:24px 0 12px 0;color:var(--accent);">🎯 Key Learning Points</h3>
+      <ul style="list-style:none;padding:0;">
+        ${bullets.map(b=>`<li style="margin:8px 0;padding:12px 16px;background:rgba(255,255,255,.05);
+          border-radius:12px;border-left:4px solid var(--accent2);">• ${b}</li>`).join('')}
+      </ul>
+    ` : ''}
+    
+    <details style="margin-top:24px;">
+      <summary style="cursor:pointer;padding:12px 0;font-weight:600;color:var(--accent3);
+        border-bottom:1px solid rgba(255,255,255,.1);">📋 Review Your Answers</summary>
+      <div style="margin-top:16px;">
+        ${state.history.map((h,i)=>`
+          <div style="margin:12px 0;padding:16px;background:rgba(255,255,255,.03);
+            border:1px solid rgba(255,255,255,.1);border-radius:12px;">
+            <strong style="color:var(--accent);">Q${i+1}.</strong> 
+            <span style="color:var(--text-soft);">${h.title}</span><br/>
+            <div style="margin-top:8px;font-size:0.9rem;">
+              <span style="color:${h.correctness === 'correct' ? 'var(--good)' : h.correctness === 'close' ? 'var(--warn)' : 'var(--bad)'};">
+                ● Your answer: "${h.chosen}"
+              </span><br/>
+              <span style="color:var(--good);">✓ Correct: "${h.correct}"</span>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </details>
+    
+    <div style="text-align:center;margin-top:32px;">
+      <button class="btn" onclick="location.reload()" style="font-size:1.1rem;padding:12px 24px;background:linear-gradient(135deg, var(--accent), var(--accent2));border:none;border-radius:12px;color:white;cursor:pointer;transition:all 0.3s ease;font-weight:600;">
+        🔄 Take Another Quiz
+      </button>
+    </div>
+  `;
+}
+
+function getFallbackQuestion(index) {
+  const fallbackQuestions = [
+    // Core Gesture Fallbacks (5 original)
+    {
+      title: "Confident Speaker with Open Palms",
+      imagePrompt: "Professional speaker showing open palms to audience",
+      options: {
+        correct: "I'm being completely honest and transparent with you",
+        close: "I have nothing to hide from the audience", 
+        obviouslyWrong: "I'm feeling nervous and uncertain",
+        funnyWrong: "I forgot to bring my lucky socks today"
+      },
+      explanation: "Open palms are a universal sign of honesty and transparency. This gesture builds trust with the audience.",
+      coachingTips: [
+        "Use open palm gestures to build credibility",
+        "Keep hands visible - avoid hiding them behind your back",
+        "Practice the 'steeple' gesture for authority"
+      ]
+    },
+    {
+      title: "Speaker with Arms Crossed",
+      imagePrompt: "Professional person with arms folded across chest",
+      options: {
+        correct: "I'm feeling defensive about this topic",
+        close: "I disagree with what was just said",
+        obviouslyWrong: "I'm completely open to new ideas",
+        funnyWrong: "I'm trying to keep my shirt from falling off"
+      },
+      explanation: "Crossed arms typically signal defensiveness or resistance. It creates a barrier between speaker and audience.",
+      coachingTips: [
+        "Keep arms open and uncrossed when speaking",
+        "Use gestures that invite rather than block",
+        "Practice confident, open posture"
+      ]
+    },
+    {
+      title: "Enthusiastic Pointing Gesture",
+      imagePrompt: "Animated speaker pointing to visual presentation",
+      options: {
+        correct: "This point is really important to understand",
+        close: "Pay attention to this key information",
+        obviouslyWrong: "I have no idea what I'm talking about",
+        funnyWrong: "There's a spider on the wall behind you"
+      },
+      explanation: "Pointing gestures direct attention and emphasize importance. Use them strategically for key points.",
+      coachingTips: [
+        "Point with open hand, not single finger",
+        "Use gestures to guide audience attention",
+        "Match gesture intensity to content importance"
+      ]
+    },
+    {
+      title: "Nervous Fidgeting Behavior",
+      imagePrompt: "Person fidgeting with hands and shifting weight",
+      options: {
+        correct: "I'm feeling anxious about this presentation",
+        close: "I'm not fully prepared for these questions",
+        obviouslyWrong: "I'm supremely confident right now",
+        funnyWrong: "I'm secretly a robot having technical difficulties"
+      },
+      explanation: "Fidgeting signals nervousness and can distract from your message. Practice calming techniques.",
+      coachingTips: [
+        "Practice breathing exercises before speaking",
+        "Find a comfortable, stable stance",
+        "Channel nervous energy into purposeful gestures"
+      ]
+    },
+    {
+      title: "Victory Pose with Raised Arms",
+      imagePrompt: "Confident speaker with arms raised in victory",
+      options: {
+        correct: "We did it! We achieved our goal!",
+        close: "This is a moment worth celebrating",
+        obviouslyWrong: "I'm completely defeated by this challenge",
+        funnyWrong: "I'm trying to high-five a very tall ghost"
+      },
+      explanation: "Raised arms signal victory, success, and high energy. Perfect for celebrating achievements.",
+      coachingTips: [
+        "Use high-energy gestures for positive moments",
+        "Match your body language to your message",
+        "Practice victory poses to build confidence"
+      ]
+    },
+
+    // Additional Professional Context Fallbacks (5)
+    {
+      title: "Boardroom Executive Stance",
+      imagePrompt: "Executive standing confidently in boardroom setting",
+      options: {
+        correct: "Let's discuss the strategic implications of this decision",
+        close: "I want to address the concerns raised by the committee",
+        obviouslyWrong: "I have no idea what we're supposed to be doing",
+        funnyWrong: "Has anyone seen my missing briefcase full of secrets?"
+      },
+      explanation: "Professional boardroom presence conveys authority and strategic thinking.",
+      coachingTips: [
+        "Stand tall with confident posture",
+        "Use deliberate, measured gestures",
+        "Maintain appropriate eye contact with decision makers"
+      ]
+    },
+    {
+      title: "Keynote Speaker Energy",
+      imagePrompt: "Dynamic speaker on large conference stage",
+      options: {
+        correct: "Together, we can transform the future of our industry",
+        close: "This innovation will change how we work forever",
+        obviouslyWrong: "I'm not sure why I'm speaking to all these people",
+        funnyWrong: "Is anyone else hearing that mysterious humming sound?"
+      },
+      explanation: "Large venue speaking requires expansive gestures and high energy to connect with distant audience.",
+      coachingTips: [
+        "Use bigger gestures for larger audiences",
+        "Project voice and energy to back rows",
+        "Move purposefully across the stage"
+      ]
+    },
+    {
+      title: "Training Session Facilitation",
+      imagePrompt: "Trainer demonstrating concept to engaged participants",
+      options: {
+        correct: "Now let's practice this technique together",
+        close: "I'll demonstrate the proper approach step by step",
+        obviouslyWrong: "I forgot everything I was supposed to teach",
+        funnyWrong: "Who wants to volunteer to be my guinea pig?"
+      },
+      explanation: "Training facilitation requires clear demonstration gestures and inclusive body language.",
+      coachingTips: [
+        "Use demonstrative gestures for clarity",
+        "Include participants with welcoming posture",
+        "Break down complex concepts with visual aids"
+      ]
+    },
+    {
+      title: "Investor Pitch Confidence",
+      imagePrompt: "Entrepreneur presenting to investor panel",
+      options: {
+        correct: "Our growth projections show tremendous market potential",
+        close: "We're positioned to capture significant market share",
+        obviouslyWrong: "I hope someone here can explain our business model",
+        funnyWrong: "Would anyone like to buy some magic beans instead?"
+      },
+      explanation: "Investor presentations demand confident body language that conveys competence and reliability.",
+      coachingTips: [
+        "Display confidence without arrogance",
+        "Use precise gestures for financial data",
+        "Maintain steady eye contact with decision makers"
+      ]
+    },
+    {
+      title: "Team Meeting Leadership",
+      imagePrompt: "Team leader facilitating collaborative discussion",
+      options: {
+        correct: "I'd like to hear everyone's thoughts on this approach",
+        close: "Let's work together to find the best solution",
+        obviouslyWrong: "I don't care what any of you think about this",
+        funnyWrong: "Raise your hand if you brought snacks to share"
+      },
+      explanation: "Team leadership requires inclusive gestures that encourage participation and collaboration.",
+      coachingTips: [
+        "Use open, inviting gestures",
+        "Include all team members with eye contact",
+        "Encourage participation through body language"
+      ]
+    },
+
+    // Emotional Expression Fallbacks (5)
+    {
+      title: "Passionate Conviction",
+      imagePrompt: "Speaker expressing deep conviction with intense focus",
+      options: {
+        correct: "I absolutely believe this is the right path forward",
+        close: "This issue is critically important to our success",
+        obviouslyWrong: "I'm completely indifferent about this outcome",
+        funnyWrong: "I'm passionately excited about beige office supplies"
+      },
+      explanation: "Passionate conviction uses intense focus and purposeful gestures to convey deep commitment.",
+      coachingTips: [
+        "Match gesture intensity to message importance",
+        "Use sustained eye contact for conviction",
+        "Let genuine emotion drive authentic expression"
+      ]
+    },
+    {
+      title: "Empathetic Understanding",
+      imagePrompt: "Speaker showing genuine empathy and concern",
+      options: {
+        correct: "I understand this situation is difficult for everyone",
+        close: "We all share these concerns and challenges",
+        obviouslyWrong: "I don't really care about your problems",
+        funnyWrong: "Group hug time, whether you like it or not!"
+      },
+      explanation: "Empathetic body language uses soft expressions and open posture to show understanding.",
+      coachingTips: [
+        "Use gentle, non-threatening gestures",
+        "Show active listening through body language",
+        "Match emotional tone with physical expression"
+      ]
+    },
+    {
+      title: "Grateful Appreciation",
+      imagePrompt: "Speaker expressing heartfelt gratitude",
+      options: {
+        correct: "I'm deeply grateful for your support and trust",
+        close: "Your contributions have made all the difference",
+        obviouslyWrong: "I expect you to do much more than this",
+        funnyWrong: "Thanks for not throwing tomatoes at me today"
+      },
+      explanation: "Gratitude expressions use humble posture and genuine warmth to convey appreciation.",
+      coachingTips: [
+        "Use humble, appreciative gestures",
+        "Make genuine eye contact when thanking",
+        "Let authentic gratitude show in posture"
+      ]
+    },
+    {
+      title: "Inspiring Motivation",
+      imagePrompt: "Leader inspiring team with uplifting energy",
+      options: {
+        correct: "We have the power to achieve extraordinary things",
+        close: "Our potential is unlimited when we work together",
+        obviouslyWrong: "Everything is hopeless and we should give up",
+        funnyWrong: "Who's ready to conquer the office coffee machine?"
+      },
+      explanation: "Inspirational speaking uses uplifting gestures and positive energy to motivate others.",
+      coachingTips: [
+        "Use upward, expansive gestures",
+        "Project positive energy through posture",
+        "Include audience in vision with inclusive language"
+      ]
+    },
+    {
+      title: "Calm Authority",
+      imagePrompt: "Composed leader maintaining calm control",
+      options: {
+        correct: "Let's approach this challenge methodically and calmly",
+        close: "We'll work through this step by step together",
+        obviouslyWrong: "Everyone panic and run around screaming",
+        funnyWrong: "Time to activate our emergency dance protocol"
+      },
+      explanation: "Calm authority uses steady, controlled gestures to project confidence and stability.",
+      coachingTips: [
+        "Use controlled, deliberate movements",
+        "Maintain steady breathing and posture",
+        "Project stability through consistent body language"
+      ]
+    },
+
+    // Situational Context Fallbacks (5)
+    {
+      title: "Virtual Meeting Presence",
+      imagePrompt: "Professional speaking confidently on video call",
+      options: {
+        correct: "Can everyone see the screen I'm sharing clearly?",
+        close: "Let me know if you have any questions about this",
+        obviouslyWrong: "I forgot we were having a meeting today",
+        funnyWrong: "Is my virtual background making me look like a potato?"
+      },
+      explanation: "Virtual presenting requires camera-appropriate gestures and clear upper body communication.",
+      coachingTips: [
+        "Keep gestures within camera frame",
+        "Use clear facial expressions for engagement",
+        "Maintain good eye contact with camera"
+      ]
+    },
+    {
+      title: "Customer Consultation",
+      imagePrompt: "Professional consulting with attentive client focus",
+      options: {
+        correct: "Let me explain how this solution addresses your needs",
+        close: "This approach will help you achieve your goals",
+        obviouslyWrong: "I have no idea what you actually need",
+        funnyWrong: "Have you considered solving this with interpretive dance?"
+      },
+      explanation: "Client consultation requires attentive listening posture and solution-focused gestures.",
+      coachingTips: [
+        "Show active listening through posture",
+        "Use consultative, helpful gestures",
+        "Focus attention entirely on client needs"
+      ]
+    },
+    {
+      title: "Conference Panel Discussion",
+      imagePrompt: "Panelist contributing thoughtfully to group discussion",
+      options: {
+        correct: "I'd like to build on what Sarah just mentioned",
+        close: "That's an excellent point that deserves more discussion",
+        obviouslyWrong: "I disagree with everything everyone has said",
+        funnyWrong: "Can we talk about my pet hamster's career goals instead?"
+      },
+      explanation: "Panel discussions require respectful acknowledgment of others and collaborative body language.",
+      coachingTips: [
+        "Acknowledge other speakers respectfully",
+        "Use inclusive, collaborative gestures",
+        "Balance participation with listening"
+      ]
+    },
+    {
+      title: "Sales Presentation Closing",
+      imagePrompt: "Salesperson confidently presenting final proposal",
+      options: {
+        correct: "I believe this solution perfectly matches your requirements",
+        close: "This represents excellent value for your investment",
+        obviouslyWrong: "I'm not sure if this will work for you",
+        funnyWrong: "But wait, there's more! Call now and get free confusion!"
+      },
+      explanation: "Sales closing requires confident, persuasive body language that builds trust and conviction.",
+      coachingTips: [
+        "Project confidence without pushiness",
+        "Use open, trustworthy gestures",
+        "Maintain professional, helpful demeanor"
+      ]
+    },
+    {
+      title: "Academic Lecture Delivery",
+      imagePrompt: "Professor explaining complex concept to students",
+      options: {
+        correct: "This principle is fundamental to understanding the theory",
+        close: "Let me break this down into simpler components",
+        obviouslyWrong: "I have no idea what any of this means",
+        funnyWrong: "Pop quiz: What's the square root of friendship?"
+      },
+      explanation: "Academic presentation uses scholarly posture and educational gestures to convey expertise.",
+      coachingTips: [
+        "Use authoritative but approachable posture",
+        "Break complex ideas into clear segments",
+        "Encourage questions through open body language"
+      ]
+    }
+  ];
+  
+  return fallbackQuestions[index % fallbackQuestions.length];
+}
+
+async function fetchImageAsBlob(url, idea, errorType = 'cors') {
+  try {
+    console.log('Attempting to fetch image as blob to bypass CORS...');
+    
+    // Add no-cors mode to prevent CORS issues
+    const response = await fetch(url, {
+      mode: 'cors',
+      credentials: 'omit',
+      headers: {
+        'Accept': 'image/*',
+      },
+      referrerPolicy: 'no-referrer'
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    
+    const blob = await response.blob();
+    const objectUrl = URL.createObjectURL(blob);
+    
+    const img = new Image();
+    img.onload = () => {
+      console.log('Blob image loaded successfully, CORS bypassed!');
+      window.currentImageLoading = false;
+      imgBox.innerHTML = ''; // Clear loading states
+      imgBox.appendChild(img);
+      // Options already rendered immediately, so no need to call renderOptions again
+      URL.revokeObjectURL(objectUrl); // Clean up
+    };
+    img.onerror = () => {
+      console.log('Blob approach failed, showing error message...');
+      URL.revokeObjectURL(objectUrl);
+      showImageError(idea, errorType);
+    };
+    img.src = objectUrl;
+  } catch (error) {
+    console.log('Fetch blob failed:', error);
+    
+    // Determine specific error type
+    let specificError = 'network';
+    if (error.name === 'TypeError') specificError = 'cors';
+    if (error.message?.includes('403')) specificError = 'forbidden';
+    if (error.message?.includes('404')) specificError = 'not_found';
+    if (error.message?.includes('timeout')) specificError = 'timeout';
+    
+    showImageError(idea, specificError);
+  }
+}
+
+async function regenerateImage(idea) {
+  try {
+    console.log('Regenerating image with safer prompt...');
+    // Try a simpler, more reliable prompt
+    const simplePrompt = `Professional speaker in business attire showing ${idea.title.toLowerCase()}, clean cartoon style, white background`;
+    
+    const result = await getDalle2Image(simplePrompt, (errorType) => {
+      console.log('Regeneration failed with error:', errorType);
+      showImageError(idea, errorType);
+    });
+    
+    if (result.url) {
+      console.log('New image generated, attempting to load...');
+      const img = new Image();
+      img.onload = () => {
+        console.log('Regenerated image loaded successfully!');
+        window.currentImageLoading = false;
+        imgBox.innerHTML = ''; // Clear loading states
+        imgBox.appendChild(img);
+        // Options already rendered immediately, so no need to call renderOptions again
+      };
+      img.onerror = () => {
+        console.log('Regenerated image failed to load');
+        showImageError(idea, 'not_found');
+      };
+      img.src = result.url;
+    } else {
+      // Error already handled by callback
+      if (!result.error) {
+        showImageError(idea, 'generation_failed');
+      }
+    }
+  } catch (error) {
+    console.log('Image regeneration failed:', error);
+    showImageError(idea, 'generation_failed');
+  }
+}
+
+function showImageError(idea, errorType = 'unknown') {
+  window.currentImageLoading = false;
+  
+  const errorMessages = {
+    'content_policy_violation': {
+      icon: '🚫',
+      title: 'Content Policy Issue',
+      message: 'Our AI couldn\'t generate an appropriate image.',
+      detail: 'Use the scenario description to answer!'
+    },
+    'cors': {
+      icon: '🌐',
+      title: 'Network Security Issue',
+      message: 'Browser blocked image loading for security.',
+      detail: 'Use the scenario description to answer!'
+    },
+    'rate_limit': {
+      icon: '⏳',
+      title: 'Too Many Requests',
+      message: 'Taking a short break from image generation.',
+      detail: 'Use the scenario description to answer!'
+    },
+    'quota_exceeded': {
+      icon: '💳',
+      title: 'Service Limit Reached',
+      message: 'Daily image generation limit reached.',
+      detail: 'Use the scenario description to answer!'
+    },
+    'timeout': {
+      icon: '⏰',
+      title: 'Loading Timeout',
+      message: 'Image took too long to load.',
+      detail: 'Use the scenario description to answer!'
+    },
+    'not_found': {
+      icon: '🔍',
+      title: 'Image Not Found',
+      message: 'Generated image link expired.',
+      detail: 'Use the scenario description to answer!'
+    },
+    'forbidden': {
+      icon: '🔒',
+      title: 'Access Denied',
+      message: 'Image service denied access.',
+      detail: 'Use the scenario description to answer!'
+    },
+    'network': {
+      icon: '📶',
+      title: 'Connection Issue',
+      message: 'Network problems downloading image.',
+      detail: 'Use the scenario description to answer!'
+    },
+    'unknown': {
+      icon: '❓',
+      title: 'Image Unavailable',
+      message: 'Something went wrong loading image.',
+      detail: 'Use the scenario description to answer!'
+    }
+  };
+  
+  const error = errorMessages[errorType] || errorMessages['unknown'];
+  
+  const gestureEmojis = {
+    'open palms': '🤲',
+    'crossed arms': '🙅‍♂️', 
+    'pointing': '👉',
+    'victory': '🙌',
+    'presenting': '🫴',
+    'fidgeting': '😰',
+    'confident': '💪',
+    'welcoming': '🤗'
+  };
+  
+  let gestureEmoji = '🎭';
+  for (const [key, value] of Object.entries(gestureEmojis)) {
+    if (idea.title.toLowerCase().includes(key)) {
+      gestureEmoji = value;
+      break;
+    }
+  }
+  
+  // Clear any external error notifications to maintain clean layout
+  const imageContainer = imgBox.parentElement;
+  const existingError = imageContainer.querySelector('.error-notification');
+  if (existingError) {
+    existingError.remove();
+  }
+  
+  // Show integrated error and scenario description in the image box
+  imgBox.innerHTML = `
+    <div style="padding:40px;text-align:center;color:white;background:rgba(0,229,255,.1);border:2px dashed rgba(255,255,255,.3);border-radius:16px;min-height:280px;display:flex;flex-direction:column;justify-content:center;">
+      <!-- Error indication at top -->
+      <div style="padding:12px 16px;margin-bottom:20px;background:linear-gradient(135deg, rgba(255,107,107,.15), rgba(255,193,7,.15));border:1px solid rgba(255,193,7,.3);border-radius:8px;">
+        <div style="font-size:1.2rem;margin-bottom:4px;">${error.icon}</div>
+        <div style="font-size:0.8rem;font-weight:600;color:#ffeb3b;margin-bottom:2px;">${error.title}</div>
+        <div style="font-size:0.7rem;color:rgba(255,255,255,0.8);">${error.message}</div>
+      </div>
+      
+      <!-- Scenario content -->
+      <div style="font-size:3rem;margin-bottom:16px;">${gestureEmoji}</div>
+      <div style="font-size:1.2rem;margin-bottom:12px;font-weight:600;color:white;text-shadow:0 1px 2px rgba(0,0,0,0.5);">Scenario Description</div>
+      <div style="font-size:0.9rem;line-height:1.4;color:rgba(255,255,255,0.9);max-width:300px;margin:0 auto;">
+        ${idea.imagePrompt}
+      </div>
+    </div>
+  `;
+
+  // Options already rendered immediately when renderQuestion was called
+  // No need to call renderOptions again here
+}
+
+function showEnhancedImageFallback(idea) {
+  // This is now just a wrapper for the error display
+  showImageError(idea, 'timeout');
+}
+
+function aggregateTips(history){
+  const map = new Map();
+  history.forEach(h => (h.tips||[]).forEach(t=>{ map.set(t, (map.get(t)||0)+1); }));
+  return Array.from(map.entries()).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([t])=>t);
+}
+
+async function openaiChat(body){
+  console.log('Making OpenAI Chat API call...', body);
+  try {
+    const res = await fetch('/api/openai/chat', {
+      method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)
+    });
+    console.log('Chat API response status:', res.status);
+    if (!res.ok) { 
+      const errorText = await res.text();
+      console.error('Chat API error:', res.status, errorText);
+      throw new Error(`Chat API error: ${res.status} ${errorText}`); 
+    }
+    const result = await res.json();
+    console.log('Chat API success:', result);
+    return result;
+  } catch (error) {
+    console.error('Chat API fetch failed:', error);
+    throw error;
+  }
+}
+
+async function openaiImages(body){
+  console.log('Making OpenAI Images API call...', body);
+  try {
+    const res = await fetch('/api/openai/images', {
+      method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)
+    });
+    console.log('Images API response status:', res.status);
+    if (!res.ok) { 
+      const errorText = await res.text();
+      console.error('Images API error:', res.status, errorText);
+      throw new Error(`Images API error: ${res.status} ${errorText}`); 
+    }
+    const result = await res.json();
+    console.log('Images API success:', result);
+    return result;
+  } catch (error) {
+    console.error('Images API fetch failed:', error);
+    throw error;
+  }
+}
+
+// Storage functions for saving quiz data to database and S3
+async function saveToStorage(idea, imageUrl) {
+  try {
+    console.log('Saving quiz data to storage...', { 
+      question: idea?.title, 
+      imageUrl: imageUrl ? 'present' : 'missing',
+      gestureType: extractGestureType(idea)
+    });
+    
+    if (!idea || !imageUrl) {
+      console.log('Skipping storage - missing required data');
+      return;
+    }
+    
+    // Extract gesture type from the idea
+    const gestureType = extractGestureType(idea);
+    
+    // Step 1: Upload image to S3
+    const uploadResponse = await fetch('/api/storage/upload', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        imageUrl: imageUrl,
+        gestureType: gestureType
+      })
+    });
+    
+    if (!uploadResponse.ok) {
+      throw new Error(`S3 upload failed: ${uploadResponse.status}`);
+    }
+    
+    const uploadResult = await uploadResponse.json();
+    console.log('S3 upload successful:', uploadResult.s3Url);
+    
+    // Step 2: Save quiz data to database
+    const saveResponse = await fetch('/api/database/save-quiz', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        image_url: uploadResult.s3Url,
+        s3_key: uploadResult.s3Key,
+        question: idea.title,
+        options: idea.options,
+        correct_answer: idea.options?.correct,
+        gesture_type: gestureType,
+        dalle_prompt: idea.imagePrompt,
+        scenario_prompt: idea.title,
+        explanation: idea.explanation,
+        coaching_tips: idea.coachingTips
+      })
+    });
+    
+    if (!saveResponse.ok) {
+      throw new Error(`Database save failed: ${saveResponse.status}`);
+    }
+    
+    const saveResult = await saveResponse.json();
+    console.log('✅ Quiz data saved successfully:', saveResult.id);
+    
+  } catch (error) {
+    console.warn('⚠️ Storage failed (app continues normally):', error.message);
+  }
+}
+
+function extractGestureType(idea) {
+  if (!idea?.title) return 'unknown';
+  
+  // Extract gesture type from the title or imagePrompt
+  const text = (idea.title + ' ' + (idea.imagePrompt || '')).toLowerCase();
+  
+  // Common gesture patterns
+  const gestureMap = {
+    'confident': /confident|power pose|chest out|hands on hips/,
+    'defensive': /defensive|folded arms|arms crossed/,
+    'open': /open palms|transparency|honesty/,
+    'pointing': /pointing|gesture.*slides|visual aids/,
+    'uncertain': /uncertain|shrug|questioning/,
+    'excited': /excited|enthusiastic|clapping|celebration/,
+    'sincere': /sincere|heart|emotion|touching chest/,
+    'thinking': /thinking|chin|contemplat/,
+    'welcoming': /welcoming|open arms|embrace/,
+    'nervous': /nervous|fidget|anxious/,
+    'authoritative': /authoritative|command|direct/,
+    'listening': /listening|ear|attentive/,
+    'explaining': /explaining|counting|fingers/,
+    'respectful': /respectful|bow|modest/,
+    'engaged': /engaged|lean.*forward|interest/,
+  };
+  
+  for (const [type, pattern] of Object.entries(gestureMap)) {
+    if (pattern.test(text)) return type;
+  }
+  
+  return 'general';
+}
+
+async function getGestureAndOptions(){
+  const sys = `You are a public speaking coach. Create a single multiple-choice item based on reading body language.
+Return strict JSON with keys: title, imagePrompt, options{correct,close,obviouslyWrong,funnyWrong}, explanation, coachingTips(array).
+
+CRITICAL CONSISTENCY REQUIREMENTS:
+- ALL content must be about the EXACT SAME gesture. The imagePrompt, correct answer, explanation, and tips must all describe the SAME body language.
+- If the gesture is "hand-on-heart", then the answer must be about sincerity/emotion, NOT about clapping or celebration.
+- If the gesture is "clapping", then the answer must be about celebration/excitement, NOT about sincerity or heart gestures.
+- Double-check that your imagePrompt matches your correct answer and explanation.
+
+Constraints:
+- The speaker is a professional person drawn in premium cartoon style with face and full upper body clearly visible (never crop the face), on a bright professional stage or modern background. Randomly choose between male or female appearance to ensure gender variety.
+- Body cues must be clear (hands, stance, facial expression, eye contact).
+- CRITICAL: Ensure visual-textual consistency. If showing fingers/counting, the numbers must match exactly (2 fingers = "two things", 3 fingers = "three points", etc.).
+- The "correct" option should be a short sentence of what the speaker might be saying that matches the body cues.
+- The "close" option should be plausible but slightly off.
+- The "obviouslyWrong" should ignore the cues.
+- The "funnyWrong" should be silly (family-friendly).
+- Keep each option under 100 characters for faster processing.
+- The imagePrompt must be concise but vivid - under 150 characters. NEVER include gesture names or answers in the imagePrompt to avoid giving away the answer.
+- Keep explanations <= 80 words; coachingTips = 3 to 4 short items.`;
+  const gestureTypes = [
+    // Original Core Gestures (20)
+    'open palms showing honesty and transparency',
+    'confident power pose with chest out and hands on hips',
+    'defensive folded arms across chest',
+    'enthusiastic pointing to invisible slides or visual aids',
+    'uncertain shoulder shrug with questioning expression',
+    'sincere hand-on-heart gesture',
+    'thoughtful chin scratch while pondering',
+    'welcoming outstretched arms gesture',
+    'nervous fidgeting with hands or clothing',
+    'authoritative index finger raised making a point',
+    'calming downward hand gesture',
+    'excited clapping or animated hand movements',
+    'protective crossed hands in front of body',
+    'confident handshake position reaching forward',
+    'storytelling gesture with expressive hand movements',
+    'presenting gesture with one arm extended',
+    'victory or celebration pose with arms raised',
+    'listening pose with hand cupped to ear',
+    'counting on fingers while explaining points',
+    'dramatic sweeping arm gesture',
+    
+    // Situational Context Gestures (15)
+    'boardroom presentation with authoritative stance and firm eye contact',
+    'casual team meeting with relaxed posture and friendly demeanor',
+    'keynote speech with grand expansive gestures to large audience',
+    'intimate workshop setting with personal connection and close proximity',
+    'conference panel discussion with professional seated posture',
+    'sales pitch with persuasive leaning forward position',
+    'academic lecture with scholarly thoughtful positioning',
+    'training session with instructional demonstrative gestures',
+    'virtual meeting with focused webcam-appropriate upper body language',
+    'networking event with approachable open social posture',
+    'investor presentation with confident commanding presence',
+    'customer service interaction with helpful attentive body language',
+    'media interview with composed professional media stance',
+    'graduation speech with inspirational uplifting gestures',
+    'wedding toast with warm celebratory emotional expression',
+    
+    // Combination Gestures (15)
+    'pointing while maintaining direct eye contact with audience',
+    'open palms combined with forward leaning engaged posture',
+    'raised eyebrows with questioning hands and tilted head',
+    'confident smile paired with expansive welcoming arm gesture',
+    'serious expression with clasped hands and steady gaze',
+    'nodding agreement while gesturing with both hands expressively',
+    'stepping forward with extended arm invitation gesture',
+    'looking up thoughtfully while touching temple in reflection',
+    'wide stance with hands behind back in authority position',
+    'gentle head tilt with sympathetic listening hand position',
+    'animated facial expressions with coordinated hand movements',
+    'purposeful walking while gesturing to emphasize key points',
+    'turning body toward audience with inclusive sweeping motion',
+    'mirroring audience posture while maintaining speaker presence',
+    'transition gesture moving from serious to enthusiastic energy',
+    
+    // Emotional Context Gestures (15)
+    'passionate conviction expressed through clenched fist and intense gaze',
+    'empathetic understanding shown with tilted head and soft expression',
+    'surprised realization demonstrated with raised hands and wide eyes',
+    'grateful appreciation conveyed through hand-over-heart and humble bow',
+    'determined resolve shown with squared shoulders and firm stance',
+    'gentle encouragement expressed through open arms and warm smile',
+    'concerned inquiry displayed with furrowed brow and questioning gesture',
+    'joyful celebration shown with bright smile and energetic movement',
+    'respectful acknowledgment demonstrated with slight bow and recognition gesture',
+    'confident assurance expressed through steady gaze and calm presence',
+    'urgent importance conveyed with focused intensity and precise gestures',
+    'humble gratitude shown through modest posture and appreciative expression',
+    'inspiring motivation expressed with uplifting gestures and bright energy',
+    'sincere apology demonstrated through remorseful posture and open hands',
+    'enthusiastic excitement shown with animated gestures and beaming smile'
+  ];
+  
+  // Improved anti-repetition logic with better variety
+  let availableGestures = gestureTypes.filter(g => !state.usedGestures.includes(g));
+  
+  // Only reset when we've used most gestures (90% threshold instead of 100%)
+  // This provides better variety while preventing exact repetition
+  const resetThreshold = Math.floor(gestureTypes.length * 0.9);
+  
+  if (availableGestures.length <= (gestureTypes.length - resetThreshold)) {
+    console.log(`Resetting gesture pool after using ${state.usedGestures.length}/${gestureTypes.length} gestures`);
+    
+    // Smart reset: keep most recent gestures to avoid immediate repetition
+    const recentGestures = state.usedGestures.slice(-10); // Keep last 10 gestures
+    state.usedGestures = recentGestures;
+    availableGestures = gestureTypes.filter(g => !recentGestures.includes(g));
+  }
+  
+  // Enhanced randomization to prevent predictable patterns
+  // Shuffle available gestures to add extra randomness
+  const shuffledGestures = availableGestures.sort(() => Math.random() - 0.5);
+  const randomGesture = shuffledGestures[Math.floor(Math.random() * shuffledGestures.length)];
+  
+  state.usedGestures.push(randomGesture);
+  console.log(`Selected gesture: "${randomGesture}" (${state.usedGestures.length}/${gestureTypes.length} used)`);
+  
+  // Add variety modifiers to prevent repetitive content
+  const audienceTypes = ['small team', 'large conference', 'intimate group', 'corporate board', 'workshop attendees', 'online viewers'];
+  const speakerPersonas = ['experienced executive', 'enthusiastic trainer', 'nervous newcomer', 'passionate expert', 'calm facilitator', 'dynamic presenter'];
+  const contexts = ['quarterly results', 'product launch', 'training module', 'strategic vision', 'team update', 'industry insights'];
+  
+  const randomAudience = audienceTypes[Math.floor(Math.random() * audienceTypes.length)];
+  const randomPersona = speakerPersonas[Math.floor(Math.random() * speakerPersonas.length)];
+  const randomContext = contexts[Math.floor(Math.random() * contexts.length)];
+  
+  const user = `Create one item focusing EXACTLY on: ${randomGesture}. 
+
+VARIETY CONTEXT: Imagine an ${randomPersona} speaking to a ${randomAudience} about ${randomContext}.
+
+CRITICAL: The imagePrompt must describe the exact gesture "${randomGesture}" clearly. The correct answer must match what someone with this exact gesture would be saying.
+Make the body language very clear and distinct. The gesture should be the primary focus that determines what the speaker is likely saying.
+Ensure the image description and correct answer are perfectly aligned with "${randomGesture}".
+
+CREATIVITY: Generate fresh, unique content. Avoid generic phrases. Make the speaker's words feel natural and context-appropriate.`;
+
+  const data = await openaiChat({
+    model: state.chatModel,
+    temperature: 0.8,
+    max_tokens: 800,
+    messages: [
+      { role:'system', content: sys },
+      { role:'user', content: user }
+    ],
+    response_format: { type: "json_object" }
+  });
+
+  try {
+    const obj = JSON.parse(data.choices[0].message.content);
+    if (!obj?.imagePrompt || !obj?.options?.correct) throw new Error('Bad JSON');
+    
+    // Add content consistency validation
+    console.log('Validating content consistency for gesture:', randomGesture);
+    console.log('Generated content:', {
+      imagePrompt: obj.imagePrompt,
+      correctAnswer: obj.options.correct,
+      explanation: obj.explanation
+    });
+    
+    // Basic consistency checks
+    const gestureKeywords = randomGesture.toLowerCase().split(' ');
+    const imagePromptLower = obj.imagePrompt.toLowerCase();
+    const explanationLower = obj.explanation.toLowerCase();
+    
+    // Check if there are obvious mismatches (hand-on-heart vs clapping)
+    if (randomGesture.includes('hand-on-heart') && (explanationLower.includes('clapping') || explanationLower.includes('applause'))) {
+      console.warn('Content mismatch detected: hand-on-heart gesture but clapping explanation');
+    }
+    
+    if (randomGesture.includes('clapping') && (imagePromptLower.includes('heart') || explanationLower.includes('sincere'))) {
+      console.warn('Content mismatch detected: clapping gesture but heart/sincere content');
+    }
+    
+    return obj;
+  } catch(e){
+    console.error('Parsing error:', e);
+    return null;
+  }
+}
+
+function sanitizePromptForContentPolicy(prompt) {
+  // Remove potentially problematic words/phrases
+  const problematicTerms = {
+    'attractive': 'professional',
+    'handsome': 'professional',
+    'beautiful': 'professional',
+    'sexy': 'professional',
+    'hot': 'professional',
+    'gorgeous': 'professional',
+    'stunning': 'professional',
+    'model-quality': 'professional',
+    'good-looking': 'professional',
+    'pretty': 'professional'
+  };
+  
+  let sanitized = prompt;
+  for (const [problematic, replacement] of Object.entries(problematicTerms)) {
+    sanitized = sanitized.replace(new RegExp(problematic, 'gi'), replacement);
+  }
+  
+  // Ensure business-appropriate language
+  sanitized = sanitized.replace(/\b(person|character|individual)\b/gi, 'business professional');
+  
+  return sanitized;
+}
+
+async function getDalle2Image(prompt, errorCallback = null){
+  // Sanitize prompt to avoid content policy violations
+  const sanitizedPrompt = sanitizePromptForContentPolicy(prompt);
+  const styled = `${sanitizedPrompt}. Clean professional cartoon illustration, business professional speaker with face and full upper body clearly visible, modern office background, clear expressive gestures, high-quality digital art style, business attire, professional setting.`;
+
+  try {
+    console.log('Trying DALL-E 3 with sanitized prompt...');
+    const data = await openaiImages({
+      model: 'dall-e-3',
+      prompt: styled,
+      size: state.imgSize,
+      quality: 'standard', // DALL-E 3 feature
+      n: 1
+    });
+    return { url: data.data?.[0]?.url || '', error: null };
+  } catch(e){
+    console.log('DALL-E 3 failed:', e);
+    
+    // Check for content policy violation
+    if (e.message?.includes('content_policy_violation') || e.message?.includes('safety')) {
+      console.log('Content policy violation detected, trying safer prompt...');
+      const saferPrompt = `Professional business speaker in formal attire giving a presentation, clean cartoon style, office setting, neutral expression, appropriate business gestures.`;
+      
+      try {
+        const data = await openaiImages({
+          model: 'dall-e-2',
+          prompt: saferPrompt,
+          size: '512x512',
+          n: 1
+        });
+        return { url: data.data?.[0]?.url || '', error: 'content_policy_sanitized' };
+      } catch(e3) {
+        if (errorCallback) errorCallback('content_policy_violation');
+        return { url: '', error: 'content_policy_violation' };
+      }
+    }
+    
+    // Try DALL-E 2 fallback
+    try {
+      console.log('Trying DALL-E 2 fallback...');
+      const data = await openaiImages({
+        model: 'dall-e-2',
+        prompt: styled.substring(0, 1000), // DALL-E 2 has shorter prompt limits
+        size: '512x512', // DALL-E 2 max size
+        n: 1
+      });
+      return { url: data.data?.[0]?.url || '', error: null };
+    } catch(e2) {
+      console.log('Both DALL-E 3 and 2 failed:', e2);
+      
+      // Determine error type
+      let errorType = 'generation_failed';
+      if (e2.message?.includes('rate_limit')) errorType = 'rate_limit';
+      if (e2.message?.includes('insufficient_quota')) errorType = 'quota_exceeded';
+      if (e2.message?.includes('timeout')) errorType = 'timeout';
+      
+      if (errorCallback) errorCallback(errorType);
+      return { url: '', error: errorType };
+    }
+  }
+}
+
+
+const confettiCanvas = document.querySelector('.confetti');
+const ctx = confettiCanvas.getContext('2d');
+let confetti = [];
+function confettiBurst(){
+  const w = confettiCanvas.width = innerWidth;
+  const h = confettiCanvas.height = innerHeight;
+  const colors = ['#7cf5ff','#ffd166','#ff8bd1','#b5ff7a','#c1a8ff'];
+  for(let i=0;i<120;i++){
+    confetti.push({
+      x: Math.random()*w, y: -10, vy: 2+Math.random()*4, vx: -1+Math.random()*2,
+      size: 3+Math.random()*5, rot: Math.random()*360, vr: -5+Math.random()*10,
+      color: colors[Math.floor(Math.random()*colors.length)]
+    });
+  }
+}
+function tick(){
+  ctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+  confetti.forEach(p=>{
+    p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr;
+    ctx.save();
+    ctx.translate(p.x,p.y);
+    ctx.rotate(p.rot*Math.PI/180);
+    ctx.fillStyle = p.color;
+    ctx.fillRect(-p.size/2,-p.size/2,p.size,p.size);
+    ctx.restore();
+  });
+  confetti = confetti.filter(p=>p.y < innerHeight+20);
+  requestAnimationFrame(tick);
+}
+tick();
+</script>
+</body>
+</html>

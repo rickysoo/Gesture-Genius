@@ -1,0 +1,17 @@
+{
+  "name": "Gesture Genius - Body Language Quiz",
+  "short_name": "Gesture Genius",
+  "description": "Learn to read body language like a pro with our AI-powered interactive quiz",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0714",
+  "theme_color": "#0a0714",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "32x32",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
