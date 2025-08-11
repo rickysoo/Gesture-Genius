@@ -758,7 +758,7 @@ async function newQuestion(){
         imageUrl = dbQuestion.image_url;
         
         hideLoadingState();
-        renderQuestion(idea, imageUrl);
+        renderQuestion(idea, imageUrl, true); // Skip storage - already in database
       } else {
         // Fallback to fresh question if database is empty
         console.log('Database empty, generating fresh question as fallback');
@@ -1041,10 +1041,12 @@ function updateImageInPlace(idea, imageUrl) {
     imgBox.innerHTML = '';
     imgBox.appendChild(img);
     
-    // Save to storage (non-blocking, fails silently)
-    saveToStorage(idea, imageUrl).catch(err => 
-      console.log('Storage save failed but app continues:', err.message)
-    );
+    // Save to storage (non-blocking, fails silently) - only if not from database
+    if (!skipStorage) {
+      saveToStorage(idea, imageUrl).catch(err => 
+        console.log('Storage save failed but app continues:', err.message)
+      );
+    }
   };
   
   img.onerror = () => {
@@ -1055,7 +1057,7 @@ function updateImageInPlace(idea, imageUrl) {
   img.src = imageUrl;
 }
 
-function renderQuestion(idea, imageUrl){
+function renderQuestion(idea, imageUrl, skipStorage = false){
   console.log('renderQuestion called with idea:', idea?.title, 'imageUrl:', imageUrl);
   
   // Immediately show options so user can start answering
@@ -1156,10 +1158,12 @@ function renderQuestion(idea, imageUrl){
       imgBox.appendChild(img);
       // Options already rendered immediately, so no need to call renderOptions again
       
-      // Save to storage (non-blocking, fails silently)
-      saveToStorage(idea, imageUrl).catch(err => 
-        console.log('Storage save failed but app continues:', err.message)
-      );
+      // Save to storage (non-blocking, fails silently) - only if not from database
+      if (!skipStorage) {
+        saveToStorage(idea, imageUrl).catch(err => 
+          console.log('Storage save failed but app continues:', err.message)
+        );
+      }
     };
     
     console.log('Setting image src:', url);
