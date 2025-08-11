@@ -670,30 +670,36 @@ async function newQuestion(){
       return;
     }
     
-    // Check if we have an in-progress prefetch (user clicked Start while image was generating)
-    if (state.prefetchInProgress) {
-      console.log('Using in-progress prefetch question:', state.prefetchInProgress.idea.title);
+    // Debug: Check prefetch state
+    console.log('🔍 Debug - prefetchInProgress:', state.prefetchInProgress ? 'YES' : 'NO');
+    console.log('🔍 Debug - prefetchQueue length:', state.prefetchQueue.length);
+    console.log('🔍 Debug - question index:', state.index);
+    
+    // Check if we have an in-progress prefetch (user clicked Start while prefetch was running)
+    if (state.prefetchInProgress && state.index === 0) {
+      console.log('🔄 Using in-progress prefetch question:', state.prefetchInProgress.idea.title);
       idea = state.prefetchInProgress.idea;
       
-      // Show the question with loading placeholder
+      // Show the question immediately with loading placeholder
       hideLoadingState();
       renderQuestionWithProgressiveLoading(idea);
       
       // Continue the background image generation and update when ready
+      console.log('📡 Continuing background prefetch image generation...');
       state.prefetchInProgress.imagePromise.then(result => {
         const finalImageUrl = result.url || null;
         if (finalImageUrl) {
-          console.log('🖼️ In-progress prefetch image completed, updating display...');
+          console.log('🖼️ Background prefetch image completed, updating display!');
           updateImageInPlace(idea, finalImageUrl);
           
           // Save to database now that we have the image
           saveToStorage(idea, finalImageUrl);
         } else {
-          console.log('In-progress prefetch image failed, keeping fallback');
+          console.log('Background prefetch image failed, keeping fallback');
           showImageFallback(idea);
         }
       }).catch(imageError => {
-        console.log('In-progress prefetch image failed:', imageError.message);
+        console.log('Background prefetch image failed:', imageError.message);
         showImageFallback(idea);
       });
       
@@ -914,6 +920,7 @@ async function prefetchFirstQuestion() {
       idea: idea,
       imagePromise: imagePromise
     };
+    console.log('🔄 Prefetch in progress set for:', idea.title);
     
     try {
       const imageResult = await imagePromise;
@@ -936,6 +943,7 @@ async function prefetchFirstQuestion() {
       }
       
       // Clear the in-progress state since it's completed
+      console.log('✅ Clearing prefetchInProgress - prefetch completed successfully');
       state.prefetchInProgress = null;
       
     } catch (imageError) {
