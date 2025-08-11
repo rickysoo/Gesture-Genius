@@ -467,6 +467,7 @@ let state = {
   freshQuestionsCount: 1, // Number of fresh questions to generate (rest from database)
   usedQuestionIds: [], // Track question IDs used in current quiz to prevent duplicates
   savedQuestions: new Set(), // Track questions already saved to prevent duplicates
+  prefetchInProgress: null, // Track ongoing prefetch: {idea, imagePromise} or null
 };
 
 // Sound system using Web Audio API
@@ -597,6 +598,7 @@ async function startQuiz() {
   state.index = 0; state.score = 0; state.history = []; state.usedGestures = [];
   state.usedQuestionIds = []; // Reset used question IDs to prevent duplicates in new quiz
   state.savedQuestions.clear(); // Reset saved questions tracker
+  // Keep prefetchInProgress - we want to use it if available
   // Don't clear prefetch queue - use what we already have
   summaryEl.style.display = 'none';
   nextBtn.disabled = true;
@@ -664,6 +666,39 @@ async function newQuestion(){
         renderQuestionWithProgressiveLoading(idea);
       }
       
+      state.busy = false;
+      return;
+    }
+    
+    // Check if we have an in-progress prefetch (user clicked Start while image was generating)
+    if (state.prefetchInProgress) {
+      console.log('Using in-progress prefetch question:', state.prefetchInProgress.idea.title);
+      idea = state.prefetchInProgress.idea;
+      
+      // Show the question with loading placeholder
+      hideLoadingState();
+      renderQuestionWithProgressiveLoading(idea);
+      
+      // Continue the background image generation and update when ready
+      state.prefetchInProgress.imagePromise.then(result => {
+        const finalImageUrl = result.url || null;
+        if (finalImageUrl) {
+          console.log('🖼️ In-progress prefetch image completed, updating display...');
+          updateImageInPlace(idea, finalImageUrl);
+          
+          // Save to database now that we have the image
+          saveToStorage(idea, finalImageUrl);
+        } else {
+          console.log('In-progress prefetch image failed, keeping fallback');
+          showImageFallback(idea);
+        }
+      }).catch(imageError => {
+        console.log('In-progress prefetch image failed:', imageError.message);
+        showImageFallback(idea);
+      });
+      
+      // Clear the in-progress state since we've consumed it
+      state.prefetchInProgress = null;
       state.busy = false;
       return;
     }
@@ -871,11 +906,14 @@ async function prefetchFirstQuestion() {
     
     console.log('First question prefetched, generating image...', idea.title?.substring(0, 50) + '...');
     
-    // Start image generation with timeout protection
-    const imagePromise = Promise.race([
-      getDalle2Image(idea.imagePrompt),
-      new Promise((_, reject) => setTimeout(() => reject(new Error('Image timeout')), 40000))
-    ]);
+    // Start image generation (no timeout here - let it complete in background)
+    const imagePromise = getDalle2Image(idea.imagePrompt);
+    
+    // Store the prefetch in progress state
+    state.prefetchInProgress = {
+      idea: idea,
+      imagePromise: imagePromise
+    };
     
     try {
       const imageResult = await imagePromise;
@@ -896,6 +934,10 @@ async function prefetchFirstQuestion() {
           timestamp: Date.now()
         }];
       }
+      
+      // Clear the in-progress state since it's completed
+      state.prefetchInProgress = null;
+      
     } catch (imageError) {
       console.log('⚠️ Image generation failed, storing question only');
       state.prefetchQueue = [{
@@ -904,18 +946,29 @@ async function prefetchFirstQuestion() {
         timestamp: Date.now()
       }];
       
-      // Continue image generation in background
-      getDalle2Image(idea.imagePrompt).then(result => {
-        if (result.url && state.prefetchQueue.length > 0) {
-          console.log('📦 Background image completed, updating prefetch queue');
-          state.prefetchQueue[0].imageUrl = result.url;
-        }
-      }).catch(e => console.log('Background image failed:', e.message));
+      // Keep the in-progress state for background completion
+      if (state.prefetchInProgress) {
+        console.log('🔄 Continuing image generation in background...');
+        state.prefetchInProgress.imagePromise.then(result => {
+          if (result.url) {
+            console.log('📦 Background prefetch image completed!');
+            // Update existing queue entry if it exists
+            if (state.prefetchQueue.length > 0) {
+              state.prefetchQueue[0].imageUrl = result.url;
+            }
+          }
+          state.prefetchInProgress = null;
+        }).catch(e => {
+          console.log('Background prefetch image failed:', e.message);
+          state.prefetchInProgress = null;
+        });
+      }
     }
     
   } catch (error) {
     console.log('First question prefetch failed, will generate on demand:', error.message);
     state.prefetchQueue = [];
+    state.prefetchInProgress = null;
   }
 }
 
