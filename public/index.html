@@ -511,15 +511,23 @@ const prefetchStatus = qs('#prefetchStatus');
 
 // Page load - show ready immediately (no prefetching)
 window.addEventListener('load', async () => {
+  console.log('Page loaded, starting prefetch...');
   prefetchStatus.innerHTML = '🔄 Preparing your first question...';
   
-  // Start prefetching the first question immediately
-  await prefetchFirstQuestion();
-  
-  // Update status based on prefetch result
-  if (state.prefetchQueue.length > 0) {
-    prefetchStatus.innerHTML = '✅ Ready to start instantly!';
-  } else {
+  try {
+    // Start prefetching the first question immediately
+    await prefetchFirstQuestion();
+    
+    // Update status based on prefetch result
+    if (state.prefetchQueue.length > 0) {
+      prefetchStatus.innerHTML = '✅ Ready to start instantly!';
+      console.log('Prefetch successful - ready for instant start');
+    } else {
+      prefetchStatus.innerHTML = '✅ Ready to start!';
+      console.log('Prefetch failed - will generate on demand');
+    }
+  } catch (error) {
+    console.error('Prefetch error:', error);
     prefetchStatus.innerHTML = '✅ Ready to start!';
   }
 });

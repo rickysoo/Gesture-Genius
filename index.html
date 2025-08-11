@@ -872,35 +872,45 @@ async function prefetchFirstQuestion() {
   console.log('Prefetching first question for instant quiz start...');
   
   try {
-    // Generate the first question (which will be fresh)
-    const idea = await getGestureAndOptions();
-    if (!idea) throw new Error('No first question generated in prefetch');
+    // Add timeout for prefetch to avoid hanging
+    const prefetchPromise = Promise.race([
+      (async () => {
+        // Generate the first question (which will be fresh)
+        const idea = await getGestureAndOptions();
+        if (!idea) throw new Error('No first question generated in prefetch');
+        
+        console.log('First question prefetched, generating image...', idea.title?.substring(0, 50) + '...');
+        
+        // Generate matching image
+        const imageResult = await getDalle2Image(idea.imagePrompt);
+        const imageUrl = imageResult.url || null;
+        
+        return { idea, imageUrl };
+      })(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Prefetch timeout')), 20000))
+    ]);
     
-    console.log('First question prefetched, generating image...', idea.title?.substring(0, 50) + '...');
+    const result = await prefetchPromise;
     
-    // Generate matching image
-    const imageResult = await getDalle2Image(idea.imagePrompt);
-    const imageUrl = imageResult.url || null;
-    
-    if (imageUrl) {
+    if (result.imageUrl) {
       console.log('✅ First question + image prefetched successfully');
       // Store in prefetch queue for immediate use
       state.prefetchQueue = [{
-        idea: idea,
-        imageUrl: imageUrl,
+        idea: result.idea,
+        imageUrl: result.imageUrl,
         timestamp: Date.now()
       }];
     } else {
       console.log('⚠️ First question prefetched but image failed');
       state.prefetchQueue = [{
-        idea: idea,
+        idea: result.idea,
         imageUrl: null,
         timestamp: Date.now()
       }];
     }
     
   } catch (error) {
-    console.warn('First question prefetch failed:', error.message);
+    console.log('First question prefetch failed, will generate on demand:', error.message);
     state.prefetchQueue = [];
   }
 }
