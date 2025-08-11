@@ -1,4 +1,4 @@
-const { secureEndpoint, validateRequired, sanitizeString } = require('../middleware/security');
+import { secureEndpoint, validateRequired, sanitizeString } from '../middleware/security.js';
 
 async function imagesHandler(req, res) {
   if (req.method !== 'POST') {
