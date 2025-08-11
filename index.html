@@ -466,6 +466,7 @@ let state = {
   usedGestures: [],
   freshQuestionsCount: 1, // Number of fresh questions to generate (rest from database)
   usedQuestionIds: [], // Track question IDs used in current quiz to prevent duplicates
+  savedQuestions: new Set(), // Track questions already saved to prevent duplicates
 };
 
 // Sound system using Web Audio API
@@ -561,22 +562,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Keep the original for fallback
-if (startQuizBtn) {
-  startQuizBtn.addEventListener('click', async () => {
-    try { sounds.click(); } catch(e) { console.warn('Sound play failed:', e); }
-    
-    // Clean screen transitions
-    introScreen.style.display = 'none';
-    quizScreen.style.display = 'block';
-    
-    // Clear any stray error notifications
-    const existingErrors = document.querySelectorAll('.error-notification');
-    existingErrors.forEach(error => error.remove());
-    
-    await startQuiz();
-  });
-}
+// Duplicate handler removed - using DOMContentLoaded handler only
 
 
 if (restartBtn) {
@@ -610,6 +596,7 @@ async function startQuiz() {
   state.imgSize = '1024x1024'; // DALL-E 3 supports higher resolution
   state.index = 0; state.score = 0; state.history = []; state.usedGestures = [];
   state.usedQuestionIds = []; // Reset used question IDs to prevent duplicates in new quiz
+  state.savedQuestions.clear(); // Reset saved questions tracker
   // Don't clear prefetch queue - use what we already have
   summaryEl.style.display = 'none';
   nextBtn.disabled = true;
@@ -2013,11 +2000,22 @@ async function openaiImages(body){
 // Storage functions for saving quiz data to database and S3
 async function saveToStorage(idea, imageUrl) {
   try {
+    const questionKey = idea?.title + '|' + (imageUrl || 'no-image');
+    
+    // Prevent duplicate saves for the same question
+    if (state.savedQuestions.has(questionKey)) {
+      console.log('Question already saved, skipping duplicate save:', idea?.title);
+      return;
+    }
+    
     console.log('Saving quiz data to storage...', { 
       question: idea?.title, 
       imageUrl: imageUrl ? 'present' : 'missing',
       gestureType: extractGestureType(idea)
     });
+    
+    // Mark as saved to prevent duplicates
+    state.savedQuestions.add(questionKey);
     
     if (!idea || !imageUrl) {
       console.log('Skipping storage - missing required data');
