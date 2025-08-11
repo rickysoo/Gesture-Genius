@@ -1,5 +1,5 @@
 import { neon } from '@neondatabase/serverless';
-const { secureEndpoint, validateRequired, sanitizeString, validateImageUrl } = require('../middleware/security');
+import { secureEndpoint, validateRequired, sanitizeString, validateImageUrl } from '../middleware/security.js';
 
 async function saveQuizHandler(req, res) {
   if (req.method !== 'POST') {

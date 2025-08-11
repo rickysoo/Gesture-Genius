@@ -872,41 +872,52 @@ async function prefetchFirstQuestion() {
   console.log('Prefetching first question for instant quiz start...');
   
   try {
-    // Add timeout for prefetch to avoid hanging
-    const prefetchPromise = Promise.race([
-      (async () => {
-        // Generate the first question (which will be fresh)
-        const idea = await getGestureAndOptions();
-        if (!idea) throw new Error('No first question generated in prefetch');
-        
-        console.log('First question prefetched, generating image...', idea.title?.substring(0, 50) + '...');
-        
-        // Generate matching image
-        const imageResult = await getDalle2Image(idea.imagePrompt);
-        const imageUrl = imageResult.url || null;
-        
-        return { idea, imageUrl };
-      })(),
-      new Promise((_, reject) => setTimeout(() => reject(new Error('Prefetch timeout')), 20000))
+    // Generate the first question (which will be fresh)
+    const idea = await getGestureAndOptions();
+    if (!idea) throw new Error('No first question generated in prefetch');
+    
+    console.log('First question prefetched, generating image...', idea.title?.substring(0, 50) + '...');
+    
+    // Start image generation with timeout protection
+    const imagePromise = Promise.race([
+      getDalle2Image(idea.imagePrompt),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Image timeout')), 40000))
     ]);
     
-    const result = await prefetchPromise;
-    
-    if (result.imageUrl) {
-      console.log('✅ First question + image prefetched successfully');
-      // Store in prefetch queue for immediate use
+    try {
+      const imageResult = await imagePromise;
+      const imageUrl = imageResult.url || null;
+      
+      if (imageUrl) {
+        console.log('✅ First question + image prefetched successfully');
+        state.prefetchQueue = [{
+          idea: idea,
+          imageUrl: imageUrl,
+          timestamp: Date.now()
+        }];
+      } else {
+        console.log('⚠️ First question prefetched but image failed');
+        state.prefetchQueue = [{
+          idea: idea,
+          imageUrl: null,
+          timestamp: Date.now()
+        }];
+      }
+    } catch (imageError) {
+      console.log('⚠️ Image generation failed, storing question only');
       state.prefetchQueue = [{
-        idea: result.idea,
-        imageUrl: result.imageUrl,
-        timestamp: Date.now()
-      }];
-    } else {
-      console.log('⚠️ First question prefetched but image failed');
-      state.prefetchQueue = [{
-        idea: result.idea,
+        idea: idea,
         imageUrl: null,
         timestamp: Date.now()
       }];
+      
+      // Continue image generation in background
+      getDalle2Image(idea.imagePrompt).then(result => {
+        if (result.url && state.prefetchQueue.length > 0) {
+          console.log('📦 Background image completed, updating prefetch queue');
+          state.prefetchQueue[0].imageUrl = result.url;
+        }
+      }).catch(e => console.log('Background image failed:', e.message));
     }
     
   } catch (error) {
@@ -2098,14 +2109,17 @@ async function getQuestionsFromDatabase(count = 4) {
   try {
     console.log(`Retrieving ${count} questions from database...`);
     
-    const response = await fetch('/api/database/get-questions', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        count: count,
-        excludeIds: state.usedQuestionIds
-      })
-    });
+    const response = await Promise.race([
+      fetch('/api/database/get-questions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          count: count,
+          excludeIds: state.usedQuestionIds
+        })
+      }),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Database timeout')), 10000))
+    ]);
     
     if (!response.ok) {
       throw new Error(`Database request failed: ${response.status}`);
@@ -2269,16 +2283,19 @@ Ensure the image description and correct answer are perfectly aligned with "${ra
 
 CREATIVITY: Generate fresh, unique content. Avoid generic phrases. Make the speaker's words feel natural and context-appropriate.`;
 
-  const data = await openaiChat({
-    model: state.chatModel,
-    temperature: 0.8,
-    max_tokens: 800,
-    messages: [
-      { role:'system', content: sys },
-      { role:'user', content: user }
-    ],
-    response_format: { type: "json_object" }
-  });
+  const data = await Promise.race([
+    openaiChat({
+      model: state.chatModel,
+      temperature: 0.8,
+      max_tokens: 800,
+      messages: [
+        { role:'system', content: sys },
+        { role:'user', content: user }
+      ],
+      response_format: { type: "json_object" }
+    }),
+    new Promise((_, reject) => setTimeout(() => reject(new Error('OpenAI Chat timeout')), 15000))
+  ]);
 
   try {
     // Extract JSON from potential markdown code blocks

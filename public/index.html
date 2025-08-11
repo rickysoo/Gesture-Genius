@@ -887,7 +887,7 @@ async function prefetchFirstQuestion() {
         
         return { idea, imageUrl };
       })(),
-      new Promise((_, reject) => setTimeout(() => reject(new Error('Prefetch timeout')), 20000))
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Prefetch timeout')), 40000))
     ]);
     
     const result = await prefetchPromise;

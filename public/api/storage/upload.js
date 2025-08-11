@@ -1,6 +1,6 @@
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import crypto from 'crypto';
-const { secureEndpoint, validateRequired, sanitizeString, validateImageUrl } = require('../middleware/security');
+import { secureEndpoint, validateRequired, sanitizeString, validateImageUrl } from '../middleware/security.js';
 
 // Initialize S3 client
 const s3Client = new S3Client({
