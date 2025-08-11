@@ -2000,7 +2000,7 @@ async function openaiImages(body){
 // Storage functions for saving quiz data to database and S3
 async function saveToStorage(idea, imageUrl) {
   try {
-    const questionKey = idea?.title + '|' + (imageUrl || 'no-image');
+    const questionKey = idea?.title; // Use only title to prevent duplicates regardless of image URL
     
     // Prevent duplicate saves for the same question
     if (state.savedQuestions.has(questionKey)) {
