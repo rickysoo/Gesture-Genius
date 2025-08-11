@@ -1,7 +1,7 @@
 // Security middleware for API endpoints
 // Provides authentication, rate limiting, and security headers
 
-const crypto = require('crypto');
+import crypto from 'crypto';
 
 // Rate limiting store (in-memory for demo - use Redis for production)
 const rateLimitStore = new Map();
@@ -195,7 +195,7 @@ function secureEndpoint(handler) {
   };
 }
 
-module.exports = {
+export {
   secureEndpoint,
   setSecurityHeaders,
   rateLimit,
