@@ -511,7 +511,17 @@ const prefetchStatus = qs('#prefetchStatus');
 
 // Page load - show ready immediately (no prefetching)
 window.addEventListener('load', async () => {
-  prefetchStatus.innerHTML = '✅ Ready to start!';
+  prefetchStatus.innerHTML = '🔄 Preparing your first question...';
+  
+  // Start prefetching the first question immediately
+  await prefetchFirstQuestion();
+  
+  // Update status based on prefetch result
+  if (state.prefetchQueue.length > 0) {
+    prefetchStatus.innerHTML = '✅ Ready to start instantly!';
+  } else {
+    prefetchStatus.innerHTML = '✅ Ready to start!';
+  }
 });
 
 // Ensure DOM is loaded before attaching events
@@ -568,7 +578,6 @@ if (restartBtn) {
   
   // Reset summary display
   if (summaryEl) summaryEl.style.display = 'none';
-  prefetchStatus.innerHTML = '✅ Ready to start!';
 });
 }
 
@@ -624,6 +633,32 @@ async function newQuestion(){
 
   try {
     let idea, imageUrl;
+    
+    // Check if we have a prefetched question+image pair first (intro screen prefetch)
+    if (state.prefetchQueue.length > 0) {
+      const prefetched = state.prefetchQueue.shift();
+      idea = prefetched.idea;
+      imageUrl = prefetched.imageUrl;
+      console.log('Using prefetched question from intro screen');
+      console.log('Prefetched idea:', idea.title);
+      console.log('Prefetched imageUrl:', imageUrl ? 'present' : 'null');
+      
+      // Show the prefetched question immediately
+      hideLoadingState();
+      if (imageUrl) {
+        console.log('Rendering prefetched question with image...');
+        renderQuestion(idea, imageUrl);
+        
+        // Save prefetched question to database for future reuse
+        saveToStorage(idea, imageUrl);
+      } else {
+        // Question was prefetched but image failed, show progressive loading
+        renderQuestionWithProgressiveLoading(idea);
+      }
+      
+      state.busy = false;
+      return;
+    }
     
     // Hybrid approach: First n questions are fresh, rest from database
     if (state.index < state.freshQuestionsCount) {
@@ -818,12 +853,46 @@ function hideLoadingState() {
 }
 
 async function prefetchFirstQuestion() {
-  return prefetchNextQuestion();
+  // Prefetch only the first question on intro screen
+  console.log('Prefetching first question for instant quiz start...');
+  
+  try {
+    // Generate the first question (which will be fresh)
+    const idea = await getGestureAndOptions();
+    if (!idea) throw new Error('No first question generated in prefetch');
+    
+    console.log('First question prefetched, generating image...', idea.title?.substring(0, 50) + '...');
+    
+    // Generate matching image
+    const imageResult = await getDalle2Image(idea.imagePrompt);
+    const imageUrl = imageResult.url || null;
+    
+    if (imageUrl) {
+      console.log('✅ First question + image prefetched successfully');
+      // Store in prefetch queue for immediate use
+      state.prefetchQueue = [{
+        idea: idea,
+        imageUrl: imageUrl,
+        timestamp: Date.now()
+      }];
+    } else {
+      console.log('⚠️ First question prefetched but image failed');
+      state.prefetchQueue = [{
+        idea: idea,
+        imageUrl: null,
+        timestamp: Date.now()
+      }];
+    }
+    
+  } catch (error) {
+    console.warn('First question prefetch failed:', error.message);
+    state.prefetchQueue = [];
+  }
 }
 
 async function prefetchNextQuestion() {
-  // DISABLED: Prefetching completely disabled per user request
-  console.log('Prefetch disabled - questions will be generated on demand');
+  // DISABLED: Background prefetching completely disabled per user request
+  console.log('Background prefetch disabled - questions will be generated on demand');
   return;
   
   try {

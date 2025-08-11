@@ -10,30 +10,42 @@ export default async function handler(req, res) {
     const sql = neon(process.env.DATABASE_URL);
     
     // Get random questions excluding specified IDs
-    let excludeCondition = '';
-    let queryParams = [count];
+    let result;
     
     if (excludeIds && excludeIds.length > 0) {
-      excludeCondition = `WHERE id NOT IN (${excludeIds.map((_, i) => `$${i + 2}`).join(', ')})`;
-      queryParams.push(...excludeIds);
+      result = await sql`
+        SELECT 
+          id,
+          image_url,
+          question,
+          options,
+          correct_answer,
+          gesture_type,
+          explanation,
+          coaching_tips,
+          reuse_count
+        FROM quiz_data 
+        WHERE id NOT IN (${sql.join(excludeIds, ',')})
+        ORDER BY RANDOM() 
+        LIMIT ${count}
+      `;
+    } else {
+      result = await sql`
+        SELECT 
+          id,
+          image_url,
+          question,
+          options,
+          correct_answer,
+          gesture_type,
+          explanation,
+          coaching_tips,
+          reuse_count
+        FROM quiz_data 
+        ORDER BY RANDOM() 
+        LIMIT ${count}
+      `;
     }
-    
-    const result = await sql`
-      SELECT 
-        id,
-        image_url,
-        question,
-        options,
-        correct_answer,
-        gesture_type,
-        explanation,
-        coaching_tips,
-        reuse_count
-      FROM quiz_data 
-      ${excludeCondition ? sql.unsafe(excludeCondition) : sql``}
-      ORDER BY RANDOM() 
-      LIMIT ${sql.unsafe('$1')}
-    `.bind(queryParams);
     
     // Update reuse count for retrieved questions
     if (result.length > 0) {
