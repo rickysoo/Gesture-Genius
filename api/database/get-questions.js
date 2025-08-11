@@ -13,6 +13,7 @@ export default async function handler(req, res) {
     let result;
     
     if (excludeIds && excludeIds.length > 0) {
+      // Create a PostgreSQL array from the excluded IDs
       result = await sql`
         SELECT 
           id,
@@ -25,7 +26,7 @@ export default async function handler(req, res) {
           coaching_tips,
           reuse_count
         FROM quiz_data 
-        WHERE id NOT IN (${sql.join(excludeIds, ',')})
+        WHERE id != ALL(${excludeIds})
         ORDER BY RANDOM() 
         LIMIT ${count}
       `;
