@@ -599,6 +599,12 @@ if (restartBtn) {
 // Test button for debugging
 
 async function startQuiz() {
+  // Prevent multiple simultaneous starts
+  if (state.busy) {
+    console.log('Quiz already starting, ignoring duplicate startQuiz call');
+    return;
+  }
+  
   console.log('Starting quiz...');
   state.chatModel = 'gpt-4o-mini';
   state.imgSize = '1024x1024'; // DALL-E 3 supports higher resolution
@@ -1167,11 +1173,11 @@ function renderQuestion(idea, imageUrl){
   setTimeout(() => {
     console.log('Image loading timeout - checking if still loading...');
     if (window.currentImageLoading) { // Image still loading after timeout
-      console.log('Still loading after 30 seconds, forcing fallback...');
+      console.log('Still loading after 10 seconds, forcing fallback...');
       window.currentImageLoading = false;
       showEnhancedImageFallback(idea);
     }
-  }, 30000); // Increased to 30 seconds for better reliability
+  }, 10000); // Reduced to 10 seconds for better UX
   
   } catch (error) {
     console.error('Error in renderQuestion:', error);
