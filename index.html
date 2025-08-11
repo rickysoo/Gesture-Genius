@@ -464,6 +464,8 @@ let state = {
   prefetchQueue: [],
   loadingInterval: null,
   usedGestures: [],
+  freshQuestionsCount: 1, // Number of fresh questions to generate (rest from database)
+  usedQuestionIds: [], // Track question IDs used in current quiz to prevent duplicates
 };
 
 // Sound system using Web Audio API
@@ -577,6 +579,7 @@ async function startQuiz() {
   state.chatModel = 'gpt-4o-mini';
   state.imgSize = '1024x1024'; // DALL-E 3 supports higher resolution
   state.index = 0; state.score = 0; state.history = []; state.usedGestures = [];
+  state.usedQuestionIds = []; // Reset used question IDs to prevent duplicates in new quiz
   // Don't clear prefetch queue - use what we already have
   summaryEl.style.display = 'none';
   nextBtn.disabled = true;
@@ -587,7 +590,7 @@ async function startQuiz() {
   if (bar) bar.style.width = '0%';
   if (restartBtn) restartBtn.style.display = 'none';
   
-  console.log('About to call newQuestion...');
+  console.log(`Starting quiz with hybrid approach: ${state.freshQuestionsCount} fresh, ${state.total - state.freshQuestionsCount} from database`);
   await newQuestion();
 }
 
@@ -617,46 +620,24 @@ async function newQuestion(){
   // Show loading state
   showLoadingState();
   
-  console.log('Loading state shown, about to try API...');
+  console.log('Loading state shown, hybrid question system starting...');
 
   try {
-    // Check if we have a prefetched question+image pair
     let idea, imageUrl;
-    if (state.prefetchQueue.length > 0) {
-      const prefetched = state.prefetchQueue.shift();
-      idea = prefetched.idea;
-      imageUrl = prefetched.imageUrl;
-      console.log('Using prefetched question+image pair');
-      console.log('Prefetched idea:', idea.title);
-      console.log('Prefetched imageUrl:', imageUrl ? 'present' : 'null');
+    
+    // Hybrid approach: First n questions are fresh, rest from database
+    if (state.index < state.freshQuestionsCount) {
+      // Generate fresh question
+      console.log(`Generating fresh question ${n}/${state.freshQuestionsCount}`);
       
-      // Show the prefetched question immediately
-      hideLoadingState();
-      if (imageUrl) {
-        console.log('Rendering prefetched question with image...');
-        renderQuestion(idea, imageUrl);
-      } else {
-        // Question was prefetched but image failed, show progressive loading
-        renderQuestionWithProgressiveLoading(idea);
-      }
-      
-      state.busy = false;
-      
-      // Prefetching disabled - questions generated on demand
-      return;
-    } else {
-      // Generate question first, then appropriate image
-      console.log('Generating question first, then matching image...');
-      
-      // Generate text first
       idea = await Promise.race([
         getGestureAndOptions(),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('Text timeout')), 15000))
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Fresh question timeout')), 15000))
       ]);
       
-      if (!idea) throw new Error('No idea generated');
+      if (!idea) throw new Error('No fresh idea generated');
       
-      console.log('Generated new idea:', {
+      console.log('Generated fresh idea:', {
         title: idea.title,
         imagePrompt: idea.imagePrompt,
         correctAnswer: idea.options?.correct
@@ -666,8 +647,8 @@ async function newQuestion(){
       hideLoadingState();
       renderQuestionWithProgressiveLoading(idea);
       
-      // Now generate matching image
-      console.log('Generating image...');
+      // Generate matching image
+      console.log('Generating fresh image...');
       const imagePromise = Promise.race([
         getDalle2Image(idea.imagePrompt),
         new Promise((_, reject) => setTimeout(() => reject(new Error('Image timeout')), 25000))
@@ -677,31 +658,92 @@ async function newQuestion(){
       imagePromise.then(result => {
         const finalImageUrl = result.url || null;
         if (finalImageUrl) {
-          console.log('Image ready, updating display...');
+          console.log('Fresh image ready, updating display...');
           updateImageInPlace(idea, finalImageUrl);
+          
+          // Save fresh question to database for future reuse
+          saveToStorage(idea, finalImageUrl);
         } else {
-          console.warn('Image generation failed, showing fallback');
+          console.warn('Fresh image generation failed, showing fallback');
           showImageFallback(idea);
         }
       }).catch(imageError => {
-        console.warn('Image generation failed, showing fallback:', imageError.message);
+        console.warn('Fresh image generation failed, showing fallback:', imageError.message);
         showImageFallback(idea);
       });
       
-      // Continue with the flow - we already rendered the question
-      state.busy = false;
-      return;
+    } else {
+      // Use question from database
+      console.log(`Using database question ${n} (beyond fresh limit of ${state.freshQuestionsCount})`);
+      
+      const dbQuestions = await getQuestionsFromDatabase(1);
+      
+      if (dbQuestions.length > 0) {
+        const dbQuestion = dbQuestions[0];
+        console.log('Retrieved database question:', {
+          id: dbQuestion.id,
+          question: dbQuestion.question,
+          reuse_count: dbQuestion.reuse_count
+        });
+        
+        // Convert database format to app format
+        idea = {
+          title: dbQuestion.question,
+          options: {
+            correct: dbQuestion.options[0],
+            close: dbQuestion.options[1] || dbQuestion.options[0],
+            obviouslyWrong: dbQuestion.options[2] || 'Not sure',
+            funnyWrong: dbQuestion.options[3] || 'Completely wrong'
+          },
+          explanation: dbQuestion.explanation || 'Great observation!',
+          coachingTips: dbQuestion.coaching_tips || ['Keep practicing your body language reading skills!']
+        };
+        
+        imageUrl = dbQuestion.image_url;
+        
+        hideLoadingState();
+        renderQuestion(idea, imageUrl);
+      } else {
+        // Fallback to fresh question if database is empty
+        console.log('Database empty, generating fresh question as fallback');
+        
+        idea = await Promise.race([
+          getGestureAndOptions(),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Fallback fresh question timeout')), 15000))
+        ]);
+        
+        if (!idea) throw new Error('No fallback idea generated');
+        
+        hideLoadingState();
+        renderQuestionWithProgressiveLoading(idea);
+        
+        // Generate image for fallback question
+        const imagePromise = Promise.race([
+          getDalle2Image(idea.imagePrompt),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Fallback image timeout')), 25000))
+        ]);
+        
+        imagePromise.then(result => {
+          const finalImageUrl = result.url || null;
+          if (finalImageUrl) {
+            updateImageInPlace(idea, finalImageUrl);
+            saveToStorage(idea, finalImageUrl);
+          } else {
+            showImageFallback(idea);
+          }
+        }).catch(imageError => {
+          console.warn('Fallback image generation failed:', imageError.message);
+          showImageFallback(idea);
+        });
+      }
     }
     
-    // This code is unreachable - both branches above have return statements
-    console.error('CRITICAL: Unreachable code executed in nextQuestion()');
-    
   } catch (error) {
-    console.error('Question generation failed:', error);
+    console.error('Hybrid question generation failed:', error);
     console.log('Using fallback question...');
     hideLoadingState();
     
-    // Use fallback question when API fails
+    // Use fallback question when all methods fail
     const fallbackQuestion = getFallbackQuestion(state.index);
     console.log('Fallback question:', fallbackQuestion);
     renderQuestion(fallbackQuestion, null);
@@ -1955,6 +1997,43 @@ function extractGestureType(idea) {
   }
   
   return 'general';
+}
+
+// Retrieve questions from database
+async function getQuestionsFromDatabase(count = 4) {
+  try {
+    console.log(`Retrieving ${count} questions from database...`);
+    
+    const response = await fetch('/api/database/get-questions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        count: count,
+        excludeIds: state.usedQuestionIds
+      })
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Database request failed: ${response.status}`);
+    }
+    
+    const result = await response.json();
+    
+    if (!result.success || !result.questions) {
+      throw new Error('Invalid database response');
+    }
+    
+    // Add retrieved question IDs to used list
+    result.questions.forEach(q => {
+      state.usedQuestionIds.push(q.id);
+    });
+    
+    console.log(`Retrieved ${result.questions.length} questions from database`);
+    return result.questions;
+  } catch (error) {
+    console.warn('⚠️ Database retrieval failed, will generate fresh questions:', error.message);
+    return [];
+  }
 }
 
 async function getGestureAndOptions(){
