@@ -1,4 +1,6 @@
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { GetObjectCommand } from '@aws-sdk/client-s3';
 import crypto from 'crypto';
 import { secureEndpoint, validateRequired, sanitizeString, validateImageUrl } from '../middleware/security.js';
 
@@ -15,7 +17,7 @@ const s3Client = new S3Client({
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const MIN_FILE_SIZE = 1024; // 1KB
-const BUCKET_NAME = 's3-ai-2025';
+const BUCKET_NAME = process.env.AWS_S3_BUCKET;
 
 // Validate image content type from buffer
 function validateImageBuffer(buffer) {
@@ -142,12 +144,19 @@ async function uploadHandler(req, res) {
       const command = new PutObjectCommand(uploadParams);
       await s3Client.send(command);
       
-      // Generate S3 URL (using proper domain format)
-      const s3Url = `https://${BUCKET_NAME}.s3.amazonaws.com/${s3Key}`;
+      // Generate signed S3 URL for secure access (valid for 7 days)
+      const getObjectCommand = new GetObjectCommand({
+        Bucket: BUCKET_NAME,
+        Key: s3Key,
+      });
+      
+      const signedUrl = await getSignedUrl(s3Client, getObjectCommand, { 
+        expiresIn: 7 * 24 * 60 * 60 // 7 days
+      });
       
       res.status(201).json({
         success: true,
-        s3Url,
+        s3Url: signedUrl,
         s3Key,
         filename,
         size: imageBuffer.length,

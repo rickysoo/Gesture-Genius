@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
 <title>Gesture Genius - Master Public Speaking Body Language | Interactive Quiz</title>
 <meta name="description" content="Learn to read body language like a pro with our AI-powered interactive quiz. Master public speaking gestures, postures, and expressions through fun cartoon scenarios.">
 <meta name="keywords" content="body language, public speaking, gestures, communication skills, presentation skills, quiz">
@@ -366,8 +369,7 @@
           </button>
           
           <div id="prefetchStatus" class="prefetch-status">
-            <div class="loading-spinner"></div>
-            Getting ready...
+            ✅ Ready to start!
           </div>
         </div>
       </div>
@@ -466,6 +468,8 @@ let state = {
   usedGestures: [],
   freshQuestionsCount: 1, // Number of fresh questions to generate (rest from database)
   usedQuestionIds: [], // Track question IDs used in current quiz to prevent duplicates
+  savedQuestions: new Set(), // Track questions already saved to prevent duplicates
+  prefetchInProgress: null, // Track ongoing prefetch: {idea, imagePromise} or null
 };
 
 // Sound system using Web Audio API
@@ -511,24 +515,16 @@ const prefetchStatus = qs('#prefetchStatus');
 
 // Page load - show ready immediately (no prefetching)
 window.addEventListener('load', async () => {
+  console.log('🎯 APP VERSION: PREFETCH-CONTINUATION-DEBUG-v3 🎯');
   console.log('Page loaded, starting prefetch...');
-  prefetchStatus.innerHTML = '🔄 Preparing your first question...';
+  prefetchStatus.innerHTML = '✅ Ready to start!';
   
   try {
-    // Start prefetching the first question immediately
+    // Start prefetching the first question immediately (silent)
     await prefetchFirstQuestion();
-    
-    // Update status based on prefetch result
-    if (state.prefetchQueue.length > 0) {
-      prefetchStatus.innerHTML = '✅ Ready to start instantly!';
-      console.log('Prefetch successful - ready for instant start');
-    } else {
-      prefetchStatus.innerHTML = '✅ Ready to start!';
-      console.log('Prefetch failed - will generate on demand');
-    }
+    console.log('Prefetch completed in background');
   } catch (error) {
     console.error('Prefetch error:', error);
-    prefetchStatus.innerHTML = '✅ Ready to start!';
   }
 });
 
@@ -561,22 +557,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Keep the original for fallback
-if (startQuizBtn) {
-  startQuizBtn.addEventListener('click', async () => {
-    try { sounds.click(); } catch(e) { console.warn('Sound play failed:', e); }
-    
-    // Clean screen transitions
-    introScreen.style.display = 'none';
-    quizScreen.style.display = 'block';
-    
-    // Clear any stray error notifications
-    const existingErrors = document.querySelectorAll('.error-notification');
-    existingErrors.forEach(error => error.remove());
-    
-    await startQuiz();
-  });
-}
+// Duplicate handler removed - using DOMContentLoaded handler only
 
 
 if (restartBtn) {
@@ -599,11 +580,19 @@ if (restartBtn) {
 // Test button for debugging
 
 async function startQuiz() {
+  // Prevent multiple simultaneous starts
+  if (state.busy) {
+    console.log('Quiz already starting, ignoring duplicate startQuiz call');
+    return;
+  }
+  
   console.log('Starting quiz...');
   state.chatModel = 'gpt-4o-mini';
   state.imgSize = '1024x1024'; // DALL-E 3 supports higher resolution
   state.index = 0; state.score = 0; state.history = []; state.usedGestures = [];
   state.usedQuestionIds = []; // Reset used question IDs to prevent duplicates in new quiz
+  state.savedQuestions.clear(); // Reset saved questions tracker
+  // Keep prefetchInProgress - we want to use it if available
   // Don't clear prefetch queue - use what we already have
   summaryEl.style.display = 'none';
   nextBtn.disabled = true;
@@ -650,7 +639,8 @@ async function newQuestion(){
     let idea, imageUrl;
     
     // Check if we have a prefetched question+image pair first (intro screen prefetch)
-    if (state.prefetchQueue.length > 0) {
+    // Only use prefetch queue for the first question
+    if (state.prefetchQueue.length > 0 && state.index === 0) {
       const prefetched = state.prefetchQueue.shift();
       idea = prefetched.idea;
       imageUrl = prefetched.imageUrl;
@@ -673,6 +663,61 @@ async function newQuestion(){
       
       state.busy = false;
       return;
+    }
+    
+    // Debug: Check prefetch state
+    console.log('🔍 Debug - prefetchInProgress:', state.prefetchInProgress ? 'YES' : 'NO');
+    console.log('🔍 Debug - prefetchQueue length:', state.prefetchQueue.length);
+    console.log('🔍 Debug - question index:', state.index);
+    
+    // Check if we have an in-progress prefetch (user clicked Start while prefetch was running)
+    if (state.prefetchInProgress && state.index === 0) {
+      console.log('🔄 Detected in-progress prefetch during Start click');
+      
+      // If idea is ready, use it immediately
+      if (state.prefetchInProgress.idea) {
+        console.log('🔄 Using in-progress prefetch question:', state.prefetchInProgress.idea.title);
+        idea = state.prefetchInProgress.idea;
+        
+        // Mark prefetch as consumed to prevent duplicate queue entry
+        state.prefetchInProgress.consumed = true;
+        
+        // Show the question immediately with loading placeholder
+        hideLoadingState();
+        renderQuestionWithProgressiveLoading(idea);
+        
+        // Continue the background image generation and update when ready
+        console.log('📡 Continuing background prefetch image generation...');
+        state.prefetchInProgress.imagePromise.then(result => {
+        const finalImageUrl = result.url || null;
+        if (finalImageUrl) {
+          console.log('🖼️ Background prefetch image completed, updating display!');
+          updateImageInPlace(idea, finalImageUrl);
+          
+          // Save to database now that we have the image
+          saveToStorage(idea, finalImageUrl);
+        } else {
+          console.log('Background prefetch image failed, keeping fallback');
+          showImageFallback(idea);
+        }
+      }).catch(imageError => {
+        console.log('Background prefetch image failed:', imageError.message);
+        showImageFallback(idea);
+      });
+      } else {
+        // Idea isn't ready yet - user clicked Start very early during text generation
+        console.log('⏱️ Prefetch still generating question text - falling back to fresh generation');
+        state.prefetchInProgress = null; // Clear invalid state
+        // Fall through to fresh generation below
+      }
+      
+      // Only clear state and return if we successfully used prefetch
+      if (idea) {
+        // Clear the in-progress state since we've consumed it
+        state.prefetchInProgress = null;
+        state.busy = false;
+        return;
+      }
     }
     
     // Hybrid approach: First n questions are fresh, rest from database
@@ -737,22 +782,43 @@ async function newQuestion(){
         });
         
         // Convert database format to app format
+        console.log('🐛 Debug - Raw dbQuestion.options:', dbQuestion.options);
+        const parsedOptions = typeof dbQuestion.options === 'string' ? JSON.parse(dbQuestion.options) : dbQuestion.options;
+        console.log('🐛 Debug - Parsed options:', parsedOptions);
+        const parsedCoachingTips = typeof dbQuestion.coaching_tips === 'string' ? JSON.parse(dbQuestion.coaching_tips) : dbQuestion.coaching_tips;
+        
         idea = {
           title: dbQuestion.question,
+          correctAnswer: dbQuestion.correct_answer,
           options: {
-            correct: dbQuestion.options[0],
-            close: dbQuestion.options[1] || dbQuestion.options[0],
-            obviouslyWrong: dbQuestion.options[2] || 'Not sure',
-            funnyWrong: dbQuestion.options[3] || 'Completely wrong'
+            correct: dbQuestion.correct_answer, // Use the stored correct answer
+            close: parsedOptions?.close || parsedOptions?.[1] || 'We should consider this approach carefully.',
+            obviouslyWrong: parsedOptions?.obviouslyWrong || parsedOptions?.[2] || 'Not sure about this.',
+            funnyWrong: parsedOptions?.funnyWrong || parsedOptions?.[3] || 'This seems completely off-topic!'
           },
           explanation: dbQuestion.explanation || 'Great observation!',
-          coachingTips: dbQuestion.coaching_tips || ['Keep practicing your body language reading skills!']
+          coachingTips: parsedCoachingTips || ['Keep practicing your body language reading skills!']
         };
         
         imageUrl = dbQuestion.image_url;
         
         hideLoadingState();
-        renderQuestion(idea, imageUrl);
+        
+        // Use proxy for S3 access to avoid CORS issues
+        try {
+          if (imageUrl && imageUrl.includes('s3')) {
+            console.log('Using proxy for database image:', imageUrl);
+            // Convert S3 URL to proxy URL
+            const proxyUrl = `/api/storage/proxy-image?s3Url=${encodeURIComponent(imageUrl)}`;
+            imageUrl = proxyUrl;
+            console.log('Proxy URL created, rendering question');
+          }
+          
+          renderQuestion(idea, imageUrl, true); // Skip storage - already in database
+        } catch (imageError) {
+          console.log('Database image access failed, generating fresh image for this question:', imageError.message);
+          renderQuestionWithProgressiveLoading(idea);
+        }
       } else {
         // Fallback to fresh question if database is empty
         console.log('Database empty, generating fresh question as fallback');
@@ -869,49 +935,96 @@ function hideLoadingState() {
 
 async function prefetchFirstQuestion() {
   // Prefetch only the first question on intro screen
+  console.log('🚀 prefetchFirstQuestion called - NEW VERSION');
   console.log('Prefetching first question for instant quiz start...');
   
   try {
-    // Add timeout for prefetch to avoid hanging
-    const prefetchPromise = Promise.race([
-      (async () => {
-        // Generate the first question (which will be fresh)
-        const idea = await getGestureAndOptions();
-        if (!idea) throw new Error('No first question generated in prefetch');
-        
-        console.log('First question prefetched, generating image...', idea.title?.substring(0, 50) + '...');
-        
-        // Generate matching image
-        const imageResult = await getDalle2Image(idea.imagePrompt);
-        const imageUrl = imageResult.url || null;
-        
-        return { idea, imageUrl };
-      })(),
-      new Promise((_, reject) => setTimeout(() => reject(new Error('Prefetch timeout')), 40000))
-    ]);
+    // Set prefetch state immediately to handle early Start clicks
+    state.prefetchInProgress = {
+      idea: null, // Will be filled when idea generation completes
+      imagePromise: null, // Will be filled when image generation starts
+      consumed: false // Track if this prefetch was consumed early
+    };
+    console.log('🔄 Prefetch started - state marked as in progress');
     
-    const result = await prefetchPromise;
+    // Generate the first question (which will be fresh)
+    const idea = await getGestureAndOptions();
+    if (!idea) throw new Error('No first question generated in prefetch');
     
-    if (result.imageUrl) {
-      console.log('✅ First question + image prefetched successfully');
-      // Store in prefetch queue for immediate use
-      state.prefetchQueue = [{
-        idea: result.idea,
-        imageUrl: result.imageUrl,
-        timestamp: Date.now()
-      }];
+    console.log('First question prefetched, generating image...', idea.title?.substring(0, 50) + '...');
+    
+    // Start image generation (no timeout here - let it complete in background)
+    const imagePromise = getDalle2Image(idea.imagePrompt);
+    
+    // Update the prefetch state with actual data (only if still active)
+    if (state.prefetchInProgress) {
+      state.prefetchInProgress.idea = idea;
+      state.prefetchInProgress.imagePromise = imagePromise;
+      console.log('🔄 Prefetch in progress updated with data for:', idea.title);
     } else {
-      console.log('⚠️ First question prefetched but image failed');
+      console.log('⚠️ Prefetch state was cleared before completion, skipping update');
+    }
+    
+    try {
+      const imageResult = await imagePromise;
+      const imageUrl = imageResult.url || null;
+      
+      // Only add to queue if prefetch wasn't consumed early
+      if (!state.prefetchInProgress?.consumed) {
+        if (imageUrl) {
+          console.log('✅ First question + image prefetched successfully');
+          state.prefetchQueue = [{
+            idea: idea,
+            imageUrl: imageUrl,
+            timestamp: Date.now()
+          }];
+        } else {
+          console.log('⚠️ First question prefetched but image failed');
+          state.prefetchQueue = [{
+            idea: idea,
+            imageUrl: null,
+            timestamp: Date.now()
+          }];
+        }
+      } else {
+        console.log('⚠️ Prefetch was consumed early - not adding to queue');
+      }
+      
+      // Clear the in-progress state since it's completed
+      console.log('✅ Clearing prefetchInProgress - prefetch completed successfully');
+      state.prefetchInProgress = null;
+      
+    } catch (imageError) {
+      console.log('⚠️ Image generation failed, storing question only');
       state.prefetchQueue = [{
-        idea: result.idea,
+        idea: idea,
         imageUrl: null,
         timestamp: Date.now()
       }];
+      
+      // Keep the in-progress state for background completion
+      if (state.prefetchInProgress) {
+        console.log('🔄 Continuing image generation in background...');
+        state.prefetchInProgress.imagePromise.then(result => {
+          if (result.url) {
+            console.log('📦 Background prefetch image completed!');
+            // Update existing queue entry if it exists
+            if (state.prefetchQueue.length > 0) {
+              state.prefetchQueue[0].imageUrl = result.url;
+            }
+          }
+          state.prefetchInProgress = null;
+        }).catch(e => {
+          console.log('Background prefetch image failed:', e.message);
+          state.prefetchInProgress = null;
+        });
+      }
     }
     
   } catch (error) {
     console.log('First question prefetch failed, will generate on demand:', error.message);
     state.prefetchQueue = [];
+    state.prefetchInProgress = null;
   }
 }
 
@@ -982,7 +1095,7 @@ function renderQuestionWithProgressiveLoading(idea) {
         <div style="font-size:2.2rem;margin-bottom:12px;animation:pulse 2s infinite;">🎨</div>
         <!-- Speaker description while loading -->
         <div style="font-size:0.9rem;color:rgba(255,255,255,0.9);margin-bottom:8px;max-width:280px;line-height:1.3;">
-          ${sanitizeHTML(idea.imagePrompt)}
+          ${sanitizeHTML(idea.imagePrompt || 'Creating a professional gesture scenario...')}
         </div>
         
         <!-- Generating Image text -->
@@ -1024,7 +1137,7 @@ function updateImageInPlace(idea, imageUrl) {
     imgBox.innerHTML = '';
     imgBox.appendChild(img);
     
-    // Save to storage (non-blocking, fails silently)
+    // Save to storage (non-blocking, fails silently) 
     saveToStorage(idea, imageUrl).catch(err => 
       console.log('Storage save failed but app continues:', err.message)
     );
@@ -1038,7 +1151,7 @@ function updateImageInPlace(idea, imageUrl) {
   img.src = imageUrl;
 }
 
-function renderQuestion(idea, imageUrl){
+function renderQuestion(idea, imageUrl, skipStorage = false){
   console.log('renderQuestion called with idea:', idea?.title, 'imageUrl:', imageUrl);
   
   // Immediately show options so user can start answering
@@ -1068,7 +1181,7 @@ function renderQuestion(idea, imageUrl){
     imgBox.innerHTML = `
       <div style="padding:30px;text-align:center;color:rgba(255,255,255,0.7);background:linear-gradient(135deg, rgba(0,229,255,.1), rgba(255,110,199,.1));border:2px dashed rgba(255,255,255,.3);border-radius:16px;min-height:200px;display:flex;flex-direction:column;justify-content:center;align-items:center;">
         <div style="font-size:2rem;margin-bottom:8px;animation:pulse 2s infinite;">🖼️</div>
-        <div style="font-size:0.9rem;color:rgba(255,255,255,0.9);margin-bottom:8px;">${idea.imagePrompt}</div>
+        <div style="font-size:0.9rem;color:rgba(255,255,255,0.9);margin-bottom:8px;">${idea.imagePrompt || 'Creating professional gesture scenario...'}</div>
         
         <!-- Generating Image text -->
         <div style="font-size:0.85rem;color:rgba(255,255,255,0.8);margin-bottom:12px;font-style:italic;">
@@ -1090,19 +1203,36 @@ function renderQuestion(idea, imageUrl){
   const maxRetries = 5; // Increased retries
   
   const tryLoadImage = (url) => {
-    img.onerror = () => {
-      console.warn('Image load failed:', url, 'Retry:', retryCount);
+    img.onerror = (error) => {
+      console.warn('Image load failed:', {
+        url,
+        retryCount,
+        error,
+        naturalWidth: img.naturalWidth,
+        naturalHeight: img.naturalHeight,
+        complete: img.complete
+      });
       if (retryCount < maxRetries) {
         retryCount++;
-        // Try different strategies
+        // For proxy URLs or signed URLs, don't modify the URL - just retry as-is
         setTimeout(() => {
-          if (retryCount === 1) {
-            // Try with cache busting
-            img.src = url + '&cache=' + Date.now();
-          } else if (retryCount === 2) {
-            // Try without additional params
-            img.src = url;
-          } else if (retryCount === 3) {
+          if (url.includes('/api/storage/proxy-image') || url.includes('X-Amz-Algorithm')) {
+            console.log('Retrying proxy/signed URL without modification:', retryCount);
+            img.src = url; // Don't modify proxy or signed URLs
+          } else if (retryCount === 1 && url.includes('.s3.amazonaws.com/')) {
+            // For S3 URLs, try region-specific format
+            const s3AltUrl = url.replace('.s3.amazonaws.com/', '.s3.us-east-1.amazonaws.com/');
+            console.log('Trying alternative S3 URL format:', s3AltUrl);
+            img.src = s3AltUrl;
+          } else if (retryCount === 2 && url.includes('s3-ai-2025.s3.us-east-1.amazonaws.com') && !url.includes('X-Amz-Algorithm')) {
+            // Try alternative S3 path format (only for non-signed URLs)
+            const s3PathUrl = url.replace('s3-ai-2025.s3.us-east-1.amazonaws.com/', 's3.us-east-1.amazonaws.com/s3-ai-2025/');
+            console.log('Trying S3 path-style URL:', s3PathUrl);
+            img.src = s3PathUrl;
+          } else if (retryCount === 3 && !url.includes('X-Amz-Algorithm')) {
+            // Try with cache busting (only for non-signed URLs)
+            img.src = url + (url.includes('?') ? '&' : '?') + 'cache=' + Date.now();
+          } else if (retryCount === 4) {
             // Try with different approach - create new image element
             const newImg = new Image();
             newImg.onload = () => {
@@ -1128,39 +1258,94 @@ function renderQuestion(idea, imageUrl){
       } else {
         // All retries failed, determine error type
         console.log('All image load retries failed');
-        showImageError(idea, 'not_found');
+        
+        // For database images (S3), try generating a fresh image instead of giving up
+        if (url.includes('s3-ai-2025.s3')) {
+          console.log('Database S3 image failed completely, generating fresh image...');
+          // Always generate fresh for failed database images, even without imagePrompt
+          generateFreshImageForFailedDatabase(idea);
+        } else {
+          showImageError(idea, 'not_found');
+        }
       }
     };
     
     img.onload = () => {
-      console.log('Image loaded successfully!');
+      console.log('Image loaded successfully!', {
+        src: img.src,
+        naturalWidth: img.naturalWidth,
+        naturalHeight: img.naturalHeight,
+        complete: img.complete
+      });
       window.currentImageLoading = false; // Mark as complete
       imgBox.innerHTML = ''; // Clear loading placeholder
       imgBox.appendChild(img);
       // Options already rendered immediately, so no need to call renderOptions again
       
-      // Save to storage (non-blocking, fails silently)
-      saveToStorage(idea, imageUrl).catch(err => 
-        console.log('Storage save failed but app continues:', err.message)
-      );
+      // Save to storage (non-blocking, fails silently) - only if not from database
+      if (!skipStorage) {
+        saveToStorage(idea, imageUrl).catch(err => 
+          console.log('Storage save failed but app continues:', err.message)
+        );
+      }
     };
     
     console.log('Setting image src:', url);
-    img.src = url;
+    
+    // For proxy URLs, use fetch to get blob first then convert to object URL
+    if (url.includes('/api/storage/proxy-image')) {
+      console.log('Fetching proxy image as blob...');
+      fetch(url)
+        .then(response => {
+          console.log('Proxy fetch response:', response.status, response.statusText);
+          if (!response.ok) {
+            throw new Error(`Proxy fetch failed: ${response.status}`);
+          }
+          return response.blob();
+        })
+        .then(blob => {
+          console.log('Proxy blob received:', blob.size, 'bytes');
+          const objectUrl = URL.createObjectURL(blob);
+          console.log('Created object URL:', objectUrl);
+          img.src = objectUrl;
+          
+          // Clean up object URL when image loads
+          const originalOnLoad = img.onload;
+          img.onload = () => {
+            URL.revokeObjectURL(objectUrl);
+            if (originalOnLoad) originalOnLoad();
+          };
+        })
+        .catch(error => {
+          console.error('Proxy fetch error:', error);
+          // Fall back to direct assignment
+          img.src = url;
+        });
+    } else {
+      img.src = url;
+    }
   };
   
   console.log('Attempting to load image...');
   tryLoadImage(imageUrl);
   
-  // Add timeout fallback in case image loading hangs
+  // Add timeout fallback - longer for proxy URLs since they need server processing time
+  const timeoutDuration = imageUrl.includes('/api/storage/proxy-image') ? 45000 : 30000;
   setTimeout(() => {
-    console.log('Image loading timeout - checking if still loading...');
+    console.log(`Image loading timeout after ${timeoutDuration/1000}s - checking if still loading...`);
     if (window.currentImageLoading) { // Image still loading after timeout
-      console.log('Still loading after 30 seconds, forcing fallback...');
+      console.log(`Still loading after ${timeoutDuration/1000} seconds, forcing fallback...`);
       window.currentImageLoading = false;
-      showEnhancedImageFallback(idea);
+      
+      // For proxy URLs, try regenerating fresh image instead of fallback
+      if (imageUrl.includes('/api/storage/proxy-image')) {
+        console.log('Proxy URL timeout - generating fresh image as fallback');
+        generateFreshImageForFailedDatabase(idea);
+      } else {
+        showEnhancedImageFallback(idea);
+      }
     }
-  }, 30000); // Increased to 30 seconds for better reliability
+  }, timeoutDuration);
   
   } catch (error) {
     console.error('Error in renderQuestion:', error);
@@ -1237,7 +1422,7 @@ function showImageFallback(idea) {
         <div style="font-size:2.2rem;margin-bottom:12px;animation:pulse 2s infinite;">🎨</div>
         <!-- Speaker description -->
         <div style="font-size:0.9rem;color:rgba(255,255,255,0.9);margin-bottom:8px;max-width:280px;line-height:1.3;">
-          ${sanitizeHTML(idea.imagePrompt)}
+          ${sanitizeHTML(idea.imagePrompt || 'Professional gesture scenario')}
         </div>
         
         <!-- Generating Image text -->
@@ -1825,6 +2010,27 @@ async function regenerateImage(idea) {
   }
 }
 
+async function generateFreshImageForFailedDatabase(idea) {
+  console.log('Generating fresh image for failed database question:', idea.title);
+  
+  try {
+    // Create a generic prompt if imagePrompt is missing
+    const imagePrompt = idea.imagePrompt || `A professional demonstrating ${idea.title.toLowerCase()} in a business setting`;
+    
+    const imageResult = await getDalle2Image(imagePrompt);
+    if (imageResult && imageResult.url) {
+      console.log('Fresh image generated successfully, updating display');
+      updateImageInPlace(idea, imageResult.url);
+    } else {
+      console.log('Fresh image generation failed, showing fallback');
+      showImageFallback(idea);
+    }
+  } catch (error) {
+    console.log('Fresh image generation error:', error.message);
+    showImageFallback(idea);
+  }
+}
+
 function showImageError(idea, errorType = 'unknown') {
   window.currentImageLoading = false;
   
@@ -1927,7 +2133,7 @@ function showImageError(idea, errorType = 'unknown') {
       <div style="font-size:3rem;margin-bottom:16px;">${gestureEmoji}</div>
       <div style="font-size:1.2rem;margin-bottom:12px;font-weight:600;color:white;text-shadow:0 1px 2px rgba(0,0,0,0.5);">Scenario Description</div>
       <div style="font-size:0.9rem;line-height:1.4;color:rgba(255,255,255,0.9);max-width:300px;margin:0 auto;">
-        ${idea.imagePrompt}
+        ${idea.imagePrompt || 'A professional demonstrating effective body language'}
       </div>
     </div>
   `;
@@ -1992,11 +2198,22 @@ async function openaiImages(body){
 // Storage functions for saving quiz data to database and S3
 async function saveToStorage(idea, imageUrl) {
   try {
+    const questionKey = idea?.title; // Use only title to prevent duplicates regardless of image URL
+    
+    // Prevent duplicate saves for the same question
+    if (state.savedQuestions.has(questionKey)) {
+      console.log('Question already saved, skipping duplicate save:', idea?.title);
+      return;
+    }
+    
     console.log('Saving quiz data to storage...', { 
       question: idea?.title, 
       imageUrl: imageUrl ? 'present' : 'missing',
       gestureType: extractGestureType(idea)
     });
+    
+    // Mark as saved to prevent duplicates
+    state.savedQuestions.add(questionKey);
     
     if (!idea || !imageUrl) {
       console.log('Skipping storage - missing required data');
@@ -2093,19 +2310,47 @@ function extractGestureType(idea) {
   return 'general';
 }
 
+// Get signed URL for S3 image access
+async function getSignedUrl(s3Url) {
+  try {
+    console.log('Getting signed URL for:', s3Url);
+    
+    const response = await fetch('/api/storage/get-signed-url', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ s3Url })
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Signed URL request failed: ${response.status}`);
+    }
+    
+    const result = await response.json();
+    console.log('Signed URL generated successfully');
+    return result.signedUrl;
+    
+  } catch (error) {
+    console.error('Failed to get signed URL:', error);
+    throw error;
+  }
+}
+
 // Retrieve questions from database
 async function getQuestionsFromDatabase(count = 4) {
   try {
     console.log(`Retrieving ${count} questions from database...`);
     
-    const response = await fetch('/api/database/get-questions', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        count: count,
-        excludeIds: state.usedQuestionIds
-      })
-    });
+    const response = await Promise.race([
+      fetch('/api/database/get-questions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          count: count,
+          excludeIds: state.usedQuestionIds
+        })
+      }),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Database timeout')), 10000))
+    ]);
     
     if (!response.ok) {
       throw new Error(`Database request failed: ${response.status}`);
@@ -2269,16 +2514,19 @@ Ensure the image description and correct answer are perfectly aligned with "${ra
 
 CREATIVITY: Generate fresh, unique content. Avoid generic phrases. Make the speaker's words feel natural and context-appropriate.`;
 
-  const data = await openaiChat({
-    model: state.chatModel,
-    temperature: 0.8,
-    max_tokens: 800,
-    messages: [
-      { role:'system', content: sys },
-      { role:'user', content: user }
-    ],
-    response_format: { type: "json_object" }
-  });
+  const data = await Promise.race([
+    openaiChat({
+      model: state.chatModel,
+      temperature: 0.8,
+      max_tokens: 800,
+      messages: [
+        { role:'system', content: sys },
+        { role:'user', content: user }
+      ],
+      response_format: { type: "json_object" }
+    }),
+    new Promise((_, reject) => setTimeout(() => reject(new Error('OpenAI Chat timeout')), 15000))
+  ]);
 
   try {
     // Extract JSON from potential markdown code blocks

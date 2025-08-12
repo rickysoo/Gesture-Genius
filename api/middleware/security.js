@@ -12,12 +12,42 @@ const RATE_LIMIT_MAX_REQUESTS = 10; // 10 requests per minute per IP
 const API_SECRET = process.env.API_SECRET || crypto.randomBytes(32).toString('hex');
 
 // Security headers
-function setSecurityHeaders(res) {
+function setSecurityHeaders(req, res) {
+  // Basic security headers
   res.setHeader('X-Frame-Options', 'DENY');
   res.setHeader('X-XSS-Protection', '1; mode=block');
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('X-Powered-By', ''); // Remove X-Powered-By header
+  
+  // Content Security Policy (CSP)
+  const csp = [
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // Needed for inline JS in SPA
+    "style-src 'self' 'unsafe-inline'", // Needed for inline styles
+    "img-src 'self' data: https: blob:",
+    "font-src 'self' data:",
+    "connect-src 'self' https://api.openai.com https://*.amazonaws.com",
+    "media-src 'none'",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'none'"
+  ].join('; ');
+  res.setHeader('Content-Security-Policy', csp);
+  
+  // Strict Transport Security (HTTPS only in production)
+  if (process.env.NODE_ENV === 'production') {
+    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+  }
+  
+  // Permissions Policy (restrict dangerous features)
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
+  
+  // Cache control for API responses
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
   
   // CORS headers (restrictive by default)
   const allowedOrigins = [
@@ -27,10 +57,18 @@ function setSecurityHeaders(res) {
     'https://gesture-genius-ppfli0yh7-rickys-projects-c77239e3.vercel.app',
     'https://gesture-genius-bo77rbvnp-rickys-projects-c77239e3.vercel.app',
     'https://gesture-genius-rog748qge-rickys-projects-c77239e3.vercel.app',
-    'https://gesture-genius-gd1s4stri-rickys-projects-c77239e3.vercel.app'
+    'https://gesture-genius-gd1s4stri-rickys-projects-c77239e3.vercel.app',
+    'https://gesture-genius-rch9hdtr3-rickys-projects-c77239e3.vercel.app'
   ];
-  const allowedOrigin = process.env.ALLOWED_ORIGIN || allowedOrigins[0];
-  res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
+  
+  // Only allow origins from the allowed list
+  const requestOrigin = req.headers.origin || req.headers.referer;
+  if (requestOrigin && allowedOrigins.some(allowed => requestOrigin.startsWith(allowed))) {
+    res.setHeader('Access-Control-Allow-Origin', requestOrigin);
+  } else {
+    // Don't set CORS header for unauthorized origins
+    res.setHeader('Access-Control-Allow-Origin', 'null');
+  }
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-API-Key');
   res.setHeader('Access-Control-Max-Age', '86400'); // 24 hours
@@ -162,7 +200,7 @@ function secureEndpoint(handler) {
   return async (req, res) => {
     try {
       // Set security headers
-      setSecurityHeaders(res);
+      setSecurityHeaders(req, res);
       
       // Handle CORS preflight
       if (req.method === 'OPTIONS') {

@@ -1,4 +1,6 @@
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { GetObjectCommand } from '@aws-sdk/client-s3';
 import crypto from 'crypto';
 import { secureEndpoint, validateRequired, sanitizeString, validateImageUrl } from '../middleware/security.js';
 
@@ -142,12 +144,19 @@ async function uploadHandler(req, res) {
       const command = new PutObjectCommand(uploadParams);
       await s3Client.send(command);
       
-      // Generate S3 URL (using proper domain format)
-      const s3Url = `https://${BUCKET_NAME}.s3.amazonaws.com/${s3Key}`;
+      // Generate signed S3 URL for secure access (valid for 7 days)
+      const getObjectCommand = new GetObjectCommand({
+        Bucket: BUCKET_NAME,
+        Key: s3Key,
+      });
+      
+      const signedUrl = await getSignedUrl(s3Client, getObjectCommand, { 
+        expiresIn: 7 * 24 * 60 * 60 // 7 days
+      });
       
       res.status(201).json({
         success: true,
-        s3Url,
+        s3Url: signedUrl,
         s3Key,
         filename,
         size: imageBuffer.length,

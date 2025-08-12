@@ -1,12 +1,22 @@
 import { neon } from '@neondatabase/serverless';
+import { secureEndpoint, validateRequired } from '../middleware/security.js';
 
-export default async function handler(req, res) {
+async function getQuestionsHandler(req, res) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Only POST allowed' });
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
     const { count = 5, excludeIds = [] } = req.body;
+    
+    // Validate input parameters
+    if (typeof count !== 'number' || count < 1 || count > 50) {
+      return res.status(400).json({ error: 'Count must be a number between 1 and 50' });
+    }
+    
+    if (excludeIds && (!Array.isArray(excludeIds) || excludeIds.some(id => typeof id !== 'number'))) {
+      return res.status(400).json({ error: 'excludeIds must be an array of numbers' });
+    }
     const sql = neon(process.env.DATABASE_URL);
     
     // Get random questions excluding specified IDs
@@ -64,10 +74,15 @@ export default async function handler(req, res) {
       count: result.length 
     });
   } catch (error) {
-    console.error('Database get-questions error:', error);
-    res.status(500).json({ 
-      error: 'Failed to retrieve questions', 
-      details: error.message 
+    console.error('Database get-questions error:', {
+      error: error.message,
+      stack: error.stack,
+      timestamp: new Date().toISOString()
     });
+    
+    // Return generic error to client
+    res.status(500).json({ error: 'Failed to retrieve questions' });
   }
 }
+
+export default secureEndpoint(getQuestionsHandler);
