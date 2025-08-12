@@ -1201,7 +1201,30 @@ function renderQuestion(idea, imageUrl, skipStorage = false){
     console.log('Creating image element...');
     const img = new Image();
     img.alt = 'Cartoon speaker with body gestures';
-    img.loading = 'lazy';
+    // Remove lazy loading for blob images to ensure they load immediately
+    // img.loading = 'lazy';
+    
+    // Set up unified success handler for all images
+    img.onload = () => {
+      console.log('Image loaded successfully!', img.src.startsWith('blob:') ? 'Blob image' : 'Regular image');
+      console.log('Image dimensions:', img.naturalWidth, 'x', img.naturalHeight);
+      console.log('Image complete:', img.complete);
+      imgBox.innerHTML = ''; // Clear loading placeholder
+      imgBox.appendChild(img);
+      
+      // Clean up blob URL if needed
+      if (img.src.startsWith('blob:') && img.dataset.blobUrl) {
+        URL.revokeObjectURL(img.dataset.blobUrl);
+        delete img.dataset.blobUrl;
+      }
+      
+      // Save to storage (non-blocking, fails silently) - skip for blob URLs
+      if (idea && idea.title && !img.src.startsWith('blob:')) {
+        saveToStorage(idea, img.src).catch(err => 
+          console.log('Storage save failed but app continues:', err.message)
+        );
+      }
+    };
   
   let retryCount = 0;
   const maxRetries = 5; // Increased retries
@@ -1209,13 +1232,24 @@ function renderQuestion(idea, imageUrl, skipStorage = false){
   const tryLoadImage = (url) => {
     img.onerror = (error) => {
       console.warn('Image load failed:', {
-        url,
+        url: img.src, // Use current src (might be blob URL)
+        originalUrl: url,
         retryCount,
         error,
         naturalWidth: img.naturalWidth,
         naturalHeight: img.naturalHeight,
         complete: img.complete
       });
+      
+      // Clean up blob URL if it failed to load
+      if (img.src.startsWith('blob:') && img.dataset.blobUrl) {
+        console.error('Blob image failed to load, cleaning up and falling back to proxy URL');
+        URL.revokeObjectURL(img.dataset.blobUrl);
+        delete img.dataset.blobUrl;
+        // Fall back to original proxy URL
+        img.src = url;
+        return;
+      }
       if (retryCount < maxRetries) {
         retryCount++;
         // For proxy URLs or signed URLs, don't modify the URL - just retry as-is
@@ -1313,21 +1347,28 @@ function renderQuestion(idea, imageUrl, skipStorage = false){
           const objectUrl = URL.createObjectURL(blob);
           console.log('Created object URL:', objectUrl);
           clearTimeout(timeoutId); // Cancel timeout since proxy fetch succeeded
-          img.src = objectUrl;
           
-          // Clean up object URL when image loads
-          const originalOnLoad = img.onload;
-          img.onload = () => {
-            URL.revokeObjectURL(objectUrl);
-            if (originalOnLoad) originalOnLoad();
-          };
+          // Store blob URL for cleanup - don't override the existing error handler
+          img.dataset.blobUrl = objectUrl;
+          
+          console.log('Setting blob URL as img.src:', objectUrl);
+          
+          // Debug: Test if blob URL is valid by checking its properties
+          console.log('Blob properties:', {
+            type: blob.type,
+            size: blob.size,
+            validUrl: objectUrl.startsWith('blob:')
+          });
+          
+          img.src = objectUrl;
         })
         .catch(error => {
           console.error('Proxy fetch error:', error);
-          // Fall back to direct assignment
+          // Fall back to direct assignment (will use general onload handler)
           img.src = url;
         });
     } else {
+      // Direct assignment (will use general onload handler)
       img.src = url;
     }
   };
@@ -2722,5 +2763,20 @@ function tick(){
 }
 tick();
 </script>
+
+<!-- Footer Links -->
+<footer style="text-align: center; padding: 20px; margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.2);">
+  <div style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap;">
+    <a href="https://AICoach.my" target="_blank" rel="noopener noreferrer" 
+       style="color: var(--text); text-decoration: none; padding: 8px 16px; border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; transition: all 0.2s ease;">
+      Learn AI
+    </a>
+    <a href="https://ShortSweetTM.com" target="_blank" rel="noopener noreferrer"
+       style="color: var(--text); text-decoration: none; padding: 8px 16px; border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; transition: all 0.2s ease;">
+      Public Speaking
+    </a>
+  </div>
+</footer>
+
 </body>
 </html>
