@@ -58,7 +58,9 @@ function setSecurityHeaders(req, res) {
     'https://gesture-genius-bo77rbvnp-rickys-projects-c77239e3.vercel.app',
     'https://gesture-genius-rog748qge-rickys-projects-c77239e3.vercel.app',
     'https://gesture-genius-gd1s4stri-rickys-projects-c77239e3.vercel.app',
-    'https://gesture-genius-rch9hdtr3-rickys-projects-c77239e3.vercel.app'
+    'https://gesture-genius-rch9hdtr3-rickys-projects-c77239e3.vercel.app',
+    'https://gesture-genius-7upgf02zx-rickys-projects-c77239e3.vercel.app',
+    'https://gesture-genius-lx5fne7c7-rickys-projects-c77239e3.vercel.app'
   ];
   
   // Only allow origins from the allowed list
